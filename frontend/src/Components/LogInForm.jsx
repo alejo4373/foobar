@@ -11,6 +11,7 @@ export default class LogInForm extends Component {
     this.state = {
       username: '',
       password: '',
+      data: {}
     }
   }
 
@@ -43,7 +44,7 @@ export default class LogInForm extends Component {
           else {
              // Instantiate aws sdk service objects now that the credentials have been updated.
              // example: var s3 = new AWS.S3();
-            console.log('succesfully loggedIn')
+            console.log('successfully loggedIn')
           }
         })
       },

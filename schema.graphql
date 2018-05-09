@@ -1,0 +1,30 @@
+﻿type Event {
+  id: ID
+  awayTeam: String!
+  homeTeam: String!
+  leagueId: String!
+  sportsDbId: String!
+  startTime: String!
+}
+
+type Establishment {
+  id: ID
+  managerUsername: String!
+  googlePlaceId: String!
+  name: String!
+  address: String!
+  phone: String!
+}
+
+type Mutation {
+  #  If an item exists it's updated. If it does not it's created.
+  putEvent(awayTeam: String!, homeTeam: String!, id: ID, leagueId: String!, sportsDbId: String!, startTime: String!): Event
+
+   #id: ID => is being handled in the request mapping template so no need to include it here
+  putEstablishment(managerUsername: String!, googlePlaceId: String!, name: String!, address: String!, phone: String!): Establishment
+}
+
+type Query {
+  singlePost(id: ID!): Event
+  #getUpcomingGamesFromEstablishments
+}
