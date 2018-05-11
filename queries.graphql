@@ -32,3 +32,29 @@
       phone
     }
   }
+
+query GetAllEvents {
+  allEvents(count: 10){
+    events {
+      id
+      sportsDbId
+      leagueId
+      homeTeam
+      awayTeam
+      startTime
+    }
+  }
+}
+
+query GetAllEstablishments {
+  allEstablishments(count: 10){
+    establishments{
+      id
+      managerUsername
+      googlePlaceId
+      name
+      address
+      phone
+    }
+  }
+}

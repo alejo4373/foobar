@@ -1,4 +1,14 @@
-﻿type Event {
+﻿type PaginatedEvents {
+  events: [Event!]!
+  nextToken: String
+}
+
+type PaginatedEstablishments {
+  establishments: [Establishment!]!
+  nextToken: String
+}
+
+type Event {
   id: ID
   awayTeam: String!
   homeTeam: String!
@@ -25,6 +35,7 @@ type Mutation {
 }
 
 type Query {
-  singlePost(id: ID!): Event
+  allEvents(count: Int, nextToken: String): PaginatedEvents!
+  allEstablishments(count: Int, nextToken: String): PaginatedEstablishments!
   #getUpcomingGamesFromEstablishments
 }
