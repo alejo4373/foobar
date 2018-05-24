@@ -1,7 +1,5 @@
-import gql from 'graphql-tag';
-
-export default gql`
-  query GetAllEstablishments {
+export default 
+  `query GetAllEstablishments {
     allEstablishments(count: 10){
       establishments{
         id
