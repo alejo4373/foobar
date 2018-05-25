@@ -16,6 +16,7 @@ const UserAuth = (props) => {
         <Route exact path='/' render={() => <Redirect to='/login'/>}/>
         <Route path='/login' render={renderLogInForm}/>
         <Route path='/signup' component={SignUpForm}/>
+        <Redirect to= '/login'/>
       </Switch>
     </div>
   )
