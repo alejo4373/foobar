@@ -1,14 +1,19 @@
-import gql from 'graphql-tag';
-
-export default gql`
-  mutation PutEstablishment {
+export default `
+  mutation PutEstablishment(
+    $googlePlaceId: String!
+    $name: String!
+    $address: String!
+    $phone: String!
+    $lat: String!
+    $lng: String!
+   ){
     putEstablishment(
-      #id: ID => is being handled in the request mapping template so no need to include it here
-      managerUsername: "alejooooooo"
-      googlePlaceId: "EisxMyBNYXJrZXQgU3RyZWV0LCBXaWxtaW5ndG9uLCBOQyAyODQwMSwgVVNB"
-      name: "Kabu"
-      address: "3140 87th street, east elmhurst"
-      phone: "917-573-6025"
+      googlePlaceId: $googlePlaceId
+      name: $name
+      address: $address
+      phone: $phone
+      lat: $lat
+      lng: $lng
     ){
       id
       managerUsername
@@ -16,6 +21,8 @@ export default gql`
       name
       address
       phone
+      lat
+      lng
     }
   }
 `;

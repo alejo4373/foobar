@@ -19,19 +19,36 @@ type Event {
 
 type Establishment {
   id: ID
-  managerUsername: String!
+  managerUsername: String 
   googlePlaceId: String!
   name: String!
   address: String!
   phone: String!
+  lat: String!
+  lng: String!
 }
 
 type Mutation {
   #  If an item exists it's updated. If it does not it's created.
-  putEvent(awayTeam: String!, homeTeam: String!, id: ID, leagueId: String!, sportsDbId: String!, startTime: String!): Event
+  putEvent(
+    awayTeam: String!,
+    homeTeam: String!,
+    id: ID,
+    leagueId: String!,
+    sportsDbId: String!,
+    startTime: String!
+  ): Event
 
-   #id: ID => is being handled in the request mapping template so no need to include it here
-  putEstablishment(managerUsername: String!, googlePlaceId: String!, name: String!, address: String!, phone: String!): Establishment
+  putEstablishment(
+    #id: ID # Handled in request mapping template, not requiered here
+    #managerUsername: String!, # Handled in request mapping template, not requiered here
+    googlePlaceId: String!
+    name: String!
+    address: String!
+    phone: String!,
+    lat: String!,
+    lng: String!
+   ): Establishment
 }
 
 type Query {
