@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { FormGroup, FormControl, ControlLabel, Radio, Button} from 'react-bootstrap';
+
 import { Auth } from 'aws-amplify';
 
 export default class SignUpForm extends Component {
@@ -27,10 +29,6 @@ export default class SignUpForm extends Component {
     })
     .then(data => console.log(data))
     .catch(err => console.log(err))
-
-    // Auth.confirmSignUp(username, code)
-    // .then(data => console.log('confirm===>', data))
-    // .catch(err => console.log('confirm===>', err))
   }
 
   handleInput = (e) => {
@@ -45,18 +43,27 @@ export default class SignUpForm extends Component {
       <div>
         <h3>Sign Up</h3>
         <form onSubmit={this.handleSubmit}>
-          <label> Username </label>
-          <input type='text' name='username' value={username} onChange={this.handleInput} />
-          <label> Password </label>
-          <input type='text' name='password' value={password} onChange={this.handleInput} />
-          <label> Email </label>
-          <input type='text' name='email' value={email} onChange={this.handleInput} />
-          <div>
+          <FormGroup>
+            <ControlLabel> Username </ControlLabel>
+            <FormControl type='text' name='username' value={username} onChange={this.handleInput} />
+          </FormGroup>
+
+          <FormGroup>
+            <ControlLabel> Password </ControlLabel>
+            <FormControl type='text' name='password' value={password} onChange={this.handleInput} />
+          </FormGroup>
+
+          <FormGroup>
+            <ControlLabel> Email </ControlLabel>
+            <FormControl type='text' name='email' value={email} onChange={this.handleInput} />
+          </FormGroup>
+
+          <FormGroup>
             <p>Are you a bar manager</p>
-            <input type='radio' name='manager' value='1' onChange={this.handleInput}/>Yes
-            <input type='radio' name='manager' value='0' onChange={this.handleInput}/>No
-          </div>
-          <input type='submit' value='Submit'/>
+            <Radio inline name='manager' value='1' onChange={this.handleInput}>Yes</Radio>{' '}
+            <Radio inline name='manager' value='0' onChange={this.handleInput}>No</Radio>
+          </FormGroup>
+          <Button type='submit' value='Submit'>Sign Up</Button>
         </form>
       </div>
     )

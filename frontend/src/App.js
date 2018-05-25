@@ -1,50 +1,46 @@
 import React, { Component } from 'react';
 
-//Components 
-import SignUpForm from './Components/SignUpForm';
-import LogInForm from './Components/LogInForm';
-import AllEvents from './Components/AllEvents';
-import AllEstablishments from './Components/AllEstablishments';
+//Main components 
+import UserAuth from './Components/UserAuth';
+import Dashboard from './Components/Dashboard';
 
-//Aws amplify
+//Amplify setup
+import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from './aws-config';
-import Amplify , { API, graphqlOperation } from 'aws-amplify';
-import { Authenticator, withAuthenticator } from 'aws-amplify-react';
-
-//GraphQL operations
-import GetAllEvents from "./Queries/GetAllEvents";
-
 Amplify.configure(awsConfig);
+
 class App extends Component {
   state = {
-    user: {},
-    events: []
+    userLoggedIn: false
   }
 
   componentDidMount() {
-    this.getData()
+   //Check if user has a session i.e is logged in
+    Auth.currentSession()
+        .then( () => this.handleLogInSuccess() )
+        .catch(err => console.log('error in promis', err))
   }
 
-  async getData() {
-    try {
-      const res = await API.graphql(graphqlOperation(GetAllEvents));
-      this.setState({
-        events: res.data.allEvents.events
-      })
-    } catch (err) {
-      console.log(err)
-    }
+  handleLogInSuccess = () => {
+    this.setState({
+      userLoggedIn: true
+    })
+  }
+
+  handleLogOut = () => {
+    this.setState({
+      userLoggedIn: false
+    })
   }
 
   render() {
-    console.log(this.state)
-    const { events } = this.state
+    const { userLoggedIn } = this.state
     return (
-      <div className="App">
-        <SignUpForm/>
-        {/* <AllEvents events={events}/> */}
-      </div>
-    );
+      //If user is logged in we render Dashboard
+      userLoggedIn? 
+        <Dashboard handleLogOut={this.handleLogOut}/> 
+      : <UserAuth handleLogInSuccess={this.handleLogInSuccess} />
+    )
   }
 }
 
