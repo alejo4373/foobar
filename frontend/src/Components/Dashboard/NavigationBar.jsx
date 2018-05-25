@@ -23,7 +23,7 @@ const NavigationBar = (props) => {
           <Link to='/favorites'>Favorites</Link>
         </NavItem>   
         <NavItem eventKey={4}>
-          <Link to='/venue'>Venue</Link>
+          <Link to='/establishments'>Establishments</Link>
         </NavItem>   
         <NavItem eventKey={4} onClick={handleLogOut}>Log Out </NavItem>  
       </Nav>

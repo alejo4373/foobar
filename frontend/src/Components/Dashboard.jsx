@@ -12,11 +12,12 @@ import { API, graphqlOperation } from 'aws-amplify'
 //GraphQL operations
 import GetAllEvents from "../Queries/GetAllEvents";
 
+//Child Components
+import Profile from './Dashboard/Profile'
 
 //Temporary components
 const MapComponent = (props) => (<div>This is Map</div>)
-const Profile = (props) => (<div>This is Profile</div>)
-const Venue = (props) => (<div>This is Venue</div>)
+const Establishments  = (props) => (<div>This is Venue</div>)
 const Favorites = (props) => (<div>This is Favorites</div>)
 
 class Dashboard extends Component {
@@ -31,9 +32,9 @@ class Dashboard extends Component {
     })
   }
 
-  componentDidMount() {
-    this.getData()
-  }
+  // componentDidMount() {
+  //   this.getData()
+  // }
 
   async getData() {
     try {
@@ -56,7 +57,7 @@ class Dashboard extends Component {
       <Switch>
         <Route exact path='/' component={MapComponent} />
         <Route path='/profile' component={Profile} />
-        <Route path='/venue' component={Venue} />
+        <Route path='/establishments' component={Establishments} />
         <Route path='/favorites' component={Favorites} />
 
         {/* If none of the routes above was matched redirect to '/' */}
