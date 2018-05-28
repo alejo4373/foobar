@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
-//Components
-import NavigationBar from './Dashboard/NavigationBar'
-import AllEvents from './AllEvents';
-import AllEstablishments from './AllEstablishments';
-
 //Amplify 
 import { API, graphqlOperation } from 'aws-amplify'
 
@@ -13,11 +8,12 @@ import { API, graphqlOperation } from 'aws-amplify'
 import GetAllEvents from "../Queries/GetAllEvents";
 
 //Child Components
+import NavigationBar from './Dashboard/NavigationBar'
+import MapComponent from './Dashboard/MapComponent'
 import Profile from './Dashboard/Profile'
+import Establishments from './Dashboard/Establishments'
 
 //Temporary components
-const MapComponent = (props) => (<div>This is Map</div>)
-const Establishments  = (props) => (<div>This is Venue</div>)
 const Favorites = (props) => (<div>This is Favorites</div>)
 
 class Dashboard extends Component {
