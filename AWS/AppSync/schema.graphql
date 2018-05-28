@@ -52,7 +52,8 @@ type Mutation {
 }
 
 type Query {
-  allEvents(count: Int, nextToken: String): PaginatedEvents!
-  allEstablishments(count: Int, nextToken: String): PaginatedEstablishments!
+  allEvents(limit: Int, nextToken: String): PaginatedEvents!
+  allEstablishments(limit: Int, nextToken: String): PaginatedEstablishments!
+  getEstablishmentsInBounds(limit: Int, latMin: String!, latMax: String!, lngMin: String!, lngMax: String!): PaginatedEstablishments!
   #getUpcomingGamesFromEstablishments
 }

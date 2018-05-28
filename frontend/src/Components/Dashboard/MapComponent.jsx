@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
-import { Map, GoogleApiWrapper } from 'google-maps-react';
+import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 import '../../Stylesheets/map.css';
-
-import { API, graphqlOperation } from 'aws-amplify';
+import { fetchEstablishmentsInBounds } from '../../Queries/API';
 
 class MapComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      clientLocation: {} 
+      clientLocation: {},
+      establishments: [] 
     }
-    //At the moment of instantiation we try to get client location
-    //this.tryGetClientLocation()
   }
 
   componentDidMount() {
@@ -50,14 +48,20 @@ class MapComponent extends Component {
     }
     console.log('boundsArea', areaBounds)
     console.log('zoom', zoom)
-    if(zoom < 13) {
-
+    if(zoom >= 14) {
+      fetchEstablishmentsInBounds(areaBounds, (err, establishments) => {
+        if(err) {
+          return console.log('error fetchEstablishmentsInBounds:', err)
+        }
+        this.setState({
+          establishments: establishments
+        })
+      })
     }
-
   }
 
   render() {
-    const { clientLocation } = this.state
+    const { clientLocation, establishments  } = this.state
     return(
       <div className='map-container'>
         <Map 
@@ -66,7 +70,15 @@ class MapComponent extends Component {
           onTilesloaded={this.handleTilesLoaded}
           center={clientLocation}
           containerStyle={{height: 'inherit'}}
-          >
+        >{
+          establishments.map(est => (
+            <Marker
+              title={est.name}
+              name={est.name}
+              position={{lat: est.lat, lng: est.lng}}
+            />
+          ))
+        }
         </Map>
       </div>
     )

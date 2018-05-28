@@ -1,0 +1,60 @@
+## Request mapping template
+{
+    "version" : "2017-02-28",
+    "operation" : "Scan",
+    "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
+    "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null)),
+    "filter" : {
+      "expression": "(lat BETWEEN :latMin and :latMax) and (lng BETWEEN :lngMin and :lngMax)",
+      "expressionValues": {
+        ":latMax": { "S": "${ctx.args.latMax}" },
+        ":latMin": { "S": "${ctx.args.latMin}" },
+        ":lngMax": { "S": "${ctx.args.lngMax}" },
+        ":lngMin": { "S": "${ctx.args.lngMin}" }
+      } 
+    }
+}
+
+## Response mapping template
+{
+    "establishments": $util.toJson(${context.result.items}),
+    "nextToken": "${context.result.nextToken}"
+}
+
+
+## Response ===> 
+{
+  "data": {
+    "getEstablishmentsInBounds": {
+      "establishments": [
+        {
+          "id": "27b2ce38-3ce9-41e6-b66e-f1a7ef94a2ad",
+          "googlePlaceId": "ChIJhapmSa9fwokRIjQDbIjsj14",
+          "name": "Barriles",
+          "address": "Barriles, 83-14 37th Ave, Jackson Heights, NY 11372, USA",
+          "phone": "(347) 649-1511",
+          "lat": "40.7497055",
+          "lng": "-73.88282700000002"
+        },
+        {
+          "id": "ec20908e-9162-48d0-9397-9a6c3d38be5c",
+          "googlePlaceId": "ChIJCzzFk6NfwokRXi3zOXjq6W0",
+          "name": "Yeras Restaurant Sports Bar",
+          "address": "Yeras Restaurant Sports Bar, 86-09 Northern Blvd, Queens, NY 11372, USA",
+          "phone": "(929) 522-0844",
+          "lat": "40.7562429",
+          "lng": "-73.88128289999997"
+        },
+        {
+          "id": "9b302454-b464-4184-87ea-4fd2917e7266",
+          "googlePlaceId": "ChIJrW2k8aNfwokRzT_0ooA3Qzg",
+          "name": "Kabu Bar Lounge",
+          "address": "Kabu Bar Lounge, 8509 Northern Blvd, Flushing, NY 11370, USA",
+          "phone": "(718) 429-0321",
+          "lat": "40.7560244",
+          "lng": "-73.88219830000003"
+        }
+      ]
+    }
+  }
+}
