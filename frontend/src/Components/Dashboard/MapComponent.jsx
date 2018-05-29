@@ -31,7 +31,7 @@ class MapComponent extends Component {
     navigator.geolocation.getCurrentPosition(onSuccess, onError)
   }
 
-  //Though trial an error discovered that the most convenient
+  //Through trial an error discovered that the most convenient
   //event to grab the bounds of the map was tiles_loader
   //as it gets fired once the map loads and drag event ends.
   //I tried onReady but in the first render bounds were not available
