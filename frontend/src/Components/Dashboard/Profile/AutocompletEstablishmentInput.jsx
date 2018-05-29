@@ -41,7 +41,10 @@ class AddressSearchInput extends Component {
     }
 
     //Else
-    const autocomplete = new google.maps.places.Autocomplete(this.textInputRef);
+    const options = {
+      types: ['establishment']
+    };
+    const autocomplete = new google.maps.places.Autocomplete(this.textInputRef, options);
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
       if (!place.geometry) {
@@ -68,7 +71,7 @@ class AddressSearchInput extends Component {
 }
 
 const AutocompleteInputText = GoogleApiWrapper({
-  apiKey: "AIzaSyAulk5PFU6VTLLaBMnENrJGrKNlGjKnzhE",
+  apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
   version: "3.31"
 })(AddressSearchInput)
 

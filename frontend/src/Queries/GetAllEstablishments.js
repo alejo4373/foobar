@@ -4,7 +4,12 @@ export default
       establishments{
         id
         managerUsername
+        googlePlaceId
+        name
         address
+        phone
+        lat
+        lng
       }
     }
   }

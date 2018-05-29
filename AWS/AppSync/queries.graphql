@@ -58,3 +58,22 @@ query GetAllEstablishments {
     }
   }
 }
+
+query GetAllEstablishmentsInBounds {
+  getEstablishmentsInBounds(
+    latMax: "40.76744468932432",
+    latMin: "40.748877678037054",
+    lngMax: "-73.90527910727701",
+    lngMin: "-73.85639853018961"
+  ){
+    establishments{
+      id
+      googlePlaceId
+      name
+      address
+      phone
+      lat
+      lng
+    }
+  }
+}
