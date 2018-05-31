@@ -11,7 +11,7 @@ import GetAllEvents from "../Queries/GetAllEvents";
 import NavigationBar from './Dashboard/NavigationBar'
 import MapComponent from './Dashboard/MapComponent'
 import Profile from './Dashboard/Profile'
-import Establishments from './Dashboard/Establishments'
+import EstablishmentProfile from './Dashboard/EstablishmentProfile';
 
 //Temporary components
 const Favorites = (props) => (<div>This is Favorites</div>)
@@ -51,9 +51,10 @@ class Dashboard extends Component {
       <div>
       <NavigationBar handleLogOut={handleLogOut}/>
       <Switch>
-        <Route exact path='/' component={MapComponent} />
+        {/* <Route exact path='/' component={MapComponent} /> */}
+        <Route exact path='/' render={() => <div>Map</div>} />
         <Route path='/profile' component={Profile} />
-        <Route path='/establishments' component={Establishments} />
+        <Route path='/establishments/:establishmentId' component={EstablishmentProfile} />
         <Route path='/favorites' component={Favorites} />
 
         {/* If none of the routes above was matched redirect to '/' */}

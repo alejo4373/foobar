@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 import '../../Stylesheets/map.css';
-import { fetchEstablishmentsInBounds } from '../../Queries/API';
+import { getEstablishmentsInBounds } from '../../Queries/API';
 
 class MapComponent extends Component {
   constructor(props) {
@@ -49,9 +49,9 @@ class MapComponent extends Component {
     console.log('boundsArea', areaBounds)
     console.log('zoom', zoom)
     if(zoom >= 14) {
-      fetchEstablishmentsInBounds(areaBounds, (err, establishments) => {
+      getEstablishmentsInBounds(areaBounds, (err, establishments) => {
         if(err) {
-          return console.log('error fetchEstablishmentsInBounds:', err)
+          return console.log('error getEstablishmentsInBounds:', err)
         }
         this.setState({
           establishments: establishments

@@ -10,11 +10,14 @@ type PaginatedEstablishments {
 
 type Event {
   id: ID
+  establishmentId: String!
   awayTeam: String!
   homeTeam: String!
   leagueId: String!
-  sportsDbId: String!
+  sportsDbId: String #Not required because we might not find the event in sportsDbId
   startTime: String!
+  coverCharge: Boolean!
+  description: String!
 }
 
 type Establishment {
@@ -31,12 +34,15 @@ type Establishment {
 type Mutation {
   #  If an item exists it's updated. If it does not it's created.
   putEvent(
+    id: ID,
+    establishmentId: String!
     awayTeam: String!,
     homeTeam: String!,
-    id: ID,
     leagueId: String!,
-    sportsDbId: String!,
-    startTime: String!
+    sportsDbId: String, #not required (!) because we might not get an eventId from thesportsdb.com
+    startTime: String!,
+    coverCharge: Boolean!
+    description: String!
   ): Event
 
   putEstablishment(
