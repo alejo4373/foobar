@@ -18,6 +18,7 @@ class EstablishmentProfile extends Component {
       <div>
         <h3> Establishment Profile</h3>
         <AddEventForm establishmentId={establishmentId}/>
+        
       </div>
     )
   }

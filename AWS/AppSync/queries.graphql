@@ -37,8 +37,10 @@
     }
   }
 
-query GetAllEvents {
-  allEvents(count: 10){
+query GetEventsFromEstablishment {
+  getEvents(
+    limit: 10, 
+    establishmentId: "27b2ce38-3ce9-41e6-b66e-f1a7ef94a2ad"){
     events {
       id
       sportsDbId
