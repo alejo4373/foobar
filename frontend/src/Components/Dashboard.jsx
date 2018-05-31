@@ -5,7 +5,6 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import { API, graphqlOperation } from 'aws-amplify'
 
 //GraphQL operations
-import GetAllEvents from "../Queries/GetAllEvents";
 
 //Child Components
 import NavigationBar from './Dashboard/NavigationBar'
@@ -19,7 +18,6 @@ const Favorites = (props) => (<div>This is Favorites</div>)
 class Dashboard extends Component {
   state = {
     user: {},
-    events: []
   }
 
   setUser = (user) => {
@@ -28,24 +26,10 @@ class Dashboard extends Component {
     })
   }
 
-  // componentDidMount() {
-  //   this.getData()
-  // }
-
-  async getData() {
-    try {
-      const res = await API.graphql(graphqlOperation(GetAllEvents));
-      this.setState({
-        events: res.data.allEvents.events
-      })
-    } catch (err) {
-      console.log(err)
-    }
-  }
 
   render() {
     console.log(this.state)
-    const { events, user } = this.state
+    const { user } = this.state
     const { handleLogOut } = this.props
     return(
       <div>
