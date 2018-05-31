@@ -115,3 +115,41 @@ export async function getManagerEstablishments(callback) {
     callback(err, null)
   }
 }
+
+export async function addEstablishment(newEstablishment, callback) {
+  try {
+    const res = await API.graphql(graphqlOperation(
+      `mutation PutEstablishment(
+          $googlePlaceId: String!,
+          $name: String!,
+          $address: String!,
+          $phone: String!,
+          $lat: String!,
+          $lng: String!,
+        ){
+            putEstablishment(
+              googlePlaceId: $googlePlaceId,
+              name: $name,
+              address: $address,
+              phone: $phone,
+              lat: $lat,
+              lng: $lng,
+            ){
+              id
+              managerUsername
+              googlePlaceId
+              name
+              address
+              phone
+              lat
+              lng
+            }
+          }`, newEstablishment)
+    ) 
+    const establishment  = res.data.putEstablishment
+    callback(null, establishment)
+
+  } catch (err) {
+    callback(err, null)
+  }
+}

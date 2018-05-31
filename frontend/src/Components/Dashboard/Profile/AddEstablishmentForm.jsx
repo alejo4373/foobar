@@ -1,28 +1,16 @@
 import React, { Component } from 'react';
 import { FormGroup, FormControl, ControlLabel, Radio, Button} from 'react-bootstrap';
 
-import { Auth, API, graphqlOperation } from 'aws-amplify';
-
-//GraphQL operations
-import AddEstablishment from '../../../Queries/AddEstablishment'
 
 //Child Components
 import AutocompleteEstablishmenInput from './AutocompletEstablishmentInput';
+
+import { addEstablishment } from '../../../Queries/API'
 
 class AddEstablishmentForm extends Component {
   constructor(props) {
     super(props)
     this.state = {} //Will hold establishments properties
-  }
-
-  async addEstablishment() {
-    const establishmentsDetails = this.state
-    try {
-      const res = await API.graphql(graphqlOperation(AddEstablishment, establishmentsDetails));
-      console.log('addEstablishment res ===>', res)
-    } catch(err) {
-      console.log('addEstablishment err ===>', err)
-    }
   }
 
   handleEstablishmentInput = (place) => {
@@ -45,7 +33,13 @@ class AddEstablishmentForm extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    this.addEstablishment();
+    const newEstablishment = this.state
+    addEstablishment(newEstablishment, (err, data) => {
+      if(err) {
+        return console.log('error in addEstablishment:', err)
+      }
+      console.log('success in addEstablishment:', data)
+    });
   }
 
   render() {
