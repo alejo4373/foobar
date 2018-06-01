@@ -30,8 +30,8 @@ class Dashboard extends Component {
       <div>
       <NavigationBar handleLogOut={handleLogOut}/>
       <Switch>
-        {/* <Route exact path='/' component={MapComponent} /> */}
-        <Route exact path='/' render={() => <div>Map</div>} />
+        <Route exact path='/' component={MapComponent} />
+        {/* <Route exact path='/' render={() => <div>Map</div>} /> */}
         <Route path='/profile' component={Profile} />
         <Route path='/establishments/:establishmentId' component={EstablishmentProfile} />
         <Route path='/favorites' component={Favorites} />

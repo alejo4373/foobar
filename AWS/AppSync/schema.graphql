@@ -3,6 +3,10 @@
   nextToken: String
 }
 
+type EstablishmentSuggestions {
+  establishments: [Establishment] 
+}
+
 type PaginatedEstablishments {
   establishments: [Establishment!]
   nextToken: String
@@ -26,6 +30,7 @@ type Establishment {
   googlePlaceId: String!
   googlePhotoUrl: String
   name: String!
+  displayName: String #removed (!) requiered because some of the establishments I have registered so far do not have this attribute yet, put back later on
   address: String!
   phone: String!
   lat: String!
@@ -52,6 +57,7 @@ type Mutation {
     googlePlaceId: String!
     googlePhotoUrl: String!
     name: String!
+    displayName: String!
     address: String!
     phone: String!,
     lat: String!,
@@ -64,4 +70,5 @@ type Query {
   getEstablishmentsUserManages(limit: Int, nextToken: String): PaginatedEstablishments!
   getEstablishmentById(id: String!): Establishment!
   getEstablishmentsInBounds(limit: Int, latMin: String!, latMax: String!, lngMin: String!, lngMax: String!): PaginatedEstablishments!
+  getEstablishmentSuggestions(pattern: String!): EstablishmentSuggestions
 }

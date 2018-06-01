@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+import MapSearchBox from './MapSearchBox';
+
 import '../../Stylesheets/map.css';
 import { getEstablishmentsInBounds } from '../../Queries/API';
 
@@ -64,10 +66,11 @@ class MapComponent extends Component {
     const { clientLocation, establishments  } = this.state
     return(
       <div className='map-container'>
+        <MapSearchBox/>
         <Map 
           google={this.props.google} 
           zoom={14}
-          onTilesloaded={this.handleTilesLoaded}
+          // onTilesloaded={this.handleTilesLoaded}
           center={clientLocation}
           containerStyle={{height: 'inherit'}}
         >{

@@ -14,14 +14,13 @@ class EstablishmentList extends Component {
   }
 
   componentDidMount() {
-    getEstablishmentsUserManages((err, establishments) => {
+    getEstablishmentsUserManages(20, (err, establishments) => {
       if(err) {
         return console.log('error on getManagerEstablishments', err)
       }
       this.setState({
         establishments: establishments  
       })
-
     });
   }
 

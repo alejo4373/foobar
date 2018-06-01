@@ -19,14 +19,13 @@ class AddEstablishmentForm extends Component {
     const placeInfo = {
       googlePlaceId: place.place_id,
       googlePhotoUrl: googlePhotoUrl,
-      name: place.name, 
+      name: place.name.toLowerCase(), 
+      displayName: place.name, 
       address: place.formatted_address,
       phone: place.formatted_phone_number,
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
     }
-    console.log('place', place)
-    console.log('image:', place.photos[0].getUrl({'maxWidth': 100, 'maxHeight': 100}))
     this.setState(placeInfo)
   }
 

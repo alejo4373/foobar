@@ -25,6 +25,7 @@ export async function getEstablishmentsInBounds(bounds, callback){
             googlePlaceId
             managerUsername
             name
+            displayName
             address
             phone
             lat
@@ -89,26 +90,28 @@ export async function addEvent(newEvent, callback){
 
 /**
  * Gets 10 (set on resolver) establishments a manager type user manages 
+ * @param {Number} limit  - number of records to retrieve from database
  * @param {Function} callback  - Handles the response 
  */
-export async function getEstablishmentsUserManages(callback) {
+export async function getEstablishmentsUserManages(limit, callback) {
   try {
     const res = await API.graphql(graphqlOperation(
-      `query GetEstablishmentsUserManages{
-        getEstablishmentsUserManages{
+      `query GetEstablishmentsUserManages($limit: Int!){
+        getEstablishmentsUserManages(limit: $limit){
           establishments{
             id
             managerUsername
             googlePlaceId
             googlePhotoUrl
             name
+            displayName
             address
             phone
             lat
             lng
           }
         }
-      }`))
+      }`, {limit: limit}))
       const { establishments } = res.data.getEstablishmentsUserManages
       callback(null, establishments)
   } catch (err) {
@@ -128,6 +131,7 @@ export async function addEstablishment(newEstablishment, callback) {
           $googlePlaceId: String!,
           $googlePhotoUrl: String!,
           $name: String!,
+          $displayName: String!,
           $address: String!,
           $phone: String!,
           $lat: String!,
@@ -137,6 +141,7 @@ export async function addEstablishment(newEstablishment, callback) {
               googlePlaceId: $googlePlaceId,
               googlePhotoUrl: $googlePhotoUrl,
               name: $name,
+              displayName: $displayName,
               address: $address,
               phone: $phone,
               lat: $lat,
@@ -147,6 +152,7 @@ export async function addEstablishment(newEstablishment, callback) {
               googlePlaceId
               googlePhotoUrl
               name
+              displayName
               address
               phone
               lat
@@ -208,6 +214,7 @@ export async function getEstablishmentById(establishmentId, callback) {
           googlePlaceId
           googlePhotoUrl
           name
+          displayName
           address
           phone
           lat
@@ -217,6 +224,32 @@ export async function getEstablishmentById(establishmentId, callback) {
     )
     const establishment = res.data.getEstablishmentById
     callback(null, establishment)
+
+  } catch (err) {
+    callback(err, null)
+  }
+}
+
+/**
+ * Gets establishment suggestions when user is searching for one
+ * @param {String} pattern - A string pattern to search for in establishments name
+ * @param {Function} callback  - Handles response and error
+ */
+export async function getEstablishmentSuggestions(pattern, callback) {
+  try {
+    const res = await API.graphql(graphqlOperation(
+      `query GetEstablishmentSuggestions($pattern: String!){
+        getEstablishmentSuggestions(pattern: $pattern){
+          establishments{
+            id
+            name
+            displayName
+          }
+        }
+      }`, { pattern: pattern })
+    )
+    const matches = res.data.getEstablishmentSuggestions.establishments
+    callback(null, matches)
 
   } catch (err) {
     callback(err, null)
