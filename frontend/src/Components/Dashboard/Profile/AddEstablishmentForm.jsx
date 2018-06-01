@@ -14,20 +14,19 @@ class AddEstablishmentForm extends Component {
   }
 
   handleEstablishmentInput = (place) => {
-    //If place doesn't have a name, [we do not want that] place.name will be set to the part before the fist comma
-    //and we do not want a full address with repeated info so here we check and adjust 
-    const fullAddress = place.formatted_address.split(',')[0] === place.name 
-                        ? place.formatted_address 
-                        : place.name + ', ' + place.formatted_address
+    const googlePhotoUrl = place.photos[0].getUrl({maxWidth: 400, maxHeight: 400}) || 'https://images.pexels.com/photos/681847/pexels-photo-681847.jpeg?dl&fit=crop&crop=entropy&w=400&h='
+
     const placeInfo = {
       googlePlaceId: place.place_id,
+      googlePhotoUrl: googlePhotoUrl,
       name: place.name, 
-      address: fullAddress,
+      address: place.formatted_address,
       phone: place.formatted_phone_number,
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
     }
     console.log('place', place)
+    console.log('image:', place.photos[0].getUrl({'maxWidth': 100, 'maxHeight': 100}))
     this.setState(placeInfo)
   }
 

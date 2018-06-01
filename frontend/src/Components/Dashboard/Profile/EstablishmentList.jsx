@@ -3,7 +3,7 @@ import { ListGroup, Panel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 //GraphQL Operations
-import { getManagerEstablishments } from '../../../Queries/API';
+import { getEstablishmentsUserManages } from '../../../Queries/API';
 
 class EstablishmentList extends Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class EstablishmentList extends Component {
   }
 
   componentDidMount() {
-    getManagerEstablishments((err, establishments) => {
+    getEstablishmentsUserManages((err, establishments) => {
       if(err) {
         return console.log('error on getManagerEstablishments', err)
       }

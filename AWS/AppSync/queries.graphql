@@ -37,8 +37,10 @@
     }
   }
 
-query GetAllEvents {
-  allEvents(count: 10){
+query GetEventsFromEstablishment {
+  getEvents(
+    limit: 10, 
+    establishmentId: "27b2ce38-3ce9-41e6-b66e-f1a7ef94a2ad"){
     events {
       id
       sportsDbId
@@ -50,8 +52,8 @@ query GetAllEvents {
   }
 }
 
-query GetAllEstablishments {
-  allEstablishments(count: 10){
+query GetEstablishmentsUserManages {
+  getEstablishmentsUserManages{
     establishments{
       id
       managerUsername
@@ -79,5 +81,19 @@ query GetAllEstablishmentsInBounds {
       lat
       lng
     }
+  }
+}
+
+query GetEstablishmentById{
+  getEstablishmentById(id:"cc46a96b-5151-4ff8-a373-4583ba6bdd69"){
+    id
+    managerUsername
+    googlePlaceId
+    googlePhotoUrl
+    name
+    address
+    phone
+    lat
+    lng
   }
 }

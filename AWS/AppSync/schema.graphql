@@ -1,10 +1,10 @@
 ﻿type PaginatedEvents {
-  events: [Event!]!
+  events: [Event!]
   nextToken: String
 }
 
 type PaginatedEstablishments {
-  establishments: [Establishment!]!
+  establishments: [Establishment!]
   nextToken: String
 }
 
@@ -24,6 +24,7 @@ type Establishment {
   id: ID
   managerUsername: String 
   googlePlaceId: String!
+  googlePhotoUrl: String
   name: String!
   address: String!
   phone: String!
@@ -49,6 +50,7 @@ type Mutation {
     #id: ID # Handled in request mapping template, not requiered here
     #managerUsername: String!, # Handled in request mapping template, not requiered here
     googlePlaceId: String!
+    googlePhotoUrl: String!
     name: String!
     address: String!
     phone: String!,
@@ -58,8 +60,8 @@ type Mutation {
 }
 
 type Query {
-  allEvents(limit: Int, nextToken: String): PaginatedEvents!
-  allEstablishments(limit: Int, nextToken: String): PaginatedEstablishments!
+  getEvents(limit: Int, nextToken: String, establishmentId: String!): PaginatedEvents!
+  getEstablishmentsUserManages(limit: Int, nextToken: String): PaginatedEstablishments!
+  getEstablishmentById(id: String!): Establishment!
   getEstablishmentsInBounds(limit: Int, latMin: String!, latMax: String!, lngMin: String!, lngMax: String!): PaginatedEstablishments!
-  #getUpcomingGamesFromEstablishments
 }
