@@ -88,7 +88,7 @@ export async function addEvent(newEvent, callback){
 }
 
 /**
- * Gets establishments a manager type user manages 
+ * Gets 10 (set on resolver) establishments a manager type user manages 
  * @param {Function} callback  - Handles the response 
  */
 export async function getEstablishmentsUserManages(callback) {

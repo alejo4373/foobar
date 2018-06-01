@@ -45,10 +45,17 @@ class EstablishmentProfile extends Component {
 
   render() {
     const { establishmentId } = this.props.match.params;
-    const { events } = this.state;
+    const { events, establishment } = this.state;
     return(
       <div>
-        <h3> Establishment Profile</h3>
+        <div className='photo'>
+          <img src={establishment.googlePhotoUrl} alt='bar or restaurant'/>
+        </div>
+        <div className='details'>
+          <h4>{establishment.name}</h4>
+          <p>{establishment.address}</p>
+          <p>{establishment.phone}</p>
+        </div>
         <EventList events={events}/>
         <AddEventForm establishmentId={establishmentId}/>
         
