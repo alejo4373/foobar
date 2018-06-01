@@ -91,16 +91,16 @@ export async function addEvent(newEvent, callback){
  * Gets establishments a manager type user manages 
  * @param {Function} callback  - Handles the response 
  */
-export async function getManagerEstablishments(callback) {
-  console.log('getManagerEstablishments ====>')
+export async function getEstablishmentsUserManages(callback) {
   try {
-    const { data } = await API.graphql(graphqlOperation(
-      `query GetAllEstablishments {
-        allEstablishments(limit: 10){
+    const res = await API.graphql(graphqlOperation(
+      `query GetEstablishmentsUserManages{
+        getEstablishmentsUserManages{
           establishments{
             id
             managerUsername
             googlePlaceId
+            googlePhotoUrl
             name
             address
             phone
@@ -109,18 +109,24 @@ export async function getManagerEstablishments(callback) {
           }
         }
       }`))
-      const { establishments } = data.allEstablishments
+      const { establishments } = res.data.getEstablishmentsUserManages
       callback(null, establishments)
   } catch (err) {
     callback(err, null)
   }
 }
 
+/**
+ * Adds a new establishment to establishments table
+ * @param {object} newEstablishment - An object containing the new establishment to be added
+ * @param {Function} callback  - Handles the addEstablishment response 
+ */
 export async function addEstablishment(newEstablishment, callback) {
   try {
     const res = await API.graphql(graphqlOperation(
       `mutation PutEstablishment(
           $googlePlaceId: String!,
+          $googlePhotoUrl: String!,
           $name: String!,
           $address: String!,
           $phone: String!,
@@ -129,6 +135,7 @@ export async function addEstablishment(newEstablishment, callback) {
         ){
             putEstablishment(
               googlePlaceId: $googlePlaceId,
+              googlePhotoUrl: $googlePhotoUrl,
               name: $name,
               address: $address,
               phone: $phone,
@@ -138,6 +145,7 @@ export async function addEstablishment(newEstablishment, callback) {
               id
               managerUsername
               googlePlaceId
+              googlePhotoUrl
               name
               address
               phone
@@ -147,6 +155,67 @@ export async function addEstablishment(newEstablishment, callback) {
           }`, newEstablishment)
     ) 
     const establishment  = res.data.putEstablishment
+    callback(null, establishment)
+
+  } catch (err) {
+    callback(err, null)
+  }
+}
+
+/**
+ * Gets events by establishment
+ * @param {String} establishmentId - A string identifying the establishment to get events from
+ * @param {Function} callback  - Handles response and error
+ */
+export async function getEvents(establishmentId, callback) {
+  try {
+    const res = await API.graphql(graphqlOperation(`
+      query GetEventsFromEstablishment($establishmentId: String!) {
+        getEvents(establishmentId: $establishmentId){
+          events {
+            id
+            sportsDbId
+            leagueId
+            homeTeam
+            awayTeam
+            startTime
+            coverCharge
+            description
+          }
+        }
+      }`, { establishmentId: establishmentId })
+    )
+    const { events } = res.data.getEvents
+    callback(null, events)
+
+  } catch (err) {
+    callback(err, null)
+  }
+}
+
+/**
+ * Gets establishment complete information by establishmentId
+ * @param {String} establishmentId - A string identifying to query the establishments table for
+ * @param {Function} callback  - Handles response and error
+ */
+export async function getEstablishmentById(establishmentId, callback) {
+  try {
+    const res = await API.graphql(graphqlOperation(`
+      query GetEstablishmentById($id: String!) {
+        getEstablishmentById(id: $id){
+          id
+          managerUsername
+          googlePlaceId
+          googlePhotoUrl
+          name
+          address
+          phone
+          lat
+          lng
+        }
+      }`, { id: establishmentId })
+    )
+    const establishment = res.data.getEstablishmentById
     callback(null, establishment)
 
   } catch (err) {

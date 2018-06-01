@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
-//Amplify 
-import { API, graphqlOperation } from 'aws-amplify'
-
-//GraphQL operations
-
 //Child Components
 import NavigationBar from './Dashboard/NavigationBar'
 import MapComponent from './Dashboard/MapComponent'
