@@ -34,9 +34,9 @@ class EstablishmentList extends Component {
         <h4>Establishments</h4>
         <ul>
           {
-            establishments.map(est => {
+            establishments.map((est, i) => {
               return(
-                <Link to={`/establishments/${est.id}`}>
+                <Link to={`/establishments/${est.id}`} key={i}>
                   <div 
                     className='establishment-card'
                     to={`/establishments/${est.id}`}

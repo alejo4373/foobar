@@ -3,8 +3,8 @@ import React from 'react';
 const SearchIcon = (props) => (
   <svg 
     version="1.1"
-    className='svg-icon search'
-    xmLns="http://www.w3.org/2000/svg" 
+    className='svg-icon search-icon'
+    xmlns="http://www.w3.org/2000/svg" 
     xmlnsXlink="http://www.w3.org/1999/xlink" 
     x="0px"
     y="0px"

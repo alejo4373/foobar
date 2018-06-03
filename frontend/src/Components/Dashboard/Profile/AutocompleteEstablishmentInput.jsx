@@ -62,9 +62,9 @@ class AddressSearchInput extends Component {
       <input 
         ref={this.grabInputRef}
         required
-        className="event-form"
+        className="places-autocomplete"
         type="text"
-        placeholder="Type an address"
+        placeholder="Establishment Name"
       />
     );
   }

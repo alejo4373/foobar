@@ -71,7 +71,7 @@ class SearchBox extends Component {
     const { suggestions, selectedSuggestion } = this.state
 
     const inputProps = {
-      placeHolder: 'Event or Establishment',
+      placeholder: 'Event or Establishment',
       value: selectedSuggestion,
       onChange: this.onChange
     }

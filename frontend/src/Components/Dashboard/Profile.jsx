@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 import '../../Stylesheets/profile.css'
 
 // Child components
 import EstablishmentList from './Profile/EstablishmentList';
 import ProfileIcon from '../../svg/ProfileIcon'
 import PlusIcon from '../../svg/PlusIcon'
+import AddEstablishmentForm from './Profile/AddEstablishmentForm';
+import Switch from 'react-router-dom/Switch';
 
 const Profile = ({user}) => (
   <div className='profile'>
@@ -25,7 +27,8 @@ const Profile = ({user}) => (
           <p>{user.email}</p>
         </div>
       <div className='bottom'>
-        <EstablishmentList />
+      <Route exact path='/profile/addestablishment' component={AddEstablishmentForm}/>
+      <EstablishmentList />
       </div>
   </div>
 )
