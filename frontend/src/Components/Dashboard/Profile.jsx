@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import AddEstablishmentForm from './Profile/AddEstablishmentForm';
 import EstablishmentList from './Profile/EstablishmentList';
-import { Switch, Route, Link } from 'react-router-dom';
 
 class Profile extends Component {
   render() {

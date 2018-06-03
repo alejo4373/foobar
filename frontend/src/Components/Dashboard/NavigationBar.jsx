@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
-import { Navbar, Nav, NavItem, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
 import { Auth } from 'aws-amplify';
+import '../../Stylesheets/navigation-bar.css'
+
+// Child Components
+import SearchBox from './SearchBox';
+
+// Svg icons
+import LogoutIcon from "../../svg/LogoutIcon";
+import ProfileIcon from "../../svg/ProfileIcon";
+import SearchIcon from '../../svg/SearchIcon';
 
 const NavigationBar = (props) => {
   const handleLogOut = () => {
@@ -14,17 +21,23 @@ const NavigationBar = (props) => {
   }
 
   return(
-    <Navbar>
-      <Nav>
-        <NavItem eventKey={2}>
-          <Link to='/profile'>Profile</Link>
-        </NavItem>
-        <NavItem eventKey={3}>
-          <Link to='/favorites'>Favorites</Link>
-        </NavItem>   
-       <NavItem eventKey={4} onClick={handleLogOut}>Log Out </NavItem>  
-      </Nav>
-    </Navbar>
+      <div className='navigation-bar'>
+        <div className='searchbox'>
+          <SearchIcon/>
+          <SearchBox/>
+        </div>
+        <div className='separator'/>
+        <div className='links-box'>
+          <Link to='/profile'>
+            <ProfileIcon/>
+          </Link>
+          <a 
+            href='#logout'
+            onClick={handleLogOut} >
+            <LogoutIcon/>
+          </a>
+        </div>
+      </div>
   )
 } 
 

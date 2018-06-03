@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import AddEventForm from './Establishments/AddEventForm';
 
 import { getEvents, getEstablishmentById } from '../../Queries/API';
-
+import '../../Stylesheets/establishmentProfile.css'
 //Child components
 import EventList from './EventList';
 
@@ -47,9 +47,13 @@ class EstablishmentProfile extends Component {
     const { establishmentId } = this.props.match.params;
     const { events, establishment } = this.state;
     return(
-      <div>
-        <div className='photo'>
-          <img src={establishment.googlePhotoUrl} alt='bar or restaurant'/>
+      <div className='establishment-profile'>
+        <div>
+          <img 
+            className='photo'
+            src={establishment.googlePhotoUrl}
+            alt='bar or restaurant'
+          />
         </div>
         <div className='details'>
           <h4>{establishment.name}</h4>

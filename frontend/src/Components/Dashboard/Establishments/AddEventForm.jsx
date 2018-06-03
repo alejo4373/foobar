@@ -16,7 +16,7 @@ class AddEventForm extends Component {
       homeTeam: '',
       awayTeam: '',
       startTime: moment(),
-      coverCharge: false,
+      coverCharge: '0',
       description: ''
     }
   }

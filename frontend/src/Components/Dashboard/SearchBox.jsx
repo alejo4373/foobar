@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
-import '../../Stylesheets/map-searchbox.css'
+import { Link  } from 'react-router-dom';
+
 import Autosuggest from 'react-autosuggest';
 import { getEstablishmentSuggestions } from '../../Queries/API'
+import PinIcon from '../../svg/PinIcon'
 
 //Autosuggest helpers
 const renderSuggestion = (suggestion) => (
-  <div>
-    {suggestion.displayName}
+  <div className='suggestion-item'>
+    <PinIcon/>    
+    <Link to={`/establishments/${suggestion.id}`}>{suggestion.displayName}</Link>
   </div>
 )
 
 const getSuggestionValue = (suggestion) => suggestion.displayName
 
-class MapSearchBox extends Component {
+class SearchBox extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -23,7 +26,7 @@ class MapSearchBox extends Component {
   }
 
   getSuggestions = (pattern) => {
-    getEstablishmentSuggestions(pattern, (err, matches) => {
+    getEstablishmentSuggestions(pattern.toLowerCase(), (err, matches) => {
       if(err) {
         return console.log('err in getEstablishmentSuggestions()', err)
       }
@@ -42,11 +45,11 @@ class MapSearchBox extends Component {
   }
 
   onSuggestionsFetchRequested = ({ value, reason }) => {
-    //When page loses focus this function gets called again and we do not want
-    //to make a network request unless the input actually changed
-    if(reason == 'input-changed') {
+    // We do not want to make a network request unless the input actually changed
+    if(reason === 'input-changed') {
+      // If there was a previous timer running clear it
       clearTimeout(window.requestTimeout)
-      //Set timer in the window object
+      // Set timer in the window object
       window.requestTimeout = window.setTimeout(() => {
         this.getSuggestions(value)
       }, 1000)
@@ -74,7 +77,6 @@ class MapSearchBox extends Component {
     }
 
     return(
-      <div className='map-searchbox'>
         <Autosuggest
           suggestions={suggestions}
           onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
@@ -83,9 +85,8 @@ class MapSearchBox extends Component {
           renderSuggestion={renderSuggestion} 
           inputProps={inputProps}
         />
-      </div>
     )
   }
 }
 
-export default MapSearchBox;
+export default SearchBox;
