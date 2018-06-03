@@ -33,7 +33,7 @@
   fill: rgb(224, 58, 62);
 }
 
-.navigation-bar .profile:hover path {
+.navigation-bar .profile-icon:hover path {
   fill: rgb(66, 133, 244);
 }
 

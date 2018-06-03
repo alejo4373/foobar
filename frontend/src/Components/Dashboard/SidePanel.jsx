@@ -5,21 +5,29 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import NavigationBar from './NavigationBar'
 import Profile from './Profile'
 import EstablishmentProfile from './EstablishmentProfile';
+import AddEstablishmentForm from './Profile/AddEstablishmentForm';
 import Welcome from './Welcome'
 
 
-const SidePanel = ({handleLogOut}) => {
+const SidePanel = ({handleLogOut, user}) => {
+  const renderProfileWithProps = () => (
+    <Profile user={user} />
+  )
+
   return(
     <div className='side-panel'>
       <NavigationBar handleLogOut={handleLogOut}/>
-      <Switch>
-        <Route exact path='/' component={Welcome} />
-        <Route path='/profile' component={Profile} />
-        <Route path='/establishments/:establishmentId' component={EstablishmentProfile} />
+      <div className='content'>
+        <Switch>
+          <Route exact path='/' component={Welcome} />
+          <Route path='/profile/addestablishment' component={AddEstablishmentForm} />
+          <Route path='/profile' render={renderProfileWithProps} />
+          <Route path='/establishments/:establishmentId' component={EstablishmentProfile} />
 
-        {/* If none of the routes above was matched redirect to '/' */}
-        <Redirect to='/'/>
-      </Switch>
+          {/* If none of the routes above was matched redirect to '/' */}
+          <Redirect to='/'/>
+        </Switch>
+      </div>
     </div>
   )
 }

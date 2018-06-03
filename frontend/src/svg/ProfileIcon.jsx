@@ -3,7 +3,7 @@ import React from 'react';
 const ProfileIcon = (props) => (
   <svg 
     version="1.1"
-    className='svg-icon profile'
+    className='svg-icon profile-icon'
     xmLns="http://www.w3.org/2000/svg" 
     xmlnsXlink="http://www.w3.org/1999/xlink" 
     x="0px"
