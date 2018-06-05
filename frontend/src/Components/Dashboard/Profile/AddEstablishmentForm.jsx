@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { FormGroup, FormControl, ControlLabel, Radio, Button} from 'react-bootstrap';
 
-
+import '../../../Stylesheets/add-establishment.css'
 //Child Components
-import AutocompleteEstablishmenInput from './AutocompletEstablishmentInput';
+import AutocompleteEstablishmentInput from './AutocompleteEstablishmentInput';
+import SearchIcon from '../../../svg/SearchIcon';
 
 import { addEstablishment } from '../../../Queries/API'
+import PlusIcon from '../../../svg/PlusIcon';
 
 class AddEstablishmentForm extends Component {
   constructor(props) {
@@ -19,14 +21,13 @@ class AddEstablishmentForm extends Component {
     const placeInfo = {
       googlePlaceId: place.place_id,
       googlePhotoUrl: googlePhotoUrl,
-      name: place.name, 
+      name: place.name.toLowerCase(), 
+      displayName: place.name, 
       address: place.formatted_address,
-      phone: place.formatted_phone_number,
+      phone: place.formatted_phone_number || 'none',
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
     }
-    console.log('place', place)
-    console.log('image:', place.photos[0].getUrl({'maxWidth': 100, 'maxHeight': 100}))
     this.setState(placeInfo)
   }
 
@@ -44,12 +45,17 @@ class AddEstablishmentForm extends Component {
   render() {
     const { username, password, email } = this.state
     return (
-      <div>
-        <h3>Add Establishment</h3>
-        <form onSubmit={this.handleSubmit}>
-          <AutocompleteEstablishmenInput handleEstablishmentInput={this.handleEstablishmentInput}/>
-          <Button type='submit' value='Submit'>Add</Button>
-        </form>
+      <div className='add-establishment'>
+        <h4>Add Establishment</h4>
+        <div className='form-box'>
+          <SearchIcon/>
+          <form onSubmit={this.handleSubmit}>
+              <AutocompleteEstablishmentInput handleEstablishmentInput={this.handleEstablishmentInput}/>
+              <button type='submit'>
+                <PlusIcon />
+              </button>
+          </form>
+        </div>
       </div>
     )
   }

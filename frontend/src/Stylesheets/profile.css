@@ -1,0 +1,65 @@
+.profile {
+  display: grid;
+  grid-template-rows: 400px 10% 30%;
+  font-family: 'Raleway', sans-serif;
+}
+
+.profile .top {
+  text-align: center;
+  background-color: rgb(250, 199, 71);
+}
+
+.profile .profile-icon {
+  margin-top: 20%;
+  margin-bottom: 7%;
+  width: 70%;
+}
+
+.profile .middle {
+  color: whitesmoke;
+  background-color: rgb(74, 35, 40);
+  padding: 4%
+}
+
+.profile .middle .button {
+  float: right;
+  margin-top: -44px;
+  width: 86px;
+  text-align: center;
+}
+
+.profile .middle .button a{
+  text-decoration: none;
+}
+.profile .middle .button p {
+  padding-top: 8px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: white;
+}
+
+.profile .middle .add-establishment {
+  margin: 0 auto;
+  background: radial-gradient(circle, white, white);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 4px 0px;
+}
+
+.profile .middle .add-establishment:hover {
+  box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 4px 0px;
+}
+
+.profile .middle .plus-icon {
+  width: 28px;
+  margin: 17px 0;
+}
+.profile .middle .plus-icon path {
+  fill: rgb(74, 35, 40);
+}
+
+.profile .bottom {
+  padding: 4%
+}

@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
-import AddEventForm from './Establishments/AddEventForm';
+import { Route, Link } from 'react-router-dom';
 
 import { getEvents, getEstablishmentById } from '../../Queries/API';
+import '../../Stylesheets/establishmentProfile.css'
 
 //Child components
 import EventList from './EventList';
+import AddEventForm from './Establishments/AddEventForm';
+import PlusIcon from '../../svg/PlusIcon';
+
+
 
 class EstablishmentProfile extends Component {
   constructor(props) {
@@ -43,21 +48,42 @@ class EstablishmentProfile extends Component {
     })
   }
 
-  render() {
-    const { establishmentId } = this.props.match.params;
-    const { events, establishment } = this.state;
+  renderAddEventForm = () => {
+    const { establishmentId } = this.props.match.params
     return(
-      <div>
-        <div className='photo'>
-          <img src={establishment.googlePhotoUrl} alt='bar or restaurant'/>
+      <AddEventForm establishmentId={establishmentId}/>
+    )
+  }
+
+  render() {
+    const { events, establishment } = this.state;
+    console.log('this.props.match.url',this.props.match.url)
+    return(
+      <div className='establishment-profile'>
+        <div className='top'>
+          <img 
+            className='establishment-photo'
+            src={establishment.googlePhotoUrl}
+            alt='bar or restaurant'
+          />
         </div>
-        <div className='details'>
-          <h4>{establishment.name}</h4>
+        <div className='middle'>
+          <Link to={`${this.props.match.url}/addEvent`}>
+            <div className='button'>
+              <div className='add-event'>
+                <PlusIcon/>
+              </div>
+              <p>Add Event</p>
+            </div>
+          </Link>
+          <h3>{establishment.displayName}</h3>
           <p>{establishment.address}</p>
           <p>{establishment.phone}</p>
         </div>
-        <EventList events={events}/>
-        <AddEventForm establishmentId={establishmentId}/>
+        <div className='bottom'>
+          <Route path={`${this.props.match.url}/addevent`} render={this.renderAddEventForm} />
+          <EventList events={events}/>
+        </div>
         
       </div>
     )
