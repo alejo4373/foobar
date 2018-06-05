@@ -48,10 +48,20 @@ class EstablishmentProfile extends Component {
     })
   }
 
+  handleAddedEvent = (event) => {
+    this.setState(prevState => ({
+      events: [...prevState.events, event]
+    }))
+  }
+
+  //Renderers
   renderAddEventForm = () => {
     const { establishmentId } = this.props.match.params
     return(
-      <AddEventForm establishmentId={establishmentId}/>
+      <AddEventForm
+        establishmentId={establishmentId}
+        handleAddedEvent={this.handleAddedEvent}
+      />
     )
   }
 

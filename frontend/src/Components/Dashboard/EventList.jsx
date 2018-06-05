@@ -3,7 +3,7 @@ import '../../Stylesheets/event-list.css'
 
 const imagesSources = {
   //LeagueId: Url
-  4340: 'https://www.thesportsdb.com/images/media/league/badge/small/vxwtqq1421413200.png', //NHL
+  4380: 'https://www.thesportsdb.com/images/media/league/badge/small/vxwtqq1421413200.png', //NHL
   4391: 'https://www.thesportsdb.com/images/media/league/badge/small/trppxv1421413032.png', //NFL
   4387: 'https://www.thesportsdb.com/images/media/league/badge/small/rwpxsw1421413099.png', //NBA
   4346: 'https://www.thesportsdb.com/images/media/league/badge/small/uxwyuw1421512733.png', //MLS

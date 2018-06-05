@@ -61,11 +61,11 @@ class AddEventForm extends Component {
       coverCharge: coverCharge === '1' ? true : false,
     }
 
-    addEvent(event, (err, res) => {
+    addEvent(event, (err, resEvent) => {
       if (err) {
         return console.log('error in addEvent()', err)
       }
-      console.log('success', res)
+      this.props.handleAddedEvent(resEvent)
     })
   }
 
