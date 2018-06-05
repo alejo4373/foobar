@@ -52,7 +52,9 @@ export async function addEvent(newEvent, callback){
       `mutation AddEvent(
         $establishmentId: String!
         $awayTeam: String!,
+        $awayTeamBadge: String,
         $homeTeam: String!,
+        $homeTeamBadge: String,
         $leagueId: String!,
         $sportsDbId: String,
         $startTime: String!,
@@ -62,7 +64,9 @@ export async function addEvent(newEvent, callback){
         putEvent(
           establishmentId: $establishmentId
           awayTeam: $awayTeam,
+          awayTeamBadge: $awayTeamBadge,
           homeTeam: $homeTeam,
+          homeTeamBadge: $homeTeamBadge,
           leagueId: $leagueId,
           sportsDbId: $sportsDbId,
           startTime: $startTime,
@@ -72,7 +76,9 @@ export async function addEvent(newEvent, callback){
           id
           establishmentId
           awayTeam
+          awayTeamBadge
           homeTeam
+          homeTeamBadge
           leagueId
           sportsDbId
           startTime

@@ -43,7 +43,8 @@ class AddEventForm extends Component {
       this.setState(prevState => ({
         event: {
           ...prevState.event,
-          [type]: team 
+          [type]: team.strTeam,
+          [`${type}Badge`]: team.strTeamBadge
         }
       }))
   }
@@ -94,7 +95,7 @@ class AddEventForm extends Component {
           teams: teams,
           event: { 
             ...prevState.event,
-            homeTeam: '', 
+            homeTeam: '', //reset teams on league change 
             awayTeam: '' 
           }
         }))
