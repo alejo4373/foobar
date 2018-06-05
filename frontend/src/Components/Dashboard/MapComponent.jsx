@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+
 import '../../Stylesheets/map.css';
 import { getEstablishmentsInBounds } from '../../Queries/API';
 
@@ -67,7 +68,7 @@ class MapComponent extends Component {
         <Map 
           google={this.props.google} 
           zoom={14}
-          onTilesloaded={this.handleTilesLoaded}
+          // onTilesloaded={this.handleTilesLoaded}
           center={clientLocation}
           containerStyle={{height: 'inherit'}}
         >{

@@ -1,0 +1,17 @@
+.dashboard {
+  display: grid;
+  grid-template-columns: 408px auto;
+  height: 100vh;
+}
+
+.side-panel {
+  overflow: hidden;
+}
+
+.side-panel:hover {
+  overflow-y: auto;
+}
+
+.side-panel .content {
+  width: 408px;
+}

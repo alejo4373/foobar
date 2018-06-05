@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../Stylesheets/event-list.css'
 
 const imagesSources = {
   //LeagueId: Url
@@ -12,18 +13,20 @@ const imagesSources = {
 
 const EventList = ({ events }) => {
   return(
-    <div>
-      <h3>This is event list </h3>
+    <div className='event-list'>
+      <h4>Games and Matches </h4>
     {
       events.map(event => (
-        <div>
+        <div className='event-card'>
+          <div className='left'>
             <img src={imagesSources[event.leagueId]} alt='sport league badge'/>
-          <div>
-            {event.homeTeam} VS {event.awayTeam}
           </div>
-          <div>{event.startTime}</div>
-          <div>{event.coverCharge}</div>
-          <div>{event.description}</div>
+          <div className='right'>
+            <p>{event.homeTeam} VS {event.awayTeam}</p>
+            <div>{event.startTime}</div>
+            <div>{event.coverCharge}</div>
+            <div>{event.description}</div>
+          </div>
         </div>
       ))
    }</div>

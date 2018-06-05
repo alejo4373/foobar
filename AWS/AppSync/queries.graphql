@@ -97,3 +97,13 @@ query GetEstablishmentById{
     lng
   }
 }
+
+#Dynamodb does not allow case-insensitive scans or queries
+query GetEstablishmentSuggestions{
+  getEstablishmentSuggestions(pattern: "Barril"){
+    establishments{
+      id
+      name
+    }
+  }
+}

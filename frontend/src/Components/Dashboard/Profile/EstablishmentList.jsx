@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { ListGroup, Panel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
+import '../../../Stylesheets/establishment-list.css'
+
 //GraphQL Operations
 import { getEstablishmentsUserManages } from '../../../Queries/API';
 
@@ -14,14 +16,13 @@ class EstablishmentList extends Component {
   }
 
   componentDidMount() {
-    getEstablishmentsUserManages((err, establishments) => {
+    getEstablishmentsUserManages(20, (err, establishments) => {
       if(err) {
         return console.log('error on getManagerEstablishments', err)
       }
       this.setState({
         establishments: establishments  
       })
-
     });
   }
 
@@ -29,25 +30,29 @@ class EstablishmentList extends Component {
     const { establishments } = this.state;
     console.log(this.state)
     return(
-      <div>
-        <h3>Establishments</h3>
-        <ListGroup componentClass='ul'>
+      <div className='establishment-list'>
+        <h4>Establishments</h4>
+        <ul>
           {
-            establishments.map(est => {
+            establishments.map((est, i) => {
               return(
-                <Link to={`/establishments/${est.id}`}>
-                  <Panel>
-                    <Panel.Heading>{est.name}</Panel.Heading> 
-                    <Panel.Body>
-                      <p>Manager: {est.managerUsername}</p>
-                      <p>Phone: {est.phone}</p>
-                    </Panel.Body> 
-                  </Panel>
+                <Link to={`/establishments/${est.id}`} key={i}>
+                  <div 
+                    className='establishment-card'
+                    to={`/establishments/${est.id}`}
+                  >
+                    <div className='left' style={{backgroundImage: `url(${est.googlePhotoUrl})`}}>
+                    </div>
+                    <div className='right'>
+                      <p className='name'>{est.displayName}</p> 
+                      <p>{est.phone}</p>
+                    </div> 
+                  </div>
                 </Link>
               )
             })
           }
-        </ListGroup>
+        </ul>
       </div>
     )
   }
