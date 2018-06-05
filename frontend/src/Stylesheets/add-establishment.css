@@ -25,61 +25,20 @@
   top: -9px;
   left: 14px;
   line-height: 23px;
-  width: 283px;
+  width: 264px;
   border: none;
 }
 
 .add-establishment .form-box button {
   border: 0;
+  margin-left: 20px;
   background: none;
   color: white;
 }
-.navigation-bar {
-  display: grid;
-  grid-template-columns: auto 2px 85px;
-  border-radius: 2px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px 0px;
-  margin: 8px;
-  position: absolute;
-  top: 0;
-  z-index: 2;
-  width: 392px;
-  background-color: white;
-}
 
-.navigation-bar .searchbox, .links-box {
-  border-radius: 2px;
-  height: inherit;
-  padding: 10px;
-}
 
-.navigation-bar .links-box {
-  display: grid;
-  grid-template-columns: 50% 50%;
-  text-align: center;
-}
-
-.navigation-bar .svg-icon{
-  fill: rgba(0, 0, 0, 0.4);
-  width: 27px;
-}
-
-.navigation-bar .logout:hover path{
-  fill: rgb(224, 58, 62);
-}
-
-.navigation-bar .profile-icon:hover path {
-  fill: rgb(66, 133, 244);
-}
-
-.navigation-bar .separator {
-  margin: 10px 0;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  border-radius: 2px;
-}
-
-/* --- React Autosuggest Styling ---*/
-.navigation-bar .searchbox .react-autosuggest__container {
+/* --- Google Autocomplet Styling ---*/
+.add-establishment .form-box .pac-container {
   display: inline-block;
   position: relative;
   z-index: 3;
@@ -88,11 +47,6 @@
   left: 14px;
 }
 
-.navigation-bar .searchbox .react-autosuggest__input {
-  line-height: 23px;
-  width: 100%;
-  border: none;
-}
 
 .navigation-bar .searchbox .react-autosuggest__suggestions-container {
   background-color: white;

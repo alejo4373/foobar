@@ -32,7 +32,7 @@ type Establishment {
   name: String!
   displayName: String #removed (!) requiered because some of the establishments I have registered so far do not have this attribute yet, put back later on
   address: String!
-  phone: String!
+  phone: String #removed (!) requiered because some establishments do not have a phone
   lat: String!
   lng: String!
 }
@@ -59,7 +59,7 @@ type Mutation {
     name: String!
     displayName: String!
     address: String!
-    phone: String!,
+    phone: String,
     lat: String!,
     lng: String!
    ): Establishment

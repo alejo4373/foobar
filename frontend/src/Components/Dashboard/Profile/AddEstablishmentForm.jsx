@@ -24,7 +24,7 @@ class AddEstablishmentForm extends Component {
       name: place.name.toLowerCase(), 
       displayName: place.name, 
       address: place.formatted_address,
-      phone: place.formatted_phone_number,
+      phone: place.formatted_phone_number || 'none',
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng(),
     }

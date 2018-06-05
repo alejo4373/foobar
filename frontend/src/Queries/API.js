@@ -133,7 +133,7 @@ export async function addEstablishment(newEstablishment, callback) {
           $name: String!,
           $displayName: String!,
           $address: String!,
-          $phone: String!,
+          $phone: String,
           $lat: String!,
           $lng: String!,
         ){
