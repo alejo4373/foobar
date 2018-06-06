@@ -1,6 +1,7 @@
 .navigation-bar {
-  display: grid;
-  grid-template-columns: auto 2px 85px;
+  display: flex;
+  /* display: grid; */
+  /* grid-template-columns: 305px 2px auto; */
   border-radius: 2px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px 0px;
   margin: 8px;
@@ -12,13 +13,19 @@
   background-color: white;
 }
 
+.navigation-bar .searchbox {
+  flex-grow: 1;
+}
 .navigation-bar .searchbox, .links-box {
-  border-radius: 2px;
   height: inherit;
   padding: 10px;
 }
 
-.navigation-bar .links-box {
+.navigation-bar .no-grid {
+  text-align: center;
+}
+
+.navigation-bar .two-grid{
   display: grid;
   grid-template-columns: 50% 50%;
   text-align: center;
@@ -31,6 +38,10 @@
 
 .navigation-bar .logout:hover path{
   fill: rgb(224, 58, 62);
+}
+
+.navigation-bar .login:hover path{
+  fill: rgb(104, 187, 66);
 }
 
 .navigation-bar .profile-icon:hover path {
@@ -94,4 +105,8 @@
 }
 .navigation-bar .searchbox .react-autosuggest__suggestion--highlighted {
   background-color: rgba(140, 140, 140, 0.1);
+}
+
+.hide {
+  display: none;
 }

@@ -4,31 +4,11 @@ import { Link } from 'react-router-dom';
 
 import '../../../Stylesheets/establishment-list.css'
 
-//GraphQL Operations
-import { getEstablishmentsUserManages } from '../../../Queries/API';
+
 
 class EstablishmentList extends Component {
-  constructor(props) {
-    super(props) 
-    this.state = {
-      establishments: []
-    }
-  }
-
-  componentDidMount() {
-    getEstablishmentsUserManages(20, (err, establishments) => {
-      if(err) {
-        return console.log('error on getManagerEstablishments', err)
-      }
-      this.setState({
-        establishments: establishments  
-      })
-    });
-  }
-
   render() {
-    const { establishments } = this.state;
-    console.log(this.state)
+    const { establishments } = this.props;
     return(
       <div className='establishment-list'>
         <h4>Establishments</h4>

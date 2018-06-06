@@ -4,10 +4,9 @@ import SignUpForm from './UserAuth/SignUpForm';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import '../Stylesheets/userAuth.css'
 
-const UserAuth = (props) => {
+const UserAuth = ({ logInUser }) => {
   const renderLogInForm = () => {
-    const { handleLogInSuccess } = props
-    return(<LogInForm handleLogInSuccess={handleLogInSuccess}/>)
+    return(<LogInForm logInUser={logInUser}/>)
   }
 
   return(
