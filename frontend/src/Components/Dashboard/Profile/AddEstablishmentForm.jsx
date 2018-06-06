@@ -38,6 +38,7 @@ class AddEstablishmentForm extends Component {
       if(err) {
         return console.log('error in addEstablishment:', err)
       }
+      this.props.handleNewEstablishment(newEstablishment)
       console.log('success in addEstablishment:', data)
     });
   }

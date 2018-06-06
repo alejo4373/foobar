@@ -28,6 +28,16 @@ class Profile extends Component {
     });
   }
 
+  handleNewEstablishment = (newEst) => {
+    this.setState(prevState => ({
+      establishments: [...prevState.establishments, newEst]
+    }))
+  }
+
+  renderAddEstablishmentForm = () => {
+    return <AddEstablishmentForm handleNewEstablishment={this.handleNewEstablishment} />
+  }
+
   render() {
     const { user } = this.props;
     const { establishments } = this.state;
@@ -49,7 +59,7 @@ class Profile extends Component {
               <p>{user.email}</p>
             </div>
           <div className='bottom'>
-          <Route exact path='/profile/addestablishment' component={AddEstablishmentForm}/>
+          <Route exact path='/profile/addestablishment' render={this.renderAddEstablishmentForm}/>
           <EstablishmentList establishments={establishments}/>
           </div>
       </div>
