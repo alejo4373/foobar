@@ -16,6 +16,7 @@ class App extends Component {
 
   componentDidMount() {
    //Check if user has a session i.e is logged in
+   console.log('App didMount')
     Auth.currentSession()
       .then( () => {
         this.setState({
@@ -23,13 +24,14 @@ class App extends Component {
         }) 
       })
       .catch(err => {
+        console.log('error in Auth.currentSession', err)
         //Log in with guest credentials
         this.logInUser('guest', '$Guest$123')
-        console.log('error in Auth.currentSession', err)
       })
   }
 
   logInUser = (username, password) => {
+    console.log('logging user', username, password)
     Auth.signIn(username, password)
       .then(user => {
         console.log(user)
@@ -55,7 +57,7 @@ class App extends Component {
     return (
       //If user is logged in we render Dashboard
       userLoggedIn? 
-        <Dashboard logOutUser={this.logOutUser}/> 
+        <Dashboard logOutUser={this.logOutUser} logInUser={this.logInUser}/> 
       : <UserAuth logInUser={this.logInUser} />
     )
   }

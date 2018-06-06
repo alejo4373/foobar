@@ -12,10 +12,9 @@ const UserAuth = ({ logInUser }) => {
   return(
     <div className='form-container'>
       <Switch>
-        <Route exact path='/' render={() => <Redirect to='/login'/>}/>
         <Route path='/login' render={renderLogInForm}/>
         <Route path='/signup' component={SignUpForm}/>
-        <Redirect to= '/login'/>
+        {/* removed because when I click on <a> in the map i want to be taken to the particular establishment <Redirect to= '/login'/> */}
       </Switch>
     </div>
   )

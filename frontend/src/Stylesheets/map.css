@@ -1,3 +1,33 @@
 .map-container{
   height: 100%;
+  width: auto;
 }
+
+.map-container .establishment-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 75px auto;
+  margin-bottom: 7px;
+  margin-top: 7px;
+}
+
+.map-container .establishment-card .left{
+  background-size: cover;
+  background-position: center;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px 0px;
+}
+
+.map-container .establishment-card .right{
+  padding: 4px 15px;
+}
+
+.establishment-list a {
+  text-decoration: none;  
+}
+
+.map-container .establishment-card .name {
+  font-weight: bold;
+  font-size: 1.3em;
+}
+
+  

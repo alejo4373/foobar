@@ -23,6 +23,7 @@ export async function getEstablishmentsInBounds(bounds, callback){
           establishments{
             id
             googlePlaceId
+            googlePhotoUrl
             managerUsername
             name
             displayName

@@ -59,7 +59,7 @@ class NavigationBar extends Component {
             user.username === 'guest' ? (
               <div className='links-box no-grid'>
                 <a 
-                  href='#logout'
+                  href='/login'
                   onClick={handleLogOutClick} 
                   title='Login as a business manager'
                 >
@@ -72,7 +72,7 @@ class NavigationBar extends Component {
                   <ProfileIcon/>
                 </Link>
                 <a 
-                  href='#logout'
+                  href='/logout'
                   title='logout'
                   onClick={handleLogOutClick} >
                   <LogoutIcon/>

@@ -104,10 +104,11 @@ class AddEventForm extends Component {
   }
 
   handleDateTime = (date) => {
+    console.log('handleDateTime', date)
     if (date._isAMomentObject) {
-      this.setState({
-        startTime: date
-      })
+      this.setState(prevState => ({
+        event: { ...prevState.event, startTime: date }
+      }))
     }
   }
 
