@@ -8,6 +8,7 @@ import SearchBox from './SearchBox';
 
 // Svg icons
 import LogoutIcon from "../../svg/LogoutIcon";
+import LoginIcon from "../../svg/LoginIcon";
 import ProfileIcon from "../../svg/ProfileIcon";
 import SearchIcon from '../../svg/SearchIcon';
 
@@ -34,7 +35,8 @@ const NavigationBar = (props) => {
           <a 
             href='#logout'
             onClick={handleLogOut} >
-            <LogoutIcon/>
+            {/* <LogoutIcon/> */}
+            <LoginIcon/>
           </a>
         </div>
       </div>

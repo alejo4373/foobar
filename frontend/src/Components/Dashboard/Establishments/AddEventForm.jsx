@@ -33,7 +33,7 @@ class AddEventForm extends Component {
         awayTeam: '',
         startTime: moment(),
         coverCharge: '0',
-        description: ''
+        description: null
       }
     }
   }
@@ -51,7 +51,7 @@ class AddEventForm extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { startTime, coverCharge } = this.state.event
+    const { startTime, coverCharge, description } = this.state.event
     const { leagueId } = this.state
 
     const event = {
@@ -59,6 +59,7 @@ class AddEventForm extends Component {
       leagueId,
       startTime: startTime._d.toISOString(),
       coverCharge: coverCharge === '1' ? true : false,
+      description: description === '' ? null : description,
     }
 
     addEvent(event, (err, resEvent) => {

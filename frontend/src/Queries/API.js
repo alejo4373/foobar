@@ -59,7 +59,7 @@ export async function addEvent(newEvent, callback){
         $sportsDbId: String,
         $startTime: String!,
         $coverCharge: Boolean!,
-        $description: String!
+        $description: String
       ){
         putEvent(
           establishmentId: $establishmentId
@@ -189,7 +189,9 @@ export async function getEvents(establishmentId, callback) {
             sportsDbId
             leagueId
             homeTeam
+            homeTeamBadge
             awayTeam
+            awayTeamBadge
             startTime
             coverCharge
             description

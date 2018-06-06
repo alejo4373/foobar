@@ -23,7 +23,7 @@ type Event {
   sportsDbId: String #Not required because we might not find the event in sportsDbId
   startTime: String!
   coverCharge: Boolean!
-  description: String!
+  description: String
 }
 
 type Establishment {
@@ -52,7 +52,7 @@ type Mutation {
     sportsDbId: String, #not required (!) because we might not get an eventId from thesportsdb.com
     startTime: String!,
     coverCharge: Boolean!
-    description: String!
+    description: String
   ): Event
 
   putEstablishment(
