@@ -16,12 +16,14 @@ type Event {
   id: ID
   establishmentId: String!
   awayTeam: String!
+  awayTeamBadge: String
   homeTeam: String!
+  homeTeamBadge: String
   leagueId: String!
   sportsDbId: String #Not required because we might not find the event in sportsDbId
   startTime: String!
   coverCharge: Boolean!
-  description: String!
+  description: String
 }
 
 type Establishment {
@@ -43,12 +45,14 @@ type Mutation {
     id: ID,
     establishmentId: String!
     awayTeam: String!,
+    awayTeamBadge: String
     homeTeam: String!,
+    homeTeamBadge: String
     leagueId: String!,
     sportsDbId: String, #not required (!) because we might not get an eventId from thesportsdb.com
     startTime: String!,
     coverCharge: Boolean!
-    description: String!
+    description: String
   ): Event
 
   putEstablishment(

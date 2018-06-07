@@ -40,9 +40,13 @@ class TeamsAutosuggestInput extends Component {
     this.setState({
       selectedSuggestion: newValue
     })
+  }
 
+  handleSuggestionSelected = (event, { suggestion }) => {
     const { handlePickedTeam, name } = this.props
-    handlePickedTeam(name, newValue)
+    console.log(suggestion)
+    handlePickedTeam(name, suggestion)
+
   }
 
   onSuggestionsFetchRequested = ({ value, reason }) => {
@@ -76,6 +80,7 @@ class TeamsAutosuggestInput extends Component {
           suggestions={displaySuggestions}
           onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
           onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+          onSuggestionSelected={this.handleSuggestionSelected}
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion} 
           inputProps={inputProps}

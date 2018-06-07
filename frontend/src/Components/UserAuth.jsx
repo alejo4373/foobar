@@ -4,19 +4,17 @@ import SignUpForm from './UserAuth/SignUpForm';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import '../Stylesheets/userAuth.css'
 
-const UserAuth = (props) => {
+const UserAuth = ({ logInUser }) => {
   const renderLogInForm = () => {
-    const { handleLogInSuccess } = props
-    return(<LogInForm handleLogInSuccess={handleLogInSuccess}/>)
+    return(<LogInForm logInUser={logInUser}/>)
   }
 
   return(
     <div className='form-container'>
       <Switch>
-        <Route exact path='/' render={() => <Redirect to='/login'/>}/>
         <Route path='/login' render={renderLogInForm}/>
         <Route path='/signup' component={SignUpForm}/>
-        <Redirect to= '/login'/>
+        {/* removed because when I click on <a> in the map i want to be taken to the particular establishment <Redirect to= '/login'/> */}
       </Switch>
     </div>
   )

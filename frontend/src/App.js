@@ -16,21 +16,40 @@ class App extends Component {
 
   componentDidMount() {
    //Check if user has a session i.e is logged in
+   console.log('App didMount')
     Auth.currentSession()
-        .then( () => this.handleLogInSuccess() )
-        .catch(err => console.log('error in promis', err))
+      .then( () => {
+        this.setState({
+          userLoggedIn: true
+        }) 
+      })
+      .catch(err => {
+        console.log('error in Auth.currentSession', err)
+        //Log in with guest credentials
+        this.logInUser('guest', '$Guest$123')
+      })
   }
 
-  handleLogInSuccess = () => {
-    this.setState({
-      userLoggedIn: true
-    })
+  logInUser = (username, password) => {
+    console.log('logging user', username, password)
+    Auth.signIn(username, password)
+      .then(user => {
+        console.log(user)
+        this.setState({
+          userLoggedIn: true
+        })
+      })
+      .catch(err => console.log('err logging in', err))
   }
 
-  handleLogOut = () => {
-    this.setState({
-      userLoggedIn: false
-    })
+  logOutUser = () => {
+    Auth.signOut()
+      .then(() => {
+        this.setState({
+          userLoggedIn: false
+        })
+      })
+      .catch(err => console.log('logged out err', err))
   }
 
   render() {
@@ -38,8 +57,8 @@ class App extends Component {
     return (
       //If user is logged in we render Dashboard
       userLoggedIn? 
-        <Dashboard handleLogOut={this.handleLogOut}/> 
-      : <UserAuth handleLogInSuccess={this.handleLogInSuccess} />
+        <Dashboard logOutUser={this.logOutUser} logInUser={this.logInUser}/> 
+      : <UserAuth logInUser={this.logInUser} />
     )
   }
 }

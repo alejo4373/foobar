@@ -23,6 +23,7 @@ export async function getEstablishmentsInBounds(bounds, callback){
           establishments{
             id
             googlePlaceId
+            googlePhotoUrl
             managerUsername
             name
             displayName
@@ -52,17 +53,21 @@ export async function addEvent(newEvent, callback){
       `mutation AddEvent(
         $establishmentId: String!
         $awayTeam: String!,
+        $awayTeamBadge: String,
         $homeTeam: String!,
+        $homeTeamBadge: String,
         $leagueId: String!,
         $sportsDbId: String,
         $startTime: String!,
         $coverCharge: Boolean!,
-        $description: String!
+        $description: String
       ){
         putEvent(
           establishmentId: $establishmentId
           awayTeam: $awayTeam,
+          awayTeamBadge: $awayTeamBadge,
           homeTeam: $homeTeam,
+          homeTeamBadge: $homeTeamBadge,
           leagueId: $leagueId,
           sportsDbId: $sportsDbId,
           startTime: $startTime,
@@ -72,7 +77,9 @@ export async function addEvent(newEvent, callback){
           id
           establishmentId
           awayTeam
+          awayTeamBadge
           homeTeam
+          homeTeamBadge
           leagueId
           sportsDbId
           startTime
@@ -183,7 +190,9 @@ export async function getEvents(establishmentId, callback) {
             sportsDbId
             leagueId
             homeTeam
+            homeTeamBadge
             awayTeam
+            awayTeamBadge
             startTime
             coverCharge
             description
@@ -244,6 +253,35 @@ export async function getEstablishmentSuggestions(pattern, callback) {
             id
             name
             displayName
+          }
+        }
+      }`, { pattern: pattern })
+    )
+    const matches = res.data.getEstablishmentSuggestions.establishments
+    callback(null, matches)
+
+  } catch (err) {
+    callback(err, null)
+  }
+}
+
+
+//Basically the same as above but asking for slightly different attributes 
+/**
+ * Gets establishment that match query string 
+ * @param {String} pattern - A string pattern to search for in establishments name
+ * @param {Function} callback  - Handles response and error
+ */
+export async function searchEstablishments(pattern, callback) {
+  try {
+    const res = await API.graphql(graphqlOperation(
+      `query GetEstablishmentSuggestions($pattern: String!){
+        getEstablishmentSuggestions(pattern: $pattern){
+          establishments{
+            id
+            displayName
+            phone
+            googlePhotoUrl
           }
         }
       }`, { pattern: pattern })

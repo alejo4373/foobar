@@ -26,11 +26,11 @@ class Dashboard extends Component {
     this.getUserAttributes();
   } 
   render() {
-    const { handleLogOut } = this.props
+    const { logOutUser, logInUser } = this.props
     const { user } = this.state
     return(
       <div className='dashboard'>
-        <SidePanel handleLogOut={handleLogOut} user={user}/>
+        <SidePanel logOutUser={logOutUser} logInUser={logInUser} user={user}/>
         <MapComponent />
       </div>
     )

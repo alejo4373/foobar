@@ -42,6 +42,7 @@ class SearchBox extends Component {
     this.setState({
       selectedSuggestion: newValue
     })
+    this.props.setSearchStr(newValue)
   }
 
   onSuggestionsFetchRequested = ({ value, reason }) => {
@@ -71,20 +72,20 @@ class SearchBox extends Component {
     const { suggestions, selectedSuggestion } = this.state
 
     const inputProps = {
-      placeholder: 'Event or Establishment',
+      placeholder: 'Search for an establishment',
       value: selectedSuggestion,
       onChange: this.onChange
     }
 
     return(
-        <Autosuggest
-          suggestions={suggestions}
-          onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-          onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-          getSuggestionValue={getSuggestionValue}
-          renderSuggestion={renderSuggestion} 
-          inputProps={inputProps}
-        />
+      <Autosuggest
+        suggestions={suggestions}
+        onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+        onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+        getSuggestionValue={getSuggestionValue}
+        renderSuggestion={renderSuggestion} 
+        inputProps={inputProps}
+      />
     )
   }
 }

@@ -16,15 +16,8 @@ export default class LogInForm extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const { username, password } = this.state
-    const { handleLogInSuccess } = this.props
-    Auth.signIn(username, password)
-        .then(user => {
-          console.log(user)
-          handleLogInSuccess()
-
-        })
-        .catch(err => console.log('err logging in', err))
-    
+    const { logInUser } = this.props
+    logInUser(username, password)
   }
 
   handleInput = (e) => {

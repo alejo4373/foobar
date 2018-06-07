@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
+import { Link } from 'react-router-dom';
 
 import '../../Stylesheets/map.css';
 import { getEstablishmentsInBounds } from '../../Queries/API';
@@ -9,7 +10,11 @@ class MapComponent extends Component {
     super(props);
     this.state = {
       clientLocation: {},
-      establishments: [] 
+      establishments: [],
+
+      showInfoWindow: false,
+      activeMarker: {},
+      selectedPlace: {}
     }
   }
 
@@ -61,25 +66,57 @@ class MapComponent extends Component {
     }
   }
 
+  onMakerClick = (props, marker, e) => {
+    console.log('on pin click')
+    console.log(props)
+    console.log(marker)
+    this.setState({
+      selectedPlace: props,
+      activeMarker: marker,
+      showInfoWindow: true
+    })
+  }
+
   render() {
-    const { clientLocation, establishments  } = this.state
+    const { clientLocation, establishments, activeMarker, showInfoWindow, selectedPlace  } = this.state
     return(
       <div className='map-container'>
         <Map 
           google={this.props.google} 
           zoom={14}
-          // onTilesloaded={this.handleTilesLoaded}
+          style={{width: 'inherit'}}
+          onTilesloaded={this.handleTilesLoaded}
           center={clientLocation}
-          containerStyle={{height: 'inherit'}}
+          containerStyle={{width: 'inherit', position: 'relative'}}
         >{
-          establishments.map(est => (
-            <Marker
-              title={est.name}
-              name={est.name}
-              position={{lat: est.lat, lng: est.lng}}
-            />
+          establishments.map((est, i) => (
+              <Marker
+                key={i}
+                title={est.displayName}
+                estDisplayName={est.displayName}
+                estImage={est.googlePhotoUrl}
+                estId={est.id}
+                estPhone={est.phone}
+                position={{lat: est.lat, lng: est.lng}}
+                onClick={this.onMakerClick}
+              />
           ))
         }
+        <InfoWindow marker={activeMarker} visible={showInfoWindow} >
+          <a href={`/establishments/${selectedPlace.estId}`} >
+            <div 
+              className='establishment-card'
+              to={`/establishments/${selectedPlace.estId}`}
+            >
+              <div className='left' style={{backgroundImage: `url(${selectedPlace.estImage})`}}>
+              </div>
+              <div className='right'>
+                <p className='name'>{selectedPlace.estDisplayName}</p> 
+                <p>{selectedPlace.estPhone}</p>
+              </div> 
+            </div>
+          </a>
+        </InfoWindow>
         </Map>
       </div>
     )
