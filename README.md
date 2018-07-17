@@ -28,18 +28,25 @@ A regular user doesn't need an account. **Foobar** is a public website where a u
 
 ### Amazon Web Services (AWS)
 **Note**:
-The steps outlined here can be followed using the AWS web console or ```awscli```. Nonetheless you will need to have a basic knowledge of how AWS works as the instructions given here are rather high level. If you have any problems setting up please make sure you read and follow the associated links to the AWS documentation.
+The steps outlined here are to be followed using the [AWS web console](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ConsoleDynamoDB.html). However ```awscli``` can be used to perform the same steps faster. Regardless you will need to have a basic knowledge of how AWS works as the instructions given here are rather high level. If you have any problems setting up please make sure you read and follow the associated links to the AWS documentation.
 
 We need:
-* DynamoDB: As a database service
+* [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html): As a database service
+
+
+
 * AppSync: As a GraphQL API
 * Cognito: As user management service
 * Lambda: For adding establishment's managers to admin group
 
 #### DynamoDB 
+
 We will need to create two tables in DynamoDB: ```foobar_establishments``` and ```foobar_events```
 
-At the moment of creation ```foobar_establishments``` will need to have 
-```id```(String) as Primary partition and ```league_id```(String) as Primary sort key.
+For ```foobar_establishments``` we will have 
+```id```(String) as Primary partition key and ```managerUsername```(String) as Primary sort key. Leave the rest as it is by default and hit create.
 
-**Note**: Make sure to add a sort key and leave the rest as default
+For ```foobar_events``` we will have 
+```id```(String) as Primary partition key and ```league_id```(String) as Primary sort key. Leave the rest as it is by default and hit create.
+
+**Note**: The primary key will be used to retrieve the items directly by id, while the sort key will allow us to have those items 'sorted' sort to speak, letting us retrieve all the establishments a user manages more easily and efficiently.
