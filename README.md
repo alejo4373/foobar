@@ -32,16 +32,13 @@ The steps outlined here are to be followed using the [AWS web console](https://d
 
 We need:
 * [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html): As a database service
-
-
-
-* AppSync: As a GraphQL API
-* Cognito: As user management service
-* Lambda: For adding establishment's managers to admin group
+* [AppSync](https://docs.aws.amazon.com/appsync/latest/devguide/welcome.html): As a GraphQL API
+* [Cognito](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html): As user management service
+* [Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html): For adding establishment's managers to admin group
 
 #### DynamoDB 
 
-We will need to create two tables in DynamoDB: ```foobar_establishments``` and ```foobar_events```
+We will need to create two tables, go to [Dynamo's Dashboard](https://us-east-2.console.aws.amazon.com/dynamodb/home?region=us-east-2) and create: ```foobar_establishments``` and ```foobar_events```
 
 For ```foobar_establishments``` we will have 
 ```id```(String) as Primary partition key and ```managerUsername```(String) as Primary sort key. Leave the rest as it is by default and hit create.
