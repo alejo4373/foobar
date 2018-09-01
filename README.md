@@ -35,6 +35,7 @@ We need:
 * [AppSync](https://docs.aws.amazon.com/appsync/latest/devguide/welcome.html): As a GraphQL API
 * [Cognito](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html): As user management service
 * [Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html): For adding establishment's managers to admin group
+* [AWS Amplify](https://aws-amplify.github.io/amplify-js/media/quick_start): To help us manage and integrate our AWS resources in our App
 
 #### DynamoDB 
 
@@ -47,3 +48,14 @@ For ```foobar_events``` we will have
 ```id```(String) as Primary partition key and ```league_id```(String) as Primary sort key. Leave the rest as it is by default and hit create.
 
 **Note**: The primary key will be used to retrieve the items directly by id, while the sort key will allow us to have those items 'sorted' sort to speak, letting us retrieve all the establishments a user manages more easily and efficiently.
+
+
+#### AppSync
+
+Access [AppSync's Dashboard](https://us-east-2.console.aws.amazon.com/appsync/home?region=us-east-2) and hit create API. We will create an API called ```foobar_API```, pick the option ```Author from scratch``` since we don't want any defaults. Once created you will be in your API Page where you can see a ```API URL```, ```API ID``` and a ```Auth mode``` as seen [here](/assets/images/app-sync-api-page.png). Please take note of this info as it will be used later in [```aws-config.js```](/react-app/src/aws-config.js). We will come back to this file and learn what it should contain later.
+
+As seen in the [screenshot](/assets/images/app-sync-api-page.png), to the left you have a menu which we will use to set up our API. First go to ```Schema```, in the left you will see a text editor: **Schema** where you we are going to copy the content of [```schema.graphql```](/AWS/AppSync/schema.graphql), once copied hit ```Save Schema```. 
+
+In the right side: **Resolvers** now you will notice a list with our queries and mutations from the schema, and here is where we will set up our [*Resolvers*](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html). Resolvers are a way for us to tell our GraphQL server(AppSync) where and how to get/put the information our queries or mutations use. In other words resolvers are the messengers between AppSync and DynamoDB.
+
+Let's set up our resolvers one by one: First locate the Query ```getEvents(...): PaginatedEvents!``` and hit the button next to it ```Atach```, you will be redirected to the resolver page which looks like [this](/assets/images/app-sync-resolver-page.png). Here we will pick as our Data Source the DynamoDB table we created earlier ```foobar_events_table```
