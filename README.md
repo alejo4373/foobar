@@ -33,7 +33,7 @@ The steps outlined here are to be followed using the [AWS web console](https://d
 We need:
 * [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html): As a database service
 * [AppSync](https://docs.aws.amazon.com/appsync/latest/devguide/welcome.html): As a GraphQL API
-* [Cognito](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html): As user management service
+* [Cognito](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html): As user management and credentials granting service 
 * [Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html): For adding establishment's managers to admin group
 * [AWS Amplify](https://aws-amplify.github.io/amplify-js/media/quick_start): To help us manage and integrate our AWS resources in our App
 
@@ -48,6 +48,23 @@ For ```foobar_events``` we will have
 ```id```(String) as Primary partition key and ```league_id```(String) as Primary sort key. Leave the rest as it is by default and hit create.
 
 **Note**: The primary key will be used to retrieve the items directly by id, while the sort key will allow us to have those items 'sorted' sort to speak, letting us retrieve all the establishments a user manages more easily and efficiently.
+
+#### Cognito
+
+From Amazon Cognito we will use *User Pools* which will allows to sign-up users* and serve us as a user directory/management system. Besides user pools we will also use *Identity Pools*, which will grant those users who signed-up permissions to access other AWS resources in our case specifically *AppSync API*.
+
+**\*** When I'm talking of users in this context I am refereeing to **Establishment Managers** and  not **Regular Users**. 
+
+![Auth flow with cognito](https://docs.aws.amazon.com/cognito/latest/developerguide/images/scenario-cup-cib2.png)
+##### fig 3. Auth Flow representation with AWS Cognito
+
+We want to be careful here as in this set-up relies a big part of the security of our app. We want to make sure we are granting users only the permissions required for them to use our app as we intend them to use it and no more. I will explain in more detail as we walk through.
+
+Let's start.
+1. Go to *User Pools* in the [Cognito Dashboard](https://us-east-2.console.aws.amazon.com/cognito/home?region=us-east-2) and hit ```Create a user pool```
+2. Next name your user pool ```foobar_user_pool``` and click ```Review defaults``` since we can go with the defaults but will make some changes. 
+3. Analyze the defaults and try to make sense of some of them, like **Required attributes**: email and **Minimum password length**: 8. For this app I decided that the user will sign-up with a email and password but as you can see you can edit this setting.
+
 
 
 #### AppSync
