@@ -54,8 +54,7 @@ class App extends Component {
   render() {
     const { user } = this.state
     return (
-      user ? <Dashboard user={user} logOutUser={this.logOutUser} logInUser={this.logInUser} />
-        : <Dashboard logInUser={this.logInUser} />
+      <Dashboard user={user} logOutUser={this.logOutUser} logInUser={this.logInUser} />
     )
   }
 }

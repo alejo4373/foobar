@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../../Stylesheets/navigation-bar.css'
 
 import { searchEstablishments } from '../../Queries/API'
@@ -17,7 +17,8 @@ class NavigationBar extends Component {
     searchStr: ''
   }
 
-  handleLogOutClick = () => {
+  handleLogOutClick = (e) => {
+    e.preventDefault();
     this.props.logOutUser();
   }
 
@@ -56,15 +57,14 @@ class NavigationBar extends Component {
           <div className='separator'/>
           {
             //If user is guest
-            user === null ? (
+            !user ? (
               <div className='links-box no-grid'>
-                <a 
-                  href='/login'
-                  onClick={handleLogOutClick} 
+                <Link
+                  to='/login'
                   title='Login as a business manager'
                 >
                   <LoginIcon/>
-                </a>
+                </Link>
               </div>
             ) : (
               <div className='links-box two-grid'>
