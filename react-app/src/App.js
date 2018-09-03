@@ -11,22 +11,21 @@ Amplify.configure(awsConfig);
 
 class App extends Component {
   state = {
-    userLoggedIn: false
+    user: null,
   }
 
   componentDidMount() {
-   //Check if user has a session i.e is logged in
-   console.log('App didMount')
-    Auth.currentSession()
-      .then( () => {
+    //Check if user has a session i.e is logged in
+    console.log('App didMount')
+    Auth.currentAuthenticatedUser()
+      .then((user) => {
+        console.log('session from .currentSession()', user)
         this.setState({
-          userLoggedIn: true
-        }) 
+          user: user,
+        })
       })
       .catch(err => {
-        console.log('error in Auth.currentSession', err)
-        //Log in with guest credentials
-        this.logInUser('guest', '$Guest$123')
+        console.log('Error:', err)
       })
   }
 
@@ -36,7 +35,7 @@ class App extends Component {
       .then(user => {
         console.log(user)
         this.setState({
-          userLoggedIn: true
+          user: user,
         })
       })
       .catch(err => console.log('err logging in', err))
@@ -46,19 +45,17 @@ class App extends Component {
     Auth.signOut()
       .then(() => {
         this.setState({
-          userLoggedIn: false
+          user: null
         })
       })
       .catch(err => console.log('logged out err', err))
   }
 
   render() {
-    const { userLoggedIn } = this.state
+    const { user } = this.state
     return (
-      //If user is logged in we render Dashboard
-      userLoggedIn? 
-        <Dashboard logOutUser={this.logOutUser} logInUser={this.logInUser}/> 
-      : <UserAuth logInUser={this.logInUser} />
+      user ? <Dashboard user={user} logOutUser={this.logOutUser} logInUser={this.logInUser} />
+        : <Dashboard logInUser={this.logInUser} />
     )
   }
 }
