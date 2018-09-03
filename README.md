@@ -140,8 +140,8 @@ Let's setup one of our resolvers, the rest will follow the same pattern:
 
 1. First locate the Query ```getEvents(...): PaginatedEvents!``` on your *Resolvers* list and hit the button next to it ```Attach```.
 2. You will be redirected to the resolver page where you will need to pick a Data Source from the list. If we did set up our data sources correctly you should see your tables here. Select ```foobar_events_table``` since this is where the information for this particular Query is going to come from.
-3. Note that in this page you have two text editors one called **Configure the request mapping template.** and the other **Configure the response mapping template.**. We will fill/replace the content of this editors with the content of the files in [```/AWS/AppSync/Resolvers```](/AWS/AppSync/Resolvers). 
-4. For this Query we will use [```getEvents.vtl```](/AWS/AppSync/Resolvers/getEvent.vtl) since we are mapping the request and response for the ```getEvents(...): PaginatedEvents!``` Query.
+3. Note that in this page you have two text editors one called **Configure the request mapping template.** and the other **Configure the response mapping template.** We will fill/replace the content of this editors with the content of the files in [```/AWS/AppSync/Resolvers```](/AWS/AppSync/Resolvers). 
+4. For this Query we will use [```getEvents.vtl```](/AWS/AppSync/Resolvers/getEvents.vtl) since we are mapping the request and response for the ```getEvents(...): PaginatedEvents!``` Query.
 5. Note the format with which I keep this files. Lines starting with ```##``` are comments. I stored the the *Request Template* under the ```## Request template``` comment and the *Response Template* under the ```## Response template``` comment. Some files might have an additional comment like ```## Expected result``` or ```## Response``` which is as it says the expected result of both templates once we execute a Query.
 
 ```vtl
