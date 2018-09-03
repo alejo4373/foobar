@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+.frame {
+  display: grid;
+  height: 100%;
+  grid-template-rows: 55% 14% 31%;
+  font-family: 'Raleway', sans-serif;
+}
+
+.frame .top {
+  width: 100%;
+  margin-top: 25%; 
+  margin-bottom: 13%;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+
+.frame .middle {
+  color: whitesmoke;
+  padding: 4%;
+  background-color: rgb(74, 35, 40);
+}
+
+.frame .bottom {
+  background-color: rgb(250, 199, 71);
+  font-family: 'Raleway', cursive;
+  color: rgb(74, 35, 40);
+  padding: 15%;
+}

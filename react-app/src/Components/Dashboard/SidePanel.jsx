@@ -8,7 +8,6 @@ import EstablishmentProfile from './EstablishmentProfile';
 import Welcome from './Welcome'
 import Search from './Search'
 import EstablishmentList from './Profile/EstablishmentList'
-import LogInForm from '../UserAuth/LogInForm'
 
 
 class SidePanel extends Component {
@@ -33,10 +32,7 @@ class SidePanel extends Component {
     }
     return <Welcome/>
   }
-
-  renderLogInForm = () => {
-    return(<LogInForm logInUser={this.props.logInUser}/>)
-  }
+  
   render () {
     const { logOutUser, user } = this.props
     const { renderProfileWithProps, setSearchResults, renderWelcomeOrSearchResults, renderLogInForm} = this
@@ -51,7 +47,6 @@ class SidePanel extends Component {
         <div className='content'>
           <Switch>
             <Route exact path='/' render={renderWelcomeOrSearchResults} />
-            <Route path='/login' render={renderLogInForm}/>
             <Route path='/profile' render={renderProfileWithProps} />
             <Route path='/establishments/:establishmentId' component={EstablishmentProfile} />
 

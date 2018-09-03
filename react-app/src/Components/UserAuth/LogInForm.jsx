@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import Frame from '../Dashboard/Frame';
 
 import { Auth } from 'aws-amplify'
 
@@ -29,7 +30,7 @@ export default class LogInForm extends Component {
   render() {
     const { username, password } = this.state
     return (
-      <div>
+      <Frame>
         <h3> Log In </h3>
         <form onSubmit={this.handleSubmit}>
           <FormGroup controlId='username'>
@@ -42,7 +43,7 @@ export default class LogInForm extends Component {
           </FormGroup>
           <FormControl type='submit' value='Log In'/>
         </form>
-      </div>
+      </Frame>
     )
   }
 }
