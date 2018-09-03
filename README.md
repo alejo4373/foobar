@@ -39,12 +39,12 @@ We need:
 
 #### DynamoDB 
 
-We will need to create two tables, go to [Dynamo's Dashboard](https://us-east-2.console.aws.amazon.com/dynamodb/home?region=us-east-2) and create: ```foobar_establishments``` and ```foobar_events```
+We will need to create two tables, go to [Dynamo's Dashboard](https://us-east-2.console.aws.amazon.com/dynamodb/home?region=us-east-2) and create: ```foobar_establishments_table``` and ```foobar_events_table```
 
-For ```foobar_establishments``` we will have 
+For ```foobar_establishments_table``` we will have 
 ```id```(String) as Primary partition key and ```managerUsername```(String) as Primary sort key. Leave the rest as it is by default and hit create.
 
-For ```foobar_events``` we will have 
+For ```foobar_events_table``` we will have 
 ```id```(String) as Primary partition key and ```league_id```(String) as Primary sort key. Leave the rest as it is by default and hit create.
 
 **Note**: The primary key will be used to retrieve the items directly by id, while the sort key will allow us to have those items 'sorted' sort to speak, letting us retrieve all the establishments a user manages more easily and efficiently.
@@ -119,8 +119,63 @@ Now we can move to *Identity Pools* also known as *Federated Identities*
 
 Access [AppSync's Dashboard](https://us-east-2.console.aws.amazon.com/appsync/home?region=us-east-2) and hit create API. We will create an API called ```foobar_API```, pick the option ```Author from scratch``` since we don't want any defaults. Once created you will be in your API Page where you can see a ```API URL```, ```API ID``` and a ```Auth mode``` as seen [here](/assets/images/app-sync-api-page.png). Please take note of this info as it will be used later in [```aws-config.js```](/react-app/src/aws-config.js). We will come back to this file and learn what it should contain later.
 
-As seen in the [screenshot](/assets/images/app-sync-api-page.png), to the left you have a menu which we will use to set up our API. First go to ```Schema```, in the left you will see a text editor: **Schema** where you we are going to copy the content of [```schema.graphql```](/AWS/AppSync/schema.graphql), once copied hit ```Save Schema```. 
+##### Data Sources
 
-In the right side: **Resolvers** now you will notice a list with our queries and mutations from the schema, and here is where we will set up our [*Resolvers*](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html). Resolvers are a way for us to tell our GraphQL server(AppSync) where and how to get/put the information our queries or mutations use. In other words resolvers are the messengers between AppSync and DynamoDB.
+A Data Source is where the data will come from and go to when we interact with the API. As our Data Source we will have the two DynamoDB tables we created earlier ```foobar_events_table``` and ```foobar_establishments```. A data source can be a Lambda Function or a DynamoDB database(our case) among other options. Notice the [menu](/assets/images/app-sync-api-page.png) to the left and hit ```Data Sources```
 
-Let's set up our resolvers one by one: First locate the Query ```getEvents(...): PaginatedEvents!``` and hit the button next to it ```Atach```, you will be redirected to the resolver page which looks like [this](/assets/images/app-sync-resolver-page.png). Here we will pick as our Data Source the DynamoDB table we created earlier ```foobar_events_table```
+1. Once in the Data Sources page hit ```New``` and fill in the *Data source name* field with ```foobar_establishments_table```. 
+2. *Data source type* should be ```Amazon DynamoDB Table```. 
+3. *Region* the region where you have your DynamoDB table, mine is ```us-east-2```. 
+4. A new drop down list called *Table Name* should have appeared when you picked the region, here you can pick your actual DynamoDB table in our case ```foobar_establishments_table```. If no tables appear make sure you selected the right region.
+5. Now a new section *Create or use an existing role* should have appeared with two radio buttons. Pick ```New Role```, this will create a new role for AppSync that allows it to interact with DynamoDB more specifically with the table we specified. Here the default are actually pretty good so we can run with them.
+6. Your setup should look something like [this](/assets/images/app-sync-data-source.png). Hit ```Create```. 
+7. Repeat for table ```foobar_events_table```. At the end your Data Sources page should look like [this](/assets/images/app-sync-data-sources-list.png)
+
+##### Schema
+In the left menu seen before now go to ```Schema```. You will see [this screen](/assets/images/app-sync-schema-page.png). To the left a text editor: **Schema** . Replace its content with the content of [```schema.graphql```](/AWS/AppSync/schema.graphql), then hit ```Save Schema```. 
+
+In the right side: **Resolvers** once the schema was saved you will notice a list with our queries and mutations from the schema, here is where we will set up our [*Resolvers*](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html). Resolvers are a way for us to tell our GraphQL server(AppSync) where and how to get/put the information our queries or mutations use. In other words resolvers are the messengers between AppSync and DynamoDB.
+
+Let's setup one of our resolvers, the rest will follow the same pattern: 
+
+1. First locate the Query ```getEvents(...): PaginatedEvents!``` on your *Resolvers* list and hit the button next to it ```Attach```.
+2. You will be redirected to the resolver page where you will need to pick a Data Source from the list. If we did set up our data sources correctly you should see your tables here. Select ```foobar_events_table``` since this is where the information for this particular Query is going to come from.
+3. Note that in this page you have two text editors one called **Configure the request mapping template.** and the other **Configure the response mapping template.**. We will fill/replace the content of this editors with the content of the files in [```/AWS/AppSync/Resolvers```](/AWS/AppSync/Resolvers). 
+4. For this Query we will use [```getEvents.vtl```](/AWS/AppSync/Resolvers/getEvent.vtl) since we are mapping the request and response for the ```getEvents(...): PaginatedEvents!``` Query.
+5. Note the format with which I keep this files. Lines starting with ```##``` are comments. I stored the the *Request Template* under the ```## Request template``` comment and the *Response Template* under the ```## Response template``` comment. Some files might have an additional comment like ```## Expected result``` or ```## Response``` which is as it says the expected result of both templates once we execute a Query.
+
+```vtl
+## Request template
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
+    "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null)),
+    "index" : "establishmentId-startTime-index",
+    "query" : {
+        "expression": "establishmentId = :estId",
+        "expressionValues" : {
+            ":estId" : {
+                "S" : "$ctx.args.establishmentId"
+            }
+        }
+    }
+}
+
+
+## Response template
+#**
+    Scan and Query operations return a list of items and a nextToken. Pass them
+    to the client for use in pagination.
+*#
+{
+    "events": $util.toJson($ctx.result.items),
+    "nextToken": $util.toJson($util.defaultIfNullOrBlank($context.result.nextToken, null))
+}
+```
+6. Replace the content of the **first** editor *Request Mapping Template* with the content of the file under the comment ```## Request template```.
+7. Replace the content of the **second** editor *Response Mapping Template* with the content of the file under the comment ```## Response template```. The third comment if present can be ignored.
+8. At the end your resolver should look like [this](/assets/images/app-sync-first-resolver.png). Hit ```Save Resolver```
+9. Repeat for all the Queries in your **Resolvers** list in the *Schema* page as well as for the Mutations. Each of them have a file with the Request and Response template in [/AWS/AppSync/Resolvers](/AWS/AppSync/Resolvers) to set them up.
+
+**Note:** What the Request and Response template are doing is translating a request that comes to the GraphQL API into a request that DynamoDB can understand, same is true for the response, translating the Response from DynamoDB into something GraphQL can work with. This mapping templates are written in a language called VTL(Velocity Template Language) and there is more info about it [here](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference-overview.html) and [here](http://velocity.apache.org/engine/2.0/vtl-reference.html).
