@@ -111,7 +111,9 @@ Now we can move to *Identity Pools* also known as *Federated Identities*
 ```
 > Here we are saying, an unauthorized user has only access to the ```Query``` type and all the fields of that type ```/Query/filds/*``` of our GraphQL schema and therefore the user who assumes this role i.e(**Regular Users**) can only query the API and cannot add events or establishments since they do not have access to the ```Mutation``` nor ```Subscription``` types of our schema. Note the differences between this policy and the one for Authorized identities on step 6.
 9. Once you completed the previous steps you should be seeing [this](/assets/images/identity-pool-roles.png). Hit the ```Allow``` button and we will have our *Identity Pool* created. 
-10. If you missed any of the steps above you can always go back to your Identity Pool and edit it. In this case we will click on our Identity Pool ```foobar_identity_pool``` and in the top right corner hit ```Edit identity pool```. What we are interested in here is the **Identity pool ID** which should look something like ```us-east-2:c83c963e-fd03-440d-8504-d0b178d34632```. Take note of it, we will need it for later.
+10. Lastly click on your Identity Pool ```foobar_identity_pool``` and in the top right corner hit ```Edit identity pool```. What we are interested in is the **Identity pool ID** which should look something like: ```us-east-2:c83c963e-fd03-440d-8504-d0b178d34632```. Take note of it, we will need it for later.
+
+**Note:** If you missed any of the steps above you can always go back to your Identity Pool and edit it. [Here](https://docs.aws.amazon.com/appsync/latest/devguide/security.html) is some valuable information regarding what we just did. 
 
 #### AppSync
 
