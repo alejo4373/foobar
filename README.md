@@ -60,12 +60,58 @@ From Amazon Cognito we will use *User Pools* which will allows to sign-up users*
 
 We want to be careful here as in this set-up relies a big part of the security of our app. We want to make sure we are granting users only the permissions required for them to use our app as we intend them to use it and no more. I will explain in more detail as we walk through.
 
-Let's start.
+There is three parts to this setup, User Pools, Identity Pools and IAM [Roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) and [Policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html), this last one not really part directly of AWS Cognito but regarding the security of the app and which will happen implicitly as we define roles and policies. Let's start.
+
+##### User Pools
+
 1. Go to *User Pools* in the [Cognito Dashboard](https://us-east-2.console.aws.amazon.com/cognito/home?region=us-east-2) and hit ```Create a user pool```
-2. Next name your user pool ```foobar_user_pool``` and click ```Review defaults``` since we can go with the defaults but will make some changes. 
-3. Analyze the defaults and try to make sense of some of them, like **Required attributes**: email and **Minimum password length**: 8. For this app I decided that the user will sign-up with a email and password but as you can see you can edit this setting.
+2. Name your user pool ```foobar_user_pool``` and click ```Review defaults``` since we can go with the defaults but will make some changes. 
+3. Review the defaults and try to make sense of some of them, like **Required attributes**: email and **Minimum password length**: 8. For this app I decided that the user will sign-up with an email, username and password but as you can see there are lots of other options.
+4. Locate the [**App clients**](https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-client-apps.html) section in the defaults. Click *Add app client*. This is to tell our User Pool that the users that will log-in and sign-up with this user pool come from our app **Foobar**. Now give the client a name like ```foobar_app```. Deselect the *Generate client secret* checkbox. [Here](https://stackoverflow.com/questions/41277968/securize-aws-cognito-user-pool-client-id-in-a-static-web/52154106#52154106) and [here](https://stackoverflow.com/questions/47916034/what-is-a-cognito-app-client-secret/52153995#52153995) is why. Lastly make sure to select the box that says ```USER_PASSWORD_AUTH```, since we want to allow our users to authenticate with a username and password. Hit *Create app client* 
+5. On the left menu go back to *review* and hit *Create pool*. You should see something like [this](/assets/images/user-pool-review.png) once finished. From here take note of the **Pool Id** as well as the **App client id** which you can get in the *App clients** section of your pool. We will use this info later.
 
+Now we can move to *Identity Pools* also known as *Federated Identities*
 
+##### Identity Pools
+
+1. Go to the [*Identity Pool* dashboard](https://us-east-2.console.aws.amazon.com/cognito/federated?region=us-east-2) from Cognito, and hit ```Create new identity pool```.
+2. Name it ```foobar_identity_pool```
+3. Check the box for ```Enable access to unauthenticated identities``` in the *Unauthenticated identities* section. We want to provide access to **Regular Users** without the need of an account.
+4. In the Section *Authentication providers* we will select **Cognito** and here we are referring to our User Pool created earlier. We want to fill in **User Pool ID** and **App client id** with the information we got when creating our user pool. Hit ```Create Pool```.
+5. Once you hit ```Create Pool``` AWS may complain with the message: **Your Cognito identities require access to your resources** and it does. We need to give this Identity Pool permissions for the identities(users) belonging to it to access AWS resources in our case **AppSync**.
+6. We want to modify the defaults so hit ```View Details``` and you will see *Role Summary*. Here we have 2 roles, first: ```Cognito_foobar_identity_pool2Auth_Role``` It's a role which will be impersonated by identities who are validated by **User Pools** meaning it's a role that will be given to a user who logged-in in the app, in our case **Establishment Managers**. We want this role to have the following *Policy*(permission) which specifies what the role can do. 
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "appsync:GraphQL",
+            "Resource": "arn:aws:appsync:us-east-2:*:apis/ho6jbea5yje3yhuzqux654ga5e/types/*/fields/*"
+        }
+    ]
+}
+```
+> This policy is saying, whoever has the role ```Cognito_foobar_identity_pool2Auth_Role``` and therefore this policy attached to it, has access i.e(```"Effect: "Allow"```) to the GraphQL subset of AppSync i.e(```"Action": "appsync:GraphQL"```). What parts of the GraphQL API specifically? ```"Resource": "arn:aws:appsync:us-east-2:*:apis/<API_ID>/types/*/fields/*"``` Which says it has access to the API with id ```<API_ID>``` and to all the types ```/types/*/``` defined in that API's GraphQL schema among which are ```Query```, ```Mutation``` and ```Subscription```. It also grants access to all the fields in those types. An authenticated user has the permission to query the API, add new Establishments and Events etc.
+7. Click ```View Policy Document``` and then ```edit```. Copy the policy above and replace the default by pasting it into the *Policy Document* box.
+8. Do the same for ```Cognito_foobar_identity_pool2Unauth_Role``` replacing the policy content with the following: 
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "appsync:GraphQL",
+            "Resource": "arn:aws:appsync:us-east-2:*:apis/ho6jbea5yje3ritzqux654ga5e/types/Query/fields/*"
+        }
+    ]
+}
+```
+> Here we are saying, an unauthorized user has only access to the ```Query``` type and all the fields of that type ```/Query/filds/*``` of our GraphQL schema and therefore the user who assumes this role i.e(**Regular Users**) can only query the API and cannot add events or establishments since they do not have access to the ```Mutation``` nor ```Subscription``` types of our schema. Note the differences between this policy and the one for Authorized identities on step 6.
+9. Once you completed the previous steps you should be seeing [this](/assets/images/identity-pool-roles.png). Hit the ```Allow``` button and we will have our *Identity Pool* created. 
+10. If you missed any of the steps above you can always go back to your Identity Pool and edit it. In this case we will click on our Identity Pool ```foobar_identity_pool``` and in the top right corner hit ```Edit identity pool```. What we are interested in here is the **Identity pool ID** which should look something like ```us-east-2:c83c963e-fd03-440d-8504-d0b178d34632```. Take note of it, we will need it for later.
 
 #### AppSync
 
