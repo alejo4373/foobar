@@ -1,34 +1,21 @@
 import React, { Component } from 'react';
 import { FormGroup, FormControl, ControlLabel, Radio, Button} from 'react-bootstrap';
-
-import { Auth } from 'aws-amplify';
+import { Link } from 'react-router-dom';
+import Frame from '../Dashboard/Frame'
 
 export default class SignUpForm extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      username: 'princess123',
-      password: 'Tiziana4373$',
-      manager: '1',
-      email: 'alejo4373@gmail.com',
+      username: '',
+      password: '',
+      email: '',
     }
   }
 
   handleSubmit = (e) => {
-    const { handleSignUpResponse } = this.props
     e.preventDefault();
-    const { username, password, email, manager } = this.state
-
-    Auth.signUp({
-      username,
-      password,
-      attributes: {
-        email,
-        "custom:managerBool": manager
-      }
-    })
-    .then(data => console.log(data))
-    .catch(err => console.log(err))
+    this.props.signUpUser(this.state);
   }
 
   handleInput = (e) => {
@@ -40,7 +27,7 @@ export default class SignUpForm extends Component {
   render() {
     const { username, password, email } = this.state
     return (
-      <div>
+      <Frame>
         <h3>Sign Up</h3>
         <form onSubmit={this.handleSubmit}>
           <FormGroup>
@@ -58,14 +45,10 @@ export default class SignUpForm extends Component {
             <FormControl type='text' name='email' value={email} onChange={this.handleInput} />
           </FormGroup>
 
-          <FormGroup>
-            <p>Are you a bar manager</p>
-            <Radio inline name='manager' value='1' onChange={this.handleInput}>Yes</Radio>{' '}
-            <Radio inline name='manager' value='0' onChange={this.handleInput}>No</Radio>
-          </FormGroup>
           <Button type='submit' value='Submit'>Sign Up</Button>
         </form>
-      </div>
+        <p>Have and account? <Link to='/login'>Log In</Link> </p>
+      </Frame>
     )
   }
 }

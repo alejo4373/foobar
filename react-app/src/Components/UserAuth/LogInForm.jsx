@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import Frame from '../Dashboard/Frame';
-
-import { Auth } from 'aws-amplify'
 
 export default class LogInForm extends Component {
   constructor(props) {
@@ -43,6 +42,7 @@ export default class LogInForm extends Component {
           </FormGroup>
           <FormControl type='submit' value='Log In'/>
         </form>
+        <p>Or <Link to='/signup'>Sign-Up</Link> if you are a business owner/manager</p>
       </Frame>
     )
   }
