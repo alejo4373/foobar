@@ -10,8 +10,11 @@ import LogInForm from '../Components/UserAuth/LogInForm'
 import SignUpForm from '../Components/UserAuth/SignUpForm'
 
 class Dashboard extends Component {
-  renderLogInForm = () => {
-    return (<LogInForm logInUser={this.props.logInUser} />)
+  renderLogInForm = (routeProps) => {
+    const { state } = routeProps.location;
+    let signUpConfirmed = null;
+    if (state) { signUpConfirmed = state.signUpConfirmed }
+    return (<LogInForm logInUser={this.props.logInUser} signUpConfirmed={signUpConfirmed} />)
   }
 
   renderSignUpForm = () => {

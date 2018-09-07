@@ -30,6 +30,11 @@ export default class LogInForm extends Component {
     const { username, password } = this.state
     return (
       <Frame>
+        { this.props.signUpConfirmed ? ( 
+          <div>
+            <p> Your account has been confirmed. You can now Log-in. </p>
+          </div>) : ''
+        }
         <h3> Log In </h3>
         <form onSubmit={this.handleSubmit}>
           <FormGroup controlId='username'>
@@ -40,7 +45,7 @@ export default class LogInForm extends Component {
             <ControlLabel> Password </ControlLabel>
             <FormControl type='text' name='password' value={password} onChange={this.handleInput} />
           </FormGroup>
-          <FormControl type='submit' value='Log In'/>
+          <FormControl type='submit' value='Log In' />
         </form>
         <p>Or <Link to='/signup'>Sign-Up</Link> if you are a business owner/manager</p>
       </Frame>

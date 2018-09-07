@@ -52,27 +52,27 @@ class App extends Component {
   }
 
   signUpUser = (user) => {
-  const { username, password, email } = user
+    const { username, password, email } = user
 
-  Auth.signUp({
-    username,
-    password,
-    attributes: {
-      email
-    }
-  })
-  .then(data => {
-    console.log(data)
-  })
-  .catch(err => {
-    console.log('error signing up user', err)
-  })
-}
+    Auth.signUp({
+      username,
+      password,
+      attributes: {
+        email
+      }
+    })
+      .then(data => {
+        console.log(data)
+      })
+      .catch(err => {
+        console.log('error signing up user', err)
+      })
+  }
 
   render() {
     const { user } = this.state
     return (
-      <Dashboard user={user} logOutUser={this.logOutUser} logInUser={this.logInUser} signUpUser={this.signUpUser}/>
+      <Dashboard user={user} logOutUser={this.logOutUser} logInUser={this.logInUser} signUpUser={this.signUpUser} />
     )
   }
 }

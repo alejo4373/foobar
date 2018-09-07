@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { FormGroup, FormControl, ControlLabel, Radio, Button} from 'react-bootstrap';
+import { FormGroup, FormControl, ControlLabel, Radio, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Frame from '../Dashboard/Frame'
+import ConfirmSignUp from './ConfirmSignUp';
 
 export default class SignUpForm extends Component {
   constructor(props) {
@@ -10,11 +11,15 @@ export default class SignUpForm extends Component {
       username: '',
       password: '',
       email: '',
+      waitingConfirm: false
     }
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
+    this.setState({
+      waitingConfirm: true
+    })
     this.props.signUpUser(this.state);
   }
 
@@ -25,7 +30,7 @@ export default class SignUpForm extends Component {
   }
 
   render() {
-    const { username, password, email } = this.state
+    const { username, password, email, waitingConfirm } = this.state
     return (
       <Frame>
         <h3>Sign Up</h3>
@@ -48,6 +53,9 @@ export default class SignUpForm extends Component {
           <Button type='submit' value='Submit'>Sign Up</Button>
         </form>
         <p>Have and account? <Link to='/login'>Log In</Link> </p>
+        {
+          waitingConfirm ? <ConfirmSignUp username={username} /> : ""
+        }
       </Frame>
     )
   }
