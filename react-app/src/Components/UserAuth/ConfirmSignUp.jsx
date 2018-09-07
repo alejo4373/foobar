@@ -1,23 +1,25 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Auth } from 'aws-amplify'
+import Frame from '../Dashboard/Frame'
+
 export default class ConfirmSignUp extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      username: this.props.username,
       code: '',
-      success: null
+      confirmSuccess: false
     }
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
-    let { username } = this.props;
-    let { code } = this.state;
+    const { username, code } = this.state;
     Auth.confirmSignUp(username, code, {})
       .then(data => {
         this.setState({
-          success: data
+          confirmSuccess: data
         })
         console.log('confirmSignUP data:', data)
       })
@@ -33,24 +35,38 @@ export default class ConfirmSignUp extends Component {
   }
 
   render() {
-    const { confirmCode, success } = this.state
-    return (
-      <div>{
-        success ? <Redirect to={{
+    const { username, code, confirmSuccess } = this.state
+    if (confirmSuccess) {
+      return (
+        <Redirect to={{
           pathname: '/login',
-          state: { signUpConfirmed: success }
-        }} /> : (
+          state: { signUpConfirmed: confirmSuccess }
+        }} />
+      )
+    } else {
+      return (
+        <Frame>
+          <h3>Account created successfully</h3>
+          <p>Please verify your email with the code we sent you</p>
           <form onSubmit={this.handleSubmit}>
-            <p>You Should Have received a confirmation code in you email</p>
+            <label>Username:</label>
+            <input
+              name='username'
+              type='text'
+              value={username}
+              onChange={this.handleInput}
+            />
+            <label>Code:</label>
             <input
               name='code'
               type='text'
-              value={confirmCode}
+              value={code}
               onChange={this.handleInput}
-            />
+            />{' '}
             <button type='submit'>Confirm</button>
-          </form>)
-      }</div>
-    )
+          </form>
+        </Frame>
+      )
+    }
   }
 }

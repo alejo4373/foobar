@@ -12,6 +12,7 @@ Amplify.configure(awsConfig);
 class App extends Component {
   state = {
     user: null,
+    signUpSuccess: false,
     message: ''
   }
 
@@ -63,6 +64,9 @@ class App extends Component {
       }
     })
       .then(data => {
+        this.setState({
+          message: 'signUpSuccess'
+        })
         console.log(data)
       })
       .catch(err => {
@@ -82,7 +86,7 @@ class App extends Component {
   }
 
   render() {
-    const { user, message } = this.state
+    const { user, message, signUpSuccess } = this.state
     return (
       <Dashboard
         user={user}

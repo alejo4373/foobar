@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { Auth } from 'aws-amplify';
 import '../Stylesheets/dashboard.css'
 
 // Child Components
 import MapComponent from './Dashboard/MapComponent'
 import SidePanel from './Dashboard/SidePanel'
-import LogInForm from '../Components/UserAuth/LogInForm'
-import SignUpForm from '../Components/UserAuth/SignUpForm'
+import LogInForm from './UserAuth/LogInForm'
+import SignUpForm from './UserAuth/SignUpForm'
+import ConfirmSignUp from './UserAuth/ConfirmSignUp';
 
 class Dashboard extends Component {
   renderLogInForm = (routeProps) => {
@@ -20,6 +20,13 @@ class Dashboard extends Component {
   renderSignUpForm = () => {
     const { message } = this.props
     return (<SignUpForm signUpUser={this.props.signUpUser} message={message} />)
+  }
+
+  renderConfirmSignUp = (routeProps) => {
+    const { state } = routeProps.location;
+    let username = '';
+    if (state) { username = state.username }
+    return (<ConfirmSignUp username={username}/>)
   }
 
   renderSidePanel = () => {
@@ -35,6 +42,7 @@ class Dashboard extends Component {
         <Switch>
           <Route path='/login' render={this.renderLogInForm} />
           <Route path='/signup' render={this.renderSignUpForm} />
+          <Route path='/confirm' render={this.renderConfirmSignUp} />
           <Route path='/' render={this.renderSidePanel} />
         </Switch>
         <MapComponent />
