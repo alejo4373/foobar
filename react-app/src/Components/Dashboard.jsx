@@ -29,9 +29,9 @@ class Dashboard extends Component {
     return (
       <div className='dashboard'>
         <Switch>
-          <Route exact path='/' render={this.renderSidePanel} />
           <Route path='/login' render={this.renderLogInForm} />
           <Route path='/signup' render={this.renderSignUpForm} />
+          <Route path='/' render={this.renderSidePanel} />
         </Switch>
         <MapComponent />
       </div>
