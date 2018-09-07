@@ -3,7 +3,7 @@
 ## Introduction
 Welcome to **FooBar** a Full-Stack Web App that enables sports fanatics to find bars that will be showing the game or fight of their interest, and it does so by encouraging establishments to post the games/fights they will be showing in their profile page on our platform. 
 
-Built with ReactJS in the front-end and an array of Amazon Web Services including AppSync, DynamoDB, Lambda and Cognito as the back-end.
+Built with ReactJS in the front-end and an array of Amazon Web Services including AppSync, DynamoDB and Cognito as the back-end.
 
 ## Features
 **Foobar** is intended to be used by two different kinds of users, mainly establishments and sports fanatics. Its graphic interface is visually consistent but on the establishment side it exposes a few more controls to allow the establishment's management of sporting events.
@@ -34,7 +34,6 @@ We need:
 * [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html): As a database service
 * [AppSync](https://docs.aws.amazon.com/appsync/latest/devguide/welcome.html): As a GraphQL API
 * [Cognito](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html): As user management and credentials granting service 
-* [Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html): For adding establishment's managers to admin group
 * [AWS Amplify](https://aws-amplify.github.io/amplify-js/media/quick_start): To help us manage and integrate our AWS resources in our App
 
 #### DynamoDB 
@@ -179,3 +178,55 @@ Let's setup one of our resolvers, the rest will follow the same pattern:
 9. Repeat for all the Queries in your **Resolvers** list in the *Schema* page as well as for the Mutations. Each of them have a file with the Request and Response template in [/AWS/AppSync/Resolvers](/AWS/AppSync/Resolvers) to set them up.
 
 **Note:** What the Request and Response template are doing is translating a request that comes to the GraphQL API into a request that DynamoDB can understand, same is true for the response, translating the Response from DynamoDB into something GraphQL can work with. This mapping templates are written in a language called VTL(Velocity Template Language) and there is more info about it [here](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference-overview.html) and [here](http://velocity.apache.org/engine/2.0/vtl-reference.html).
+
+
+#### AWS Amplify config
+
+Phew that was a lot, luckily we are almost there. Do you remember everything I asked you to keep note of? We will need all that so that our front-end app knows where the back-end is and how to interact with it. 
+
+This information is sensitive and we do not want to publicly expose it, so we will set it using environment variables. In our case as this is a React App and we will use [this](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#adding-custom-environment-variables) method to set up the following info in the environment.
+
+Here's a list of the info we need at hand:
+
+* GraphQL URL endpoint
+* Identity Pool ID
+* User Pool ID
+* User Pool Client ID
+
+Make sure you have all of this from the steps that we performed earlier. Now the file [```aws-config```](/react-app/src/aws-config.js) has this:
+```js
+export default {
+  //AppSync conf
+  "aws_appsync_graphqlEndpoint": process.env.REACT_APP_GRAPHQL_ENDPOINT,
+  "aws_appsync_region": "us-east-2",
+  "aws_appsync_authenticationType": "AWS_IAM",
+  Auth: {
+    identityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID,
+    region: 'us-east-2', 
+    userPoolId: process.env.REACT_APP_USER_POOL_ID,
+    userPoolWebClientId: process.env.REACT_APP_USER_POOL_CLIENT_ID, 
+  } 
+}
+```
+This file will be given to aws-amplify like so in [```App.js```](/react-app/src/App.js):
+
+```js
+//Amplify setup
+import Amplify, { Auth } from 'aws-amplify';
+import awsConfig from './aws-config';
+Amplify.configure(awsConfig);
+```
+
+Note that ```aws-config.js``` refers to stuff like ```process.env.REACT_APP_GRAPHQL_ENDPOINT```. This will be read from an environment variable at runtime, more specifically a variable named ```REACT_APP_GRAPHQL_ENDPOINT```.  We want to make sure that the variable was defined in the environment when we fire our App.
+To set up the variables navigate the ```/react-app``` directory and create a file called ```.env```. It should look like this but with your information:
+```
+REACT_APP_GRAPHQL_ENDPOINT=https://unoodauf7fh2ri2jir5lmofydu.appsync-api.us-east-2.amazonaws.com/graphql
+REACT_APP_IDENTITY_POOL_ID=us-east-2:c83c963e-fd03-440d-8504-d0b177d34632
+REACT_APP_USER_POOL_ID=us-east-2_nsJtg4dFi
+REACT_APP_USER_POOL_CLIENT_ID=1s6rjgjqm5d2ojbhgka26sak33
+REACT_APP_GOOGLE_MAPS_API_KEY=AIzaSyAulk5PFU6VTLLaBMnENrJGrKNlGjKnzhE
+```
+Make sure to save the file.
+
+#### Fire Up
+The very last step, finally ```cd /react-app``` if you are not in this directory already and ```npm install && npm start``` after some time a new browser tab will pop up and the app will be running.
