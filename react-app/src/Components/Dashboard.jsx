@@ -18,7 +18,8 @@ class Dashboard extends Component {
   }
 
   renderSignUpForm = () => {
-    return (<SignUpForm signUpUser={this.props.signUpUser} />)
+    const { message } = this.props
+    return (<SignUpForm signUpUser={this.props.signUpUser} message={message} />)
   }
 
   renderSidePanel = () => {

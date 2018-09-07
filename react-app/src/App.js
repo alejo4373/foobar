@@ -12,6 +12,7 @@ Amplify.configure(awsConfig);
 class App extends Component {
   state = {
     user: null,
+    message: ''
   }
 
   componentDidMount() {
@@ -65,14 +66,31 @@ class App extends Component {
         console.log(data)
       })
       .catch(err => {
+        let errorMessage;  
+        console.log(typeof(err))
+        if(typeof(err) === 'string') {
+          errorMessage = err
+        } else {
+          errorMessage = err.message || 'There was an error'
+        }
+
+        this.setState({
+          message: errorMessage
+        })
         console.log('error signing up user', err)
       })
   }
 
   render() {
-    const { user } = this.state
+    const { user, message } = this.state
     return (
-      <Dashboard user={user} logOutUser={this.logOutUser} logInUser={this.logInUser} signUpUser={this.signUpUser} />
+      <Dashboard
+        user={user}
+        message={message}
+        logOutUser={this.logOutUser}
+        logInUser={this.logInUser}
+        signUpUser={this.signUpUser}
+      />
     )
   }
 }

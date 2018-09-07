@@ -31,6 +31,7 @@ export default class SignUpForm extends Component {
 
   render() {
     const { username, password, email, waitingConfirm } = this.state
+    const { message } = this.props;
     return (
       <Frame>
         <h3>Sign Up</h3>
@@ -49,7 +50,11 @@ export default class SignUpForm extends Component {
             <ControlLabel> Email </ControlLabel>
             <FormControl type='text' name='email' value={email} onChange={this.handleInput} />
           </FormGroup>
-
+          {
+            message ? <div>
+              <p>{message}</p>
+            </div> : ''
+          }
           <Button type='submit' value='Submit'>Sign Up</Button>
         </form>
         <p>Have and account? <Link to='/login'>Log In</Link> </p>
