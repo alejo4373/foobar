@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { Link, Route } from 'react-router-dom';
-import '../../Stylesheets/profile.css'
+import '../../../../Stylesheets/profile.css'
 
-//GraphQL Operations
-import { getEstablishmentsUserManages } from '../../Queries/API';
+// GraphQL Operations
+import { getEstablishmentsUserManages } from '../../../../Queries/API';
 
 // Child components
-import EstablishmentList from './Profile/EstablishmentList';
-import ProfileIcon from '../../svg/ProfileIcon'
-import PlusIcon from '../../svg/PlusIcon'
+import EstablishmentList from './SharedComponents/EstablishmentList'
 import AddEstablishmentForm from './Profile/AddEstablishmentForm';
-import Switch from 'react-router-dom/Switch';
+
+// Icons
+import ProfileIcon from '../../../../svg/ProfileIcon'
+import PlusIcon from '../../../../svg/PlusIcon'
 
 class Profile extends Component {
   state = {

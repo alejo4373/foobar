@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import DateTime from 'react-datetime';
 import moment from 'moment';
-import { addEvent } from '../../../Queries/API';
+import { addEvent } from '../../../../../Queries/API';
 
-import '../../../Stylesheets/react-datetime.css'
-import '../../../Stylesheets/addevent-form.css'
+import '../../../../../Stylesheets/react-datetime.css'
+import '../../../../../Stylesheets/addevent-form.css'
 
 //Child components 
-import TeamsAutosuggestInput from '../AddEventForm/TeamsAutosuggestInput'
+import TeamsAutosuggestInput from './AddEventForm/TeamsAutosuggestInput'
 
 const leagueImagesSources = {
   //LeagueId: Url

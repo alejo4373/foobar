@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { ListGroup, Panel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import '../../../Stylesheets/establishment-list.css'
+import '../../../../../Stylesheets/establishment-list.css'
 
 
 

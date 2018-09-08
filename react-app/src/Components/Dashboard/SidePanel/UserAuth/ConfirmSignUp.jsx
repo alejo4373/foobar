@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Auth } from 'aws-amplify'
-import Frame from '../Dashboard/Frame'
+import Frame from '../SharedComponents/Frame';
 
 export default class ConfirmSignUp extends Component {
   constructor(props) {

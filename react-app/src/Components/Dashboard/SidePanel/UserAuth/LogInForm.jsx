@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import Frame from '../Dashboard/Frame';
+import Frame from '../SharedComponents/Frame';
 
 export default class LogInForm extends Component {
   constructor(props) {
