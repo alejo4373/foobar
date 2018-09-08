@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { FormGroup, FormControl, ControlLabel, Radio, Button } from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
 import Frame from '../Dashboard/Frame'
-import ConfirmSignUp from './ConfirmSignUp';
 
 export default class SignUpForm extends Component {
   constructor(props) {

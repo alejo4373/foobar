@@ -11,7 +11,7 @@
         "id": $util.dynamodb.toDynamoDBJson($util.autoId()),
     },
     "attributeValues" : {
-      "managerUsername" : {"S" : "${context.identity.username}"}
+      "managerUsername" : {"S" : "${context.request.headers.username}"}
       #foreach( $entry in $context.arguments.entrySet() )
         #if( $entry.key != "id" )
           ,"${entry.key}" : { "S" : "${entry.value}" }

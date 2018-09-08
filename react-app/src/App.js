@@ -9,6 +9,17 @@ import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from './aws-config';
 Amplify.configure(awsConfig);
 
+const setUsernameHeader = (username) => {
+  //Reconfigure Amplify to include username as a header in the request
+  Amplify.configure({
+    API: {
+      graphql_headers: async () => ({
+        'username': username
+      })
+    }
+  })
+}
+
 class App extends Component {
   state = {
     user: null,
@@ -22,6 +33,7 @@ class App extends Component {
     Auth.currentAuthenticatedUser()
       .then((user) => {
         console.log('session from .currentSession()', user)
+        setUsernameHeader(user.username);
         this.setState({
           user: user,
         })
@@ -35,6 +47,7 @@ class App extends Component {
     console.log('logging user', username, password)
     Auth.signIn(username, password)
       .then(user => {
+        setUsernameHeader(user.username);
         console.log(user)
         this.setState({
           user: user,
@@ -70,9 +83,8 @@ class App extends Component {
         console.log(data)
       })
       .catch(err => {
-        let errorMessage;  
-        console.log(typeof(err))
-        if(typeof(err) === 'string') {
+        let errorMessage;
+        if (typeof (err) === 'string') {
           errorMessage = err
         } else {
           errorMessage = err.message || 'There was an error'

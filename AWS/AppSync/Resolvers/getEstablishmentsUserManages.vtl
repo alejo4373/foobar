@@ -7,7 +7,7 @@
     "filter" : {
       "expression": "(managerUsername = :managerUsername)",
       "expressionValues": {
-        ":managerUsername": $util.dynamodb.toDynamoDBJson($ctx.identity.username)
+        ":managerUsername": $util.dynamodb.toDynamoDBJson($ctx.request.headers.username)
       }
     }
 }
