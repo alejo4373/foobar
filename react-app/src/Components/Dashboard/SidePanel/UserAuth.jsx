@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import { Switch, Route } from 'react-router-dom';
 import LogInForm from './UserAuth/LogInForm';
 import SignUpForm from './UserAuth/SignUpForm';
 import ConfirmSignUp from './UserAuth/ConfirmSignUp';
 
-import { Switch, Route } from 'react-router-dom';
+import '../../../Stylesheets/userAuth.css'
 
 const UserAuth = ({ user, message, signUpUser, logInUser }) => {
   const renderLogInForm = (routeProps) => {

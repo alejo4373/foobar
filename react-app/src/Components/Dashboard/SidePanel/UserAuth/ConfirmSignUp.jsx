@@ -9,6 +9,7 @@ export default class ConfirmSignUp extends Component {
     this.state = {
       username: this.props.username,
       code: '',
+      message: '',
       confirmSuccess: false
     }
   }
@@ -24,6 +25,11 @@ export default class ConfirmSignUp extends Component {
         console.log('confirmSignUP data:', data)
       })
       .catch(err => {
+        let message = "User is already confirmed or does not have an account.";
+        if (err.code === 'ExpiredCodeException') { message = err.message }
+        this.setState({
+          message: message
+        })
         console.log('confirmSignUp err:', err)
       })
   }
@@ -35,7 +41,7 @@ export default class ConfirmSignUp extends Component {
   }
 
   render() {
-    const { username, code, confirmSuccess } = this.state
+    const { username, code, message, confirmSuccess } = this.state
     if (confirmSuccess) {
       return (
         <Redirect to={{
@@ -47,23 +53,28 @@ export default class ConfirmSignUp extends Component {
       return (
         <Frame>
           <h3>Account created successfully</h3>
-          <p>Please verify your email with the code we sent you</p>
+          <p>Please verify your email with the code we sent you.</p>
           <form onSubmit={this.handleSubmit}>
             <label>Username:</label>
             <input
               name='username'
               type='text'
               value={username}
+              className='input-box'
               onChange={this.handleInput}
+              required
             />
             <label>Code:</label>
             <input
               name='code'
               type='text'
               value={code}
+              className='input-box'
               onChange={this.handleInput}
+              required
             />{' '}
             <button type='submit'>Confirm</button>
+            <div>{message}</div>
           </form>
         </Frame>
       )
