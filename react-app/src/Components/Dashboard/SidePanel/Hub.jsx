@@ -45,10 +45,9 @@ class Hub extends Component {
         />
         <div className='content'>
           <Switch>
-            <Route exact path='/' render={renderWelcomeOrSearchResults} />
             <Route path='/profile' render={renderProfileWithProps} />
             <Route path='/establishments/:establishmentId' component={EstablishmentProfile} />
-
+            <Route path='/' render={renderWelcomeOrSearchResults} />
             {/* If none of the routes above was matched redirect to '/' */}
             <Redirect to='/'/>
           </Switch>

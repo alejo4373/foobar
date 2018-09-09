@@ -16,8 +16,8 @@ const SidePanel = ({ user, message, signUpUser, logInUser, logOutUser }) => {
 
   return (
     <Switch>
-      <Route exact path='/' render={renderHub} />
-      <Route path='/(|login|signup|confirm)' render={renderUserAuth} />
+      <Route path='/(login|signup|confirm)' render={renderUserAuth} />
+      <Route path='/' render={renderHub} />
     </Switch>
   )
 }
