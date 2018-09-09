@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
-//Main components 
-import UserAuth from './Components/Dashboard/SidePanel/UserAuth';
+//Child component 
 import Dashboard from './Components/Dashboard';
 
 //Amplify setup
@@ -53,7 +52,12 @@ class App extends Component {
           user: user,
         })
       })
-      .catch(err => console.log('err logging in', err))
+      .catch(err => {
+        this.setState({
+          message: 'Wrong username or password'
+        })
+        console.log('err logging in', err)
+      })
   }
 
   logOutUser = () => {

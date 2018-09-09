@@ -11,7 +11,7 @@ const SidePanel = ({ user, message, signUpUser, logInUser, logOutUser }) => {
   }
 
   const renderUserAuth = () => {
-    return <UserAuth message={message} signUpUser={signUpUser} logInUser={logInUser} />
+    return <UserAuth user={user} message={message} signUpUser={signUpUser} logInUser={logInUser} />
   }
 
   return (

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import Frame from '../SharedComponents/Frame';
 
@@ -27,14 +27,14 @@ export default class LogInForm extends Component {
   }
 
   render() {
-    const { username, password } = this.state
+    const { username, password } = this.state;
+    const { user, message } = this.props;
+
+    if (user) { return <Redirect to='/' /> }
+
     return (
       <Frame>
-        { this.props.signUpConfirmed ? ( 
-          <div>
-            <p> Your account has been confirmed. You can now Log-in. </p>
-          </div>) : ''
-        }
+        { message ? <div><p>{message}</p></div> : '' }
         <h3> Log In </h3>
         <form onSubmit={this.handleSubmit}>
           <FormGroup controlId='username'>

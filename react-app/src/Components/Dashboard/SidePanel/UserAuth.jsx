@@ -5,12 +5,11 @@ import ConfirmSignUp from './UserAuth/ConfirmSignUp';
 
 import { Switch, Route } from 'react-router-dom';
 
-const UserAuth = ({ message, signUpUser, logInUser }) => {
+const UserAuth = ({ user, message, signUpUser, logInUser }) => {
   const renderLogInForm = (routeProps) => {
     const { state } = routeProps.location;
-    let signUpConfirmed = null;
-    if (state) { signUpConfirmed = state.signUpConfirmed }
-    return (<LogInForm logInUser={logInUser} signUpConfirmed={signUpConfirmed} />)
+    if (state) { message = state.message } //If redirected from confirm set message
+    return (<LogInForm user={user} message={message} logInUser={logInUser} />)
   }
 
   const renderSignUpForm = () => {

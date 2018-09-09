@@ -40,7 +40,7 @@ export default class ConfirmSignUp extends Component {
       return (
         <Redirect to={{
           pathname: '/login',
-          state: { signUpConfirmed: confirmSuccess }
+          state: { message: 'Your account has been confirmed. You can now Log-in.' }
         }} />
       )
     } else {
