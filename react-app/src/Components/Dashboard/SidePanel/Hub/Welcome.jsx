@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import '../../Stylesheets/welcome.css'
-import logo from '../../svg/foobar-logo1.svg'
-import Frame from './Frame'
+import '../../../../Stylesheets/welcome.css'
+import logo from '../../../../svg/foobar-logo1.svg'
+import Frame from '../SharedComponents/Frame'
 
 class Welcome extends Component {
   render() {

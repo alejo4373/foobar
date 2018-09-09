@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { FormGroup, FormControl, ControlLabel, Radio, Button} from 'react-bootstrap';
 
-import '../../../Stylesheets/add-establishment.css'
+import '../../../../../Stylesheets/add-establishment.css'
 //Child Components
-import AutocompleteEstablishmentInput from './AutocompleteEstablishmentInput';
-import SearchIcon from '../../../svg/SearchIcon';
+import AutocompleteEstablishmentInput from './AddEstablishmentForm/AutocompleteEstablishmentInput';
 
-import { addEstablishment } from '../../../Queries/API'
-import PlusIcon from '../../../svg/PlusIcon';
+//Icons
+import SearchIcon from '../../../../../svg/SearchIcon';
+import PlusIcon from '../../../../../svg/PlusIcon';
+
+import { addEstablishment } from '../../../../../Queries/API'
 
 class AddEstablishmentForm extends Component {
   constructor(props) {

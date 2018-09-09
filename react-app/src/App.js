@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 //Main components 
-import UserAuth from './Components/UserAuth';
+import UserAuth from './Components/Dashboard/SidePanel/UserAuth';
 import Dashboard from './Components/Dashboard';
 
 //Amplify setup
@@ -103,9 +103,9 @@ class App extends Component {
       <Dashboard
         user={user}
         message={message}
-        logOutUser={this.logOutUser}
-        logInUser={this.logInUser}
         signUpUser={this.signUpUser}
+        logInUser={this.logInUser}
+        logOutUser={this.logOutUser}
       />
     )
   }

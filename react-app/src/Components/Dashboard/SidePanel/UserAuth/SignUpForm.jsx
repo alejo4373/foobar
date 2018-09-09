@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FormGroup, FormControl, ControlLabel, Radio, Button } from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
-import Frame from '../Dashboard/Frame'
+import Frame from '../SharedComponents/Frame';
 
 export default class SignUpForm extends Component {
   constructor(props) {

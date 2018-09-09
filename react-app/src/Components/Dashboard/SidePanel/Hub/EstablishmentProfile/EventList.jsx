@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import '../../Stylesheets/event-list.css'
+import '../../../../../Stylesheets/event-list.css'
 
 const leaguesImagesSources = {
   //LeagueId: Url

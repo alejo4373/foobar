@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import '../../Stylesheets/navigation-bar.css'
+import '../../../../Stylesheets/navigation-bar.css'
 
-import { searchEstablishments } from '../../Queries/API'
+import { searchEstablishments } from '../../../../Queries/API'
 // Child Components
-import SearchBox from './SearchBox';
+import SearchBox from './NavigationBar/SearchBox';
 
 // Svg icons
-import LogoutIcon from "../../svg/LogoutIcon";
-import LoginIcon from "../../svg/LoginIcon";
-import ProfileIcon from "../../svg/ProfileIcon";
-import SearchIcon from '../../svg/SearchIcon';
+import LogoutIcon from "../../../../svg/LogoutIcon";
+import LoginIcon from "../../../../svg/LoginIcon";
+import ProfileIcon from "../../../../svg/ProfileIcon";
+import SearchIcon from '../../../../svg/SearchIcon';
 
 class NavigationBar extends Component {
   state = {

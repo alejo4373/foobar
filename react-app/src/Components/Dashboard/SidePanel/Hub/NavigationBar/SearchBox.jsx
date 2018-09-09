@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Link  } from 'react-router-dom';
 
 import Autosuggest from 'react-autosuggest';
-import { getEstablishmentSuggestions } from '../../Queries/API'
-import PinIcon from '../../svg/PinIcon'
+import { getEstablishmentSuggestions } from '../../../../../Queries/API'
+import PinIcon from '../../../../../svg/PinIcon'
 
 //Autosuggest helpers
 const renderSuggestion = (suggestion) => (

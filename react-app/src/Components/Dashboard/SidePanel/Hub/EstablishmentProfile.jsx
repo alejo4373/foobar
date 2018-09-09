@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 
-import { getEvents, getEstablishmentById } from '../../Queries/API';
-import '../../Stylesheets/establishmentProfile.css'
+import { getEvents, getEstablishmentById } from '../../../../Queries/API';
+import '../../../../Stylesheets/establishmentProfile.css'
 
 //Child components
-import EventList from './EventList';
-import AddEventForm from './Establishments/AddEventForm';
-import PlusIcon from '../../svg/PlusIcon';
+import EventList from './EstablishmentProfile/EventList';
+import AddEventForm from './EstablishmentProfile/AddEventForm';
+import PlusIcon from '../../../../svg/PlusIcon';
 
 
 
