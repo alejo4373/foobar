@@ -8,7 +8,8 @@ import { Switch, Route } from 'react-router-dom';
 const UserAuth = ({ user, message, signUpUser, logInUser }) => {
   const renderLogInForm = (routeProps) => {
     const { state } = routeProps.location;
-    if (state) { message = state.message } //If redirected from confirm set message
+    //If redirected from ConfirmSignUp set message only if there is no message coming from higher above
+    if (state && !message) { message = state.message } 
     return (<LogInForm user={user} message={message} logInUser={logInUser} />)
   }
 
