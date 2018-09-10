@@ -1,6 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  margin: 0; 
+  margin: 0;
   font-size: 14px;
+  font-family: 'Raleway', sans-serif;
   line-height: 1.42857143;
   color: #333;
 }
@@ -13,15 +20,25 @@ h3 {
   font-size: 24px;
 }
 
+h4 {
+  font-size: 18px;
+}
+
 h1, h2, h3, h4, h5, h6 {
-    font-family: inherit;
-    font-weight: 500;
-    line-height: 1.1;
-    color: inherit;
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
 }
 
 label {
   display: inline-block;
   font-weight: 700;
   margin-bottom: 5px;
+}
+
+input {
+  font-family: inherit;
+  font-weight: 400;
+  font-size: inherit;
 }

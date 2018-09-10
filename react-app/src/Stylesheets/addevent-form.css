@@ -30,6 +30,11 @@
   font-size: 1.3em;
 }
 
+.addevent-form .form-control {
+  display: block;
+  width: 100%;
+}
+
 .addevent-form .rdtPicker {
   width: 100%;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px 0px;
@@ -54,6 +59,8 @@
 
 .addevent-form textarea {
   resize: vertical;
+  font-family: inherit;
+  font-size: inherit;
   padding: 6px;
   width: 100%
 }
