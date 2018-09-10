@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "aws-amplify": "^1.0.8",
-    "aws-amplify-react": "^2.0.0",
     "google-maps-react": "^2.0.2",
     "moment": "^2.22.1",
     "react": "^16.3.2",
