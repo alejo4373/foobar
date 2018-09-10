@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { GoogleApiWrapper } from "google-maps-react";
-import { FormGroup, FormControl, ControlLabel, Radio, Button} from 'react-bootstrap';
 
 //Component made following https://github.com/fullstackreact/google-maps-react/blob/master/examples/components/autocomplete.js example
 class AddressSearchInput extends Component {

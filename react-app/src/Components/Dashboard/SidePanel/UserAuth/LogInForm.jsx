@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import Frame from '../SharedComponents/Frame';
 
 export default class LogInForm extends Component {
@@ -34,18 +33,18 @@ export default class LogInForm extends Component {
 
     return (
       <Frame>
-        { message ? <div><p>{message}</p></div> : '' }
+        {message ? <div><p>{message}</p></div> : ''}
         <h3> Log In </h3>
         <form onSubmit={this.handleSubmit}>
-          <FormGroup controlId='username'>
-            <ControlLabel> Username </ControlLabel>
-            <FormControl type='text' name='username' value={username} onChange={this.handleInput} />
-          </FormGroup>
-          <FormGroup controlId='password'>
-            <ControlLabel> Password </ControlLabel>
-            <FormControl type='text' name='password' value={password} onChange={this.handleInput} />
-          </FormGroup>
-          <FormControl type='submit' value='Log In' />
+          <div>
+            <label> Username: </label>
+            <input className='input-box' type='text' name='username' value={username} onChange={this.handleInput} required />
+          </div>
+          <div>
+            <label> Password: </label>
+            <input className='input-box' type='text' name='password' value={password} onChange={this.handleInput} required />
+          </div>
+          <button className='btn' type='submit'> Log In </button>
         </form>
         <p>Or <Link to='/signup'>Sign-Up</Link> if you are a business owner/manager</p>
       </Frame>

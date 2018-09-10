@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { FormGroup, FormControl, ControlLabel, Radio, Button } from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
 import Frame from '../SharedComponents/Frame';
 
@@ -39,26 +38,26 @@ export default class SignUpForm extends Component {
         <Frame>
           <h3>Sign Up</h3>
           <form onSubmit={this.handleSubmit}>
-            <FormGroup>
-              <ControlLabel> Username </ControlLabel>
-              <FormControl type='text' name='username' value={username} onChange={this.handleInput} required />
-            </FormGroup>
+            <div>
+              <label> Username: </label>
+              <input className='input-box' type='text' name='username' value={username} onChange={this.handleInput} required />
+            </div>
 
-            <FormGroup>
-              <ControlLabel> Password </ControlLabel>
-              <FormControl type='text' name='password' value={password} onChange={this.handleInput} required />
-            </FormGroup>
+            <div>
+              <label> Password: </label>
+              <input className='input-box' type='text' name='password' value={password} onChange={this.handleInput} required />
+            </div>
 
-            <FormGroup>
-              <ControlLabel> Email </ControlLabel>
-              <FormControl type='text' name='email' value={email} onChange={this.handleInput} required />
-            </FormGroup>
+            <div>
+              <label> Email: </label>
+              <input className='input-box' type='text' name='email' value={email} onChange={this.handleInput} required />
+            </div>
             {
               message ? <div>
                 <p>{message}</p>
               </div> : ''
             }
-            <Button type='submit' value='Submit'>Sign Up</Button>
+            <button className='btn' type='submit' >Sign Up</button>
           </form>
           <p>Have and account? <Link to='/login'>Log In</Link> </p>
         </Frame>

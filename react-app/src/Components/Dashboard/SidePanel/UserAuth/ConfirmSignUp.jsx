@@ -73,7 +73,7 @@ export default class ConfirmSignUp extends Component {
               onChange={this.handleInput}
               required
             />{' '}
-            <button type='submit'>Confirm</button>
+            <button className='btn' type='submit'>Confirm</button>
             <div>{message}</div>
           </form>
         </Frame>
