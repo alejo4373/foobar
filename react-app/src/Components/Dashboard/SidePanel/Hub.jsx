@@ -33,7 +33,7 @@ class Hub extends Component {
   }
   
   render () {
-    const { logOutUser, user } = this.props
+    const { logOutUser, user, goBack } = this.props
     const { renderProfileWithProps, setSearchResults, renderWelcomeOrSearchResults, renderLogInForm} = this
     const { searchResults } = this.state
     return(
@@ -42,6 +42,7 @@ class Hub extends Component {
           logOutUser={logOutUser}
           user={user}
           setSearchResults={setSearchResults}
+          goBack={goBack}
         />
         <div className='content'>
           <Switch>

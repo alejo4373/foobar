@@ -27,12 +27,13 @@ export default class LogInForm extends Component {
 
   render() {
     const { username, password } = this.state;
-    const { user, message } = this.props;
+    const { user, message, goBack } = this.props;
 
     if (user) { return <Redirect to='/' /> }
 
     return (
       <Frame>
+        <button onClick={goBack}>Go Back</button>
         {message ? <div><p>{message}</p></div> : ''}
         <h3> Log In </h3>
         <form onSubmit={this.handleSubmit}>

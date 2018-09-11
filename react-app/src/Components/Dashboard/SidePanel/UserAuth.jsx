@@ -9,9 +9,10 @@ import '../../../Stylesheets/userAuth.css'
 const UserAuth = ({ user, message, signUpUser, logInUser }) => {
   const renderLogInForm = (routeProps) => {
     const { state } = routeProps.location;
+    const { goBack } = routeProps.history;
     //If redirected from ConfirmSignUp set message only if there is no message coming from higher above
     if (state && !message) { message = state.message } 
-    return (<LogInForm user={user} message={message} logInUser={logInUser} />)
+    return (<LogInForm user={user} message={message} logInUser={logInUser} goBack={goBack}/>)
   }
 
   const renderSignUpForm = () => {

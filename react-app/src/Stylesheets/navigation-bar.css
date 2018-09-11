@@ -1,7 +1,6 @@
 .navigation-bar {
-  display: flex;
-  /* display: grid; */
-  /* grid-template-columns: 305px 2px auto; */
+  display: grid;
+  grid-template-columns: 10% 5% 65% 0% auto;
   border-radius: 2px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px 0px;
   margin: 8px;
@@ -13,10 +12,19 @@
   background-color: white;
 }
 
-.navigation-bar .searchbox {
-  flex-grow: 1;
+.navigation-bar > .searchbox, .searchbox > form {
+  height: inherit;
 }
-.navigation-bar .searchbox, .links-box {
+
+.navigation-bar .back-icon {
+  margin: auto;
+}
+
+.navigation-bar .back-icon-container {
+  display: contents;
+}
+
+.navigation-bar .links-box {
   height: inherit;
   padding: 10px;
 }
@@ -36,6 +44,10 @@
   width: 27px;
 }
 
+.navigation-bar .search-icon {
+  margin: auto;
+  width: 12px;
+}
 .navigation-bar .logout:hover path{
   fill: rgb(224, 58, 62);
 }
@@ -56,16 +68,13 @@
 
 /* --- React Autosuggest Styling ---*/
 .navigation-bar .searchbox .react-autosuggest__container {
+  height: inherit;
+  width: 88%;
   display: inline-block;
-  position: relative;
-  z-index: 3;
-  width: 86%;
-  top: -8px;
-  left: 14px;
 }
 
 .navigation-bar .searchbox .react-autosuggest__input {
-  line-height: 23px;
+  line-height: 46px;
   width: 100%;
   border: none;
 }
