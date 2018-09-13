@@ -42,3 +42,14 @@ input {
   font-weight: 400;
   font-size: inherit;
 }
+
+.back-icon-container {
+  border: 0;
+  padding: 0;
+  background: none;
+}
+
+.svg-icon {
+  fill: rgba(0, 0, 0, 0.4);
+  width: 27px;
+}

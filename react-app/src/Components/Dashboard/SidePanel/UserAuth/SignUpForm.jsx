@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import Frame from '../SharedComponents/Frame';
+import BackIcon from '../../../../svg/BackIcon';
 
 export default class SignUpForm extends Component {
   constructor(props) {
@@ -25,7 +26,7 @@ export default class SignUpForm extends Component {
 
   render() {
     const { username, password, email } = this.state
-    const { message } = this.props
+    const { message, goBack } = this.props
     if (message === 'signUpSuccess') {
       return (
         <Redirect to={{
@@ -36,6 +37,9 @@ export default class SignUpForm extends Component {
     } else {
       return (
         <Frame>
+          <button className='back-icon-container' onClick={goBack} >
+            <BackIcon />
+          </button>
           <h3>Sign Up</h3>
           <form onSubmit={this.handleSubmit}>
             <div>

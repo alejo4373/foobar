@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import Frame from '../SharedComponents/Frame';
+import BackIcon from '../../../../svg/BackIcon';
 
 export default class LogInForm extends Component {
   constructor(props) {
@@ -33,7 +34,9 @@ export default class LogInForm extends Component {
 
     return (
       <Frame>
-        <button onClick={goBack}>Go Back</button>
+        <button className='back-icon-container' onClick={goBack} >
+          <BackIcon />
+        </button>
         {message ? <div><p>{message}</p></div> : ''}
         <h3> Log In </h3>
         <form onSubmit={this.handleSubmit}>
