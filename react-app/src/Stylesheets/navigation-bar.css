@@ -1,6 +1,6 @@
 .navigation-bar {
   display: grid;
-  grid-template-columns: 10% 5% 65% 0% auto;
+  grid-template-columns: 10% 70% 0% auto;
   border-radius: 2px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px 0px;
   margin: 8px;
@@ -12,7 +12,7 @@
   background-color: white;
 }
 
-.navigation-bar > .searchbox, .searchbox > form {
+.navigation-bar>.searchbox, .searchbox>form {
   height: inherit;
 }
 
@@ -21,7 +21,9 @@
 }
 
 .navigation-bar .back-icon-container {
-  display: contents;
+  border: 0;
+  padding: 0;
+  background: none;
 }
 
 .navigation-bar .links-box {
@@ -33,26 +35,27 @@
   text-align: center;
 }
 
-.navigation-bar .two-grid{
+.navigation-bar .two-grid {
   display: grid;
   grid-template-columns: 50% 50%;
   text-align: center;
 }
 
-.navigation-bar .svg-icon{
+.navigation-bar .svg-icon {
   fill: rgba(0, 0, 0, 0.4);
   width: 27px;
 }
 
-.navigation-bar .search-icon {
+.navigation-bar form>.search-icon {
   margin: auto;
   width: 12px;
 }
-.navigation-bar .logout:hover path{
+
+.navigation-bar .logout:hover path {
   fill: rgb(224, 58, 62);
 }
 
-.navigation-bar .login:hover path{
+.navigation-bar .login:hover path {
   fill: rgb(104, 187, 66);
 }
 
@@ -67,9 +70,10 @@
 }
 
 /* --- React Autosuggest Styling ---*/
+
 .navigation-bar .searchbox .react-autosuggest__container {
   height: inherit;
-  width: 88%;
+  width: 100%;
   display: inline-block;
 }
 
@@ -112,6 +116,7 @@
 .navigation-bar .searchbox .suggestion-item .pin {
   width: 20px;
 }
+
 .navigation-bar .searchbox .react-autosuggest__suggestion--highlighted {
   background-color: rgba(140, 140, 140, 0.1);
 }

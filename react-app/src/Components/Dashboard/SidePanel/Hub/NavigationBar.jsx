@@ -15,7 +15,8 @@ import BackIcon from '../../../../svg/BackIcon';
 
 class NavigationBar extends Component {
   state = {
-    searchStr: ''
+    searchStr: '',
+    searchBarFocussed: false
   }
 
   handleLogOutClick = (e) => {
@@ -26,6 +27,15 @@ class NavigationBar extends Component {
   setSearchStr = (str) => {
     this.setState({
       searchStr: str
+    })
+  }
+
+  handleInputFocus = () => {
+    console.log('handleInputFocus')
+    this.setState(prevState => {
+      return {
+        searchBarFocussed: !prevState.searchBarFocussed
+      }
     })
   }
 
@@ -42,18 +52,33 @@ class NavigationBar extends Component {
     })
   }
 
+  renderButtonIcon = () => {
+    const { searchBarFocussed } = this.state;
+    const { goBack, pathname } = this.props;
+    if (searchBarFocussed || pathname === '/') {
+      return (
+        <button className='back-icon-container' onClick={this.handleSubmit} >
+          <SearchIcon />
+        </button>
+      )
+    } else {
+      return (
+        <button className='back-icon-container' onClick={goBack} >
+          <BackIcon />
+        </button>
+      )
+    }
+  }
+
   render() {
     const { user, goBack } = this.props
-    const { handleLogOutClick, handleSubmit, setSearchStr } = this
+    const { handleLogOutClick, handleSubmit, setSearchStr, handleInputFocus } = this
     return (
       <div className='navigation-bar'>
-        <div className='back-icon-container' onClick={goBack} >
-          <BackIcon />
-        </div>
-        <SearchIcon />
+        {this.renderButtonIcon()}
         <div className='searchbox'>
           <form onSubmit={handleSubmit}>
-            <SearchBox setSearchStr={setSearchStr} />
+            <SearchBox setSearchStr={setSearchStr} handleInputFocus={handleInputFocus} />
             <input className='hide' type='submit' />
           </form>
         </div>

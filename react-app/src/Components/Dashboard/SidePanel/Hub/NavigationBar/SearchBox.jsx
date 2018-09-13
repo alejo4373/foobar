@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link  } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import Autosuggest from 'react-autosuggest';
 import { getEstablishmentSuggestions } from '../../../../../Queries/API'
@@ -8,7 +8,7 @@ import PinIcon from '../../../../../svg/PinIcon'
 //Autosuggest helpers
 const renderSuggestion = (suggestion) => (
   <div className='suggestion-item'>
-    <PinIcon/>    
+    <PinIcon />
     <Link to={`/establishments/${suggestion.id}`}>{suggestion.displayName}</Link>
   </div>
 )
@@ -16,7 +16,7 @@ const renderSuggestion = (suggestion) => (
 const getSuggestionValue = (suggestion) => suggestion.displayName
 
 class SearchBox extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       suggestions: [],
@@ -27,7 +27,7 @@ class SearchBox extends Component {
 
   getSuggestions = (pattern) => {
     getEstablishmentSuggestions(pattern.toLowerCase(), (err, matches) => {
-      if(err) {
+      if (err) {
         return console.log('err in getEstablishmentSuggestions()', err)
       }
       this.setState({
@@ -47,15 +47,13 @@ class SearchBox extends Component {
 
   onSuggestionsFetchRequested = ({ value, reason }) => {
     // We do not want to make a network request unless the input actually changed
-    if(reason === 'input-changed') {
+    if (reason === 'input-changed') {
       // If there was a previous timer running clear it
       clearTimeout(window.requestTimeout)
       // Set timer in the window object
       window.requestTimeout = window.setTimeout(() => {
         this.getSuggestions(value)
       }, 1000)
-      
-      console.log('this.onSuggestionsFetchRequested() ====>', value)
     }
   }
 
@@ -74,16 +72,18 @@ class SearchBox extends Component {
     const inputProps = {
       placeholder: 'Search for an establishment',
       value: selectedSuggestion,
-      onChange: this.onChange
+      onChange: this.onChange,
+      onBlur: this.props.handleInputFocus,
+      onFocus: this.props.handleInputFocus
     }
 
-    return(
+    return (
       <Autosuggest
         suggestions={suggestions}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
         getSuggestionValue={getSuggestionValue}
-        renderSuggestion={renderSuggestion} 
+        renderSuggestion={renderSuggestion}
         inputProps={inputProps}
       />
     )

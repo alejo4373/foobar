@@ -8,7 +8,8 @@ import UserAuth from './SidePanel/UserAuth'
 const SidePanel = ({ user, message, signUpUser, logInUser, logOutUser }) => {
   const renderHub = (routeProps) => {
     const { goBack } = routeProps.history;
-    return <Hub logOutUser={logOutUser} user={user} goBack={goBack} />
+    const { pathname } = routeProps.location
+    return <Hub logOutUser={logOutUser} user={user} goBack={goBack} pathname={pathname} />
   }
 
   const renderUserAuth = () => {
