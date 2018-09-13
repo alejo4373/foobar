@@ -7,7 +7,7 @@ import Welcome from './Hub/Welcome'
 import Search from './Hub/Search'
 import Profile from './Hub/Profile'
 import EstablishmentProfile from './Hub/EstablishmentProfile';
-
+import UserContext from '../../../contexts/user-context';
 
 class Hub extends Component {
   state = {
@@ -21,29 +21,31 @@ class Hub extends Component {
   }
 
   renderProfileWithProps = () => (
-    <Profile user={this.props.user} />
+    <UserContext.Consumer>
+      {({ user, fetchCurrentUser }) => <Profile user={user} fetchCurrentUser={fetchCurrentUser} />}
+    </UserContext.Consumer>
   )
 
   renderWelcomeOrSearchResults = () => {
     const { searchResults } = this.state
-    if(searchResults.length) {
-     return <Search searchResults={searchResults} />
+    if (searchResults.length) {
+      return <Search searchResults={searchResults} />
     }
-    return <Welcome/>
+    return <Welcome />
   }
-  
-  render () {
+
+  render() {
     const { logOutUser, user, goBack, pathname } = this.props
-    const { renderProfileWithProps, setSearchResults, renderWelcomeOrSearchResults, renderLogInForm} = this
+    const { renderProfileWithProps, setSearchResults, renderWelcomeOrSearchResults, renderLogInForm } = this
     const { searchResults } = this.state
-    return(
+    return (
       <div className='side-panel'>
         <NavigationBar
           logOutUser={logOutUser}
           user={user}
           setSearchResults={setSearchResults}
           goBack={goBack}
-          pathname = {pathname}
+          pathname={pathname}
         />
         <div className='content'>
           <Switch>
@@ -51,7 +53,7 @@ class Hub extends Component {
             <Route path='/establishments/:establishmentId' component={EstablishmentProfile} />
             <Route path='/' render={renderWelcomeOrSearchResults} />
             {/* If none of the routes above was matched redirect to '/' */}
-            <Redirect to='/'/>
+            <Redirect to='/' />
           </Switch>
         </div>
       </div>

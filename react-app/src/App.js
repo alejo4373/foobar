@@ -4,6 +4,9 @@ import './Stylesheets/app.css';
 //Child component 
 import Dashboard from './Components/Dashboard';
 
+//Context
+import UserContext from './contexts/user-context';
+
 //Amplify setup
 import Amplify, { Auth } from 'aws-amplify';
 import awsConfig from './aws-config';
@@ -22,14 +25,20 @@ const setUsernameHeader = (username) => {
 
 class App extends Component {
   state = {
-    user: null,
+    user: {},
     signUpSuccess: false,
     message: ''
   }
 
   componentDidMount() {
-    //Check if user has a session i.e is logged in
     console.log('App didMount')
+    this.fetchCurrentUser()
+  }
+
+  fetchCurrentUser = () => {
+    console.log('fetchingCurrentUser', 'state:', this.fetchingUser)
+
+    //Check if user has a session i.e is logged in
     Auth.currentAuthenticatedUser()
       .then((user) => {
         console.log('session from .currentSession()', user)
@@ -65,7 +74,7 @@ class App extends Component {
     Auth.signOut()
       .then(() => {
         this.setState({
-          user: null
+          user: {}
         })
       })
       .catch(err => console.log('logged out err', err))
@@ -103,15 +112,21 @@ class App extends Component {
   }
 
   render() {
-    const { user, message, signUpSuccess } = this.state
+    const { user, message } = this.state
+    const contextValue = {
+      user: user,
+    }
+    console.log('App Render')
     return (
-      <Dashboard
-        user={user}
-        message={message}
-        signUpUser={this.signUpUser}
-        logInUser={this.logInUser}
-        logOutUser={this.logOutUser}
-      />
+      <UserContext.Provider value={contextValue} >
+        <Dashboard
+          user={user}
+          message={message}
+          signUpUser={this.signUpUser}
+          logInUser={this.logInUser}
+          logOutUser={this.logOutUser}
+        />
+      </UserContext.Provider>
     )
   }
 }

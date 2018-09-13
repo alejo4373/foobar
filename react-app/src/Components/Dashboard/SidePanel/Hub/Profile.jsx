@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Route } from 'react-router-dom';
+import { Link, Route, Redirect } from 'react-router-dom';
 import '../../../../Stylesheets/profile.css'
 
 // GraphQL Operations
@@ -19,12 +19,27 @@ class Profile extends Component {
   }
 
   componentDidMount() {
+    // if user is already coming in the props
+    if (this.props.user.username) {
+      this.fetchEstablishments()
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    //Once the user arrives in the props due to fetching authenticated user
+    if (prevProps.user !== this.props.user) {
+      console.log(' fetchingEstablishments')
+      this.fetchEstablishments()
+    }
+  }
+
+  fetchEstablishments = () => {
     getEstablishmentsUserManages(20, (err, establishments) => {
-      if(err) {
+      if (err) {
         return console.log('error on getManagerEstablishments', err)
       }
       this.setState({
-        establishments: establishments  
+        establishments: establishments
       })
     });
   }
@@ -44,25 +59,25 @@ class Profile extends Component {
     const { establishments } = this.state;
     return (
       <div className='profile'>
-          <div className='top'>
-            <ProfileIcon/>
-          </div>
-          <div className='middle'>
-            <Link to='/profile/addestablishment'>
-              <div className='button'>
-                <div className='add-establishment'>
-                  <PlusIcon/>
-                </div>
-                <p>Add Establishment</p>
+        <div className='top'>
+          <ProfileIcon />
+        </div>
+        <div className='middle'>
+          <Link to='/profile/addestablishment'>
+            <div className='button'>
+              <div className='add-establishment'>
+                <PlusIcon />
               </div>
-            </Link>
-              <h3>{user.username}</h3>
-              <p>{user.email}</p>
+              <p>Add Establishment</p>
             </div>
-          <div className='bottom'>
-          <Route exact path='/profile/addestablishment' render={this.renderAddEstablishmentForm}/>
-          <EstablishmentList establishments={establishments}/>
-          </div>
+          </Link>
+          <h3>{user.username}</h3>
+          <p>{user.email}</p>
+        </div>
+        <div className='bottom'>
+          <Route exact path='/profile/addestablishment' render={this.renderAddEstablishmentForm} />
+          <EstablishmentList establishments={establishments} />
+        </div>
       </div>
     )
   }
