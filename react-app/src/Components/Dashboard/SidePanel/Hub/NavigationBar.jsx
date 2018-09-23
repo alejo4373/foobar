@@ -20,7 +20,6 @@ class NavigationBar extends Component {
   }
 
   handleLogOutClick = (e) => {
-    e.preventDefault();
     this.props.logOutUser();
   }
 
@@ -57,13 +56,13 @@ class NavigationBar extends Component {
     const { goBack, pathname } = this.props;
     if (searchBarFocussed || pathname === '/') {
       return (
-        <button className='back-icon-container' onClick={this.handleSubmit} >
+        <button className='button-icon-container' onClick={this.handleSubmit} >
           <SearchIcon />
         </button>
       )
     } else {
       return (
-        <button className='back-icon-container' onClick={goBack} >
+        <button className='button-icon-container' onClick={goBack} >
           <BackIcon />
         </button>
       )
@@ -100,12 +99,11 @@ class NavigationBar extends Component {
                 <Link to='/profile' title='profile'>
                   <ProfileIcon />
                 </Link>
-                <a
-                  href='/logout'
-                  title='logout'
+                <Link
+                  to='/'
                   onClick={handleLogOutClick} >
                   <LogoutIcon />
-                </a>
+                </Link>
               </div>
             )
         }
