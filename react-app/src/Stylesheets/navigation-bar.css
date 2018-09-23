@@ -20,11 +20,6 @@
   margin: auto;
 }
 
-.navigation-bar .back-icon-container {
-  border: 0;
-  padding: 0;
-  background: none;
-}
 
 .navigation-bar .links-box {
   height: inherit;

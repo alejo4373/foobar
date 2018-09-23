@@ -37,7 +37,7 @@ export default class SignUpForm extends Component {
     } else {
       return (
         <Frame>
-          <button className='back-icon-container' onClick={goBack} >
+          <button className='button-icon-container' onClick={goBack} >
             <BackIcon />
           </button>
           <h3>Sign Up</h3>

@@ -34,7 +34,7 @@ export default class LogInForm extends Component {
 
     return (
       <Frame>
-        <button className='back-icon-container' onClick={goBack} >
+        <button className='button-icon-container' onClick={goBack} >
           <BackIcon />
         </button>
         {message ? <div><p>{message}</p></div> : ''}
