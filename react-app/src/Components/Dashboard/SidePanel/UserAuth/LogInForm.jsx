@@ -30,7 +30,7 @@ export default class LogInForm extends Component {
     const { username, password } = this.state;
     const { user, message, goBack } = this.props;
 
-    if (user.username) { return <Redirect to='/' /> }
+    if (user) { return <Redirect to='/' /> }
 
     return (
       <Frame>
