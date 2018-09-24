@@ -40,13 +40,13 @@ class AddEventForm extends Component {
 
   //type will be either homeTeam or awayTeam
   handlePickedTeam = (type, team) => {
-      this.setState(prevState => ({
-        event: {
-          ...prevState.event,
-          [type]: team.strTeam,
-          [`${type}Badge`]: team.strTeamBadge
-        }
-      }))
+    this.setState(prevState => ({
+      event: {
+        ...prevState.event,
+        [type]: team.strTeam,
+        [`${type}Badge`]: team.strTeamBadge
+      }
+    }))
   }
 
   handleSubmit = (e) => {
@@ -86,18 +86,18 @@ class AddEventForm extends Component {
 
     //MMA league doesn't really have teams. It has fighters but cannot be
     //retrieved with this method
-    if(leagueId === 4443) return; 
+    if (leagueId === 4443) return;
 
     fetch(`https://www.thesportsdb.com/api/v1/json/1/lookup_all_teams.php?id=${leagueId}`)
       .then(res => res.json())
       .then(({ teams }) => {
-        this.setState(prevState => ({ 
+        this.setState(prevState => ({
           leagueId: leagueId,
           teams: teams,
-          event: { 
+          event: {
             ...prevState.event,
             homeTeam: '', //reset teams on league change 
-            awayTeam: '' 
+            awayTeam: ''
           }
         }))
       })
@@ -113,7 +113,7 @@ class AddEventForm extends Component {
   }
 
   render() {
-    const { homeTeam, awayTeam, startTime, coverCharge, description } = this.state.event
+    const { startTime, description } = this.state.event
     return (
       <div className='addevent-form'>
         <h4>Add Sporting Event</h4>
@@ -169,16 +169,16 @@ class AddEventForm extends Component {
             </div>
           </div>
           <div className='teams section'>
-            <TeamsAutosuggestInput 
+            <TeamsAutosuggestInput
               name='homeTeam'
               teams={this.state.teams}
-              handlePickedTeam={this.handlePickedTeam} 
+              handlePickedTeam={this.handlePickedTeam}
             />
             <label>VS</label>
-            <TeamsAutosuggestInput 
+            <TeamsAutosuggestInput
               name='awayTeam'
               teams={this.state.teams}
-              handlePickedTeam={this.handlePickedTeam} 
+              handlePickedTeam={this.handlePickedTeam}
             />
           </div>
           <div className='section'>
