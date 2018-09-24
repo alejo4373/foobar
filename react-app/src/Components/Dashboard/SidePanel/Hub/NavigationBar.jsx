@@ -85,7 +85,7 @@ class NavigationBar extends Component {
         <div className='separator' />
         {
           //If user is guest
-          !user.username ? (
+          !user ? (
             <div className='links-box no-grid'>
               <Link
                 to='/login'

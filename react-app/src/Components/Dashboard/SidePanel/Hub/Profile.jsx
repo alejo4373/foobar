@@ -19,18 +19,7 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    // if user is already coming in the props
-    if (this.props.user.username) {
-      this.fetchEstablishments()
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    //Once the user arrives in the props due to fetching authenticated user
-    if (prevProps.user !== this.props.user) {
-      console.log(' fetchingEstablishments')
-      this.fetchEstablishments()
-    }
+    this.fetchEstablishments()
   }
 
   fetchEstablishments = () => {
@@ -55,6 +44,7 @@ class Profile extends Component {
   }
 
   render() {
+    console.log('Profile render')
     const { user } = this.props;
     const { establishments } = this.state;
     return (

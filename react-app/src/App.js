@@ -25,29 +25,32 @@ const setUsernameHeader = (username) => {
 
 class App extends Component {
   state = {
-    user: {},
+    user: null,
     signUpSuccess: false,
+    fetchingUser: true,
     message: ''
   }
 
   componentDidMount() {
-    console.log('App didMount')
+    console.log('App DidMount')
     this.fetchCurrentUser()
   }
 
   fetchCurrentUser = () => {
-    console.log('fetchingCurrentUser', 'state:', this.fetchingUser)
-
     //Check if user has a session i.e is logged in
     Auth.currentAuthenticatedUser()
       .then((user) => {
-        console.log('session from .currentSession()', user)
+        console.log('user arrived')
         setUsernameHeader(user.username);
         this.setState({
           user: user,
+          fetchingUser: false
         })
       })
       .catch(err => {
+        this.setState({
+          fetchingUser: false,
+        })
         console.log('Error:', err)
       })
   }
@@ -74,7 +77,7 @@ class App extends Component {
     Auth.signOut()
       .then(() => {
         this.setState({
-          user: {}
+          user: null,
         })
       })
       .catch(err => console.log('logged out err', err))
@@ -112,9 +115,10 @@ class App extends Component {
   }
 
   render() {
-    const { user, message } = this.state
+    const { user, message, fetchingUser } = this.state
     const contextValue = {
-      user: user,
+      user,
+      fetchingUser,
     }
     console.log('App Render')
     return (

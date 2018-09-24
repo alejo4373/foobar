@@ -20,9 +20,13 @@ class Hub extends Component {
     })
   }
 
-  renderProfileWithProps = () => (
+  handleProfileRoute = () => (
     <UserContext.Consumer>
-      {({ user, fetchCurrentUser }) => <Profile user={user} fetchCurrentUser={fetchCurrentUser} />}
+      {({ user, fetchingUser }) => {
+        if (fetchingUser) { return <div>...Loading</div> }
+        if (!user) { return <Redirect to='/' /> };
+        return (<Profile user={user} />)
+      }}
     </UserContext.Consumer>
   )
 
@@ -49,7 +53,7 @@ class Hub extends Component {
         />
         <div className='content'>
           <Switch>
-            <Route path='/profile' render={renderProfileWithProps} />
+            <Route path='/profile' render={this.handleProfileRoute} />
             <Route path='/establishments/:establishmentId' component={EstablishmentProfile} />
             <Route path='/' render={renderWelcomeOrSearchResults} />
             {/* If none of the routes above was matched redirect to '/' */}

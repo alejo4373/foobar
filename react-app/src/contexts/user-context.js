@@ -2,7 +2,7 @@ import React from 'react';
 
 const UserContext = React.createContext({
   user: {},
-  fetchCurrentUser: () => {}
+  fetchingUser: true,
 });
 
 export default UserContext;
