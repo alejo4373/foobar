@@ -40,8 +40,7 @@ class Hub extends Component {
 
   render() {
     const { logOutUser, user, goBack, pathname } = this.props
-    const { renderProfileWithProps, setSearchResults, renderWelcomeOrSearchResults, renderLogInForm } = this
-    const { searchResults } = this.state
+    const { handleProfileRoute, setSearchResults, renderWelcomeOrSearchResults } = this
     return (
       <div className='side-panel'>
         <NavigationBar
@@ -53,7 +52,7 @@ class Hub extends Component {
         />
         <div className='content'>
           <Switch>
-            <Route path='/profile' render={this.handleProfileRoute} />
+            <Route path='/profile' render={handleProfileRoute} />
             <Route path='/establishments/:establishmentId' component={EstablishmentProfile} />
             <Route path='/' render={renderWelcomeOrSearchResults} />
             {/* If none of the routes above was matched redirect to '/' */}

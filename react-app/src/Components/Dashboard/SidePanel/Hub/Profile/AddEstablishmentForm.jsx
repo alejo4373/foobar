@@ -45,7 +45,6 @@ class AddEstablishmentForm extends Component {
   }
 
   render() {
-    const { username, password, email } = this.state
     return (
       <div className='add-establishment'>
         <h4>Add Establishment</h4>

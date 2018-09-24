@@ -70,7 +70,7 @@ class NavigationBar extends Component {
   }
 
   render() {
-    const { user, goBack } = this.props
+    const { user } = this.props
     const { handleLogOutClick, handleSubmit, setSearchStr, handleInputFocus } = this
     return (
       <div className='navigation-bar'>
