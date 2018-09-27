@@ -65,32 +65,13 @@ class MapComponent extends Component {
     }
   }
 
-  handleMapReady = (mapProps, map) => {
-    let { google } = mapProps;
-    // Create PlacesService to retrieve images src from google
-    this.placesService = new google.maps.places.PlacesService(map);
-  }
 
   onMakerClick = (props, marker, e) => {
     const { establishment } = props
-
-    // Get the photo url for the active marker from google. This sucks, google won't allow me to store 
-    // urls to their images in my database.
-    this.placesService.getDetails({
-      placeId: establishment.googlePlaceId,
-      fields: ['photo']
-    }, (place, status) => {
-      if (status === 'OK') {
-        establishment.googlePhotoUrl = place.photos[0].getUrl({ maxWidth: 500, maxHeight: 500 });
-      } else {
-        establishment.googlePhotoUrl = 'https://images.pexels.com/photos/681847/pexels-photo-681847.jpeg?dl&fit=crop&crop=entropy&w=400&h='
-      }
-
-      this.setState({
-        selectedPlace: establishment,
-        activeMarker: marker,
-        showInfoWindow: true
-      })
+    this.setState({
+      selectedPlace: establishment,
+      activeMarker: marker,
+      showInfoWindow: true
     })
   }
 
@@ -132,7 +113,9 @@ class MapComponent extends Component {
                 className='establishment-card'
                 to={`/establishments/${selectedPlace.id}`}
               >
-                <div className='left' style={{ backgroundImage: `url(${selectedPlace.googlePhotoUrl})` }}>
+                <div className='left' style={{
+                  backgroundImage: `url(https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${selectedPlace.googlePhotoUrl}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY})`
+                }}>
                 </div>
                 <div className='right'>
                   <p className='name'>{selectedPlace.displayName}</p>
