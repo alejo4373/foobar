@@ -21,7 +21,9 @@ class EstablishmentList extends Component {
                       className='establishment-card'
                       to={`/establishments/${est.id}`}
                     >
-                      <div className='left' style={{ backgroundImage: `url(${est.googlePhotoUrl})` }}>
+                      <div className='left' style={{
+                        backgroundImage: `url(https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${est.googlePhotoUrl}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY})`
+                      }}>
                       </div>
                       <div className='right'>
                         <p className='name'>{est.displayName}</p>
