@@ -5,17 +5,20 @@ const { AWS } = global;
 
 // Set APIs versions
 AWS.config.apiVersions = {
-  cognitoidentity: '2014-06-30',
   dynamodb: '2012-08-10',
+  cognitoidentityserviceprovider: '2016-04-18',
+  cognitoidentity: '2014-06-30',
 };
 
 // Loads credentials and region
 AWS.config.loadFromPath('./aws-config.json');
 
 const setupDynamoDB = require('./AWS/setup-scripts/dynamoDB')
+const setupCognito = require('./AWS/setup-scripts/cognito')
 
 const main = () => {
-  setupDynamoDB();
+  // setupDynamoDB();
+  setupCognito();
 }
 
 main();
