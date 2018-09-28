@@ -1,0 +1,12 @@
+{
+  "name": "foobar",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.324.0"
+  },
+  "scripts": {
+    "start": "cd ./react-app && npm start",
+    "setup": "node ./aws-setup.js"
+  }
+}

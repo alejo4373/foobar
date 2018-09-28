@@ -1,5 +1,6 @@
 #alejo
 misc_ignored/
+aws-config*
 
 # Logs
 logs
