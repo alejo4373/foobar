@@ -89,7 +89,7 @@ query GetEstablishmentById{
     id
     managerUsername
     googlePlaceId
-    googlePhotoUrl
+    googlePhotoReference
     name
     address
     phone

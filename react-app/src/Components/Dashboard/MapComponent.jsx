@@ -114,7 +114,7 @@ class MapComponent extends Component {
                 to={`/establishments/${selectedPlace.id}`}
               >
                 <div className='left' style={{
-                  backgroundImage: `url(https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${selectedPlace.googlePhotoUrl}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY})`
+                  backgroundImage: `url(https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${selectedPlace.googlePhotoReference}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY})`
                 }}>
                 </div>
                 <div className='right'>

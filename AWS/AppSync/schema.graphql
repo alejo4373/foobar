@@ -30,11 +30,11 @@ type Establishment {
   id: ID
   managerUsername: String 
   googlePlaceId: String!
-  googlePhotoUrl: String
+  googlePhotoReference: String
   name: String!
-  displayName: String #removed (!) requiered because some of the establishments I have registered so far do not have this attribute yet, put back later on
+  displayName: String #removed (!) required because some of the establishments I have registered so far do not have this attribute yet, put back later on
   address: String!
-  phone: String #removed (!) requiered because some establishments do not have a phone
+  phone: String #removed (!) required because some establishments do not have a phone
   lat: String!
   lng: String!
 }
@@ -59,7 +59,6 @@ type Mutation {
     #id: ID # Handled in request mapping template, not requiered here
     #managerUsername: String!, # Handled in request mapping template, not requiered here
     googlePlaceId: String!
-    googlePhotoUrl: String!
     name: String!
     displayName: String!
     address: String!

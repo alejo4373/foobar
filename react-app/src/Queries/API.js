@@ -23,7 +23,7 @@ export async function getEstablishmentsInBounds(bounds, callback){
           establishments{
             id
             googlePlaceId
-            googlePhotoUrl
+            googlePhotoReference
             managerUsername
             name
             displayName
@@ -109,7 +109,7 @@ export async function getEstablishmentsUserManages(limit, callback) {
             id
             managerUsername
             googlePlaceId
-            googlePhotoUrl
+            googlePhotoReference
             name
             displayName
             address
@@ -136,7 +136,6 @@ export async function addEstablishment(newEstablishment, callback) {
     const res = await API.graphql(graphqlOperation(
       `mutation PutEstablishment(
           $googlePlaceId: String!,
-          $googlePhotoUrl: String!,
           $name: String!,
           $displayName: String!,
           $address: String!,
@@ -146,7 +145,6 @@ export async function addEstablishment(newEstablishment, callback) {
         ){
             putEstablishment(
               googlePlaceId: $googlePlaceId,
-              googlePhotoUrl: $googlePhotoUrl,
               name: $name,
               displayName: $displayName,
               address: $address,
@@ -157,7 +155,7 @@ export async function addEstablishment(newEstablishment, callback) {
               id
               managerUsername
               googlePlaceId
-              googlePhotoUrl
+              googlePhotoReference
               name
               displayName
               address
@@ -221,7 +219,7 @@ export async function getEstablishmentById(establishmentId, callback) {
           id
           managerUsername
           googlePlaceId
-          googlePhotoUrl
+          googlePhotoReference
           name
           displayName
           address
@@ -281,7 +279,7 @@ export async function searchEstablishments(pattern, callback) {
             id
             displayName
             phone
-            googlePhotoUrl
+            googlePhotoReference
           }
         }
       }`, { pattern: pattern })

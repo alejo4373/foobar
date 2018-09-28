@@ -17,11 +17,8 @@ class AddEstablishmentForm extends Component {
   }
 
   handleEstablishmentInput = (place) => {
-    const googlePhotoUrl = place.photos[0].getUrl({maxWidth: 500, maxHeight: 500}) || 'https://images.pexels.com/photos/681847/pexels-photo-681847.jpeg?dl&fit=crop&crop=entropy&w=400&h='
-
     const placeInfo = {
       googlePlaceId: place.place_id,
-      googlePhotoUrl: googlePhotoUrl,
       name: place.name.toLowerCase(), 
       displayName: place.name, 
       address: place.formatted_address,

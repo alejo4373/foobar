@@ -73,7 +73,7 @@ class EstablishmentProfile extends Component {
         <div className='top'>
           <img 
             className='establishment-photo'
-            src={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference=${establishment.googlePhotoUrl}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+            src={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference=${establishment.googlePhotoReference}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
             alt='bar or restaurant'
           />
         </div>
