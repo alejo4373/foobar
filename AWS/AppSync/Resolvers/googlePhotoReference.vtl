@@ -1,0 +1,9 @@
+## Request Mapping Template
+{
+    "version" : "2017-02-28",
+    "operation": "Invoke",
+    "payload": $util.toJson($context.source.googlePlaceId)
+}
+
+## Response Mapping Template
+$util.toJson($context.result)

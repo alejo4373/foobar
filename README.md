@@ -3,7 +3,7 @@
 ## Introduction
 Welcome to **FooBar** a Full-Stack Web App that enables sports fanatics to find bars that will be showing the game or fight of their interest, and it does so by encouraging establishments to post the games/fights they will be showing in their profile page on our platform. 
 
-Built with ReactJS in the front-end and an array of Amazon Web Services including AppSync, DynamoDB and Cognito as the back-end.
+Built with ReactJS in the front-end and an array of Amazon Web Services including AppSync, Lambda, DynamoDB and Cognito as the back-end.
 
 ## Features
 **Foobar** is intended to be used by two different kinds of users, mainly establishments and sports fanatics. Its graphic interface is visually consistent but on the establishment side it exposes a few more controls to allow the establishment's management of sporting events.
@@ -34,6 +34,7 @@ We need:
 * [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html): As a database service
 * [AppSync](https://docs.aws.amazon.com/appsync/latest/devguide/welcome.html): As a GraphQL API
 * [Cognito](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html): As user management and credentials granting service 
+* [Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html): As data-source for AppSync to get 'fresh' google places photos.
 * [AWS Amplify](https://aws-amplify.github.io/amplify-js/media/quick_start): To help us manage and integrate our AWS resources in our App
 
 #### DynamoDB 
@@ -114,14 +115,35 @@ Now we can move to *Identity Pools* also known as *Federated Identities*
 
 **Note:** If you missed any of the steps above you can always go back to your Identity Pool and edit it. [Here](https://docs.aws.amazon.com/appsync/latest/devguide/security.html) is some valuable information regarding what we just did. 
 
+#### Lambda 
+
+We will use a Lambda Function to retrieve a photo reference that will the `googlePhotoReference` property of an `Establishment` object in our schema. This reference (which is just a random string of characters and numbers) will be used to  get a 'fresh' url to an establishment image to display in the App. I say 'fresh' because Google doesn't allow us to store information like urls to their images for [more than 30 days](https://developers.google.com/places/web-service/policies#pre-fetching-caching-or-storage-of-content), so we cannot store a permanent url in our database. To work with this constraint we employ this function. The function will act as a resolver for the `googlePhotoReference` field of the `Establishment` type in the GraphQL Schema.
+
+> Note: If we think about it, this function will run every time the client requests an `Establishment` object with the `googlePhotoReference` field in any of its queries. It will even run as many times as `Establishment` objects in a query that returns a list of them. If the user load in our app was heavy this could become an expense that we might not want to afford. This functionality could be moved to the client itself with some hard work, allowing us to get rid of it in the back-end. I use this function here not only to get around [Google's less than 30 days policy](https://developers.google.com/places/web-service/policies#pre-fetching-caching-or-storage-of-content) constraint, but also to demonstrate how a Lambda Function can be used as a data source for custom work you might need to do. 
+
+Let's create our Lambda Function.
+
+1. Go to the [Lambda dashboard](https://us-east-2.console.aws.amazon.com/lambda/home).
+2. Hit `[Create Function]` and select **Author from Scratch**.
+3. In the Name filed, give the function the name `getGooglePhotoReference`.
+4. In the Runtime field select `Node.js 8.10`
+5. From the Role list select `Create a custom role`. A new tab will open with a wizard to create a new role. you can run with the defaults, it should look like [this](/assets/images/iam-lambda-role-wizard.png). Go ahead and hit `Allow`.
+6. By the end of these steps your Lambda creation wizard should look like [this](/assets/images/lambda-create-function.png). You can hit `[Create Function]`.
+7. Now to edit the actual function you should have been redirected and should see a text editor. Replace the content of the editor with the content of [AWS/Lambda/getGooglePhotoReference.js](/AWS/Lambda/getGooglePhotoReference.js) 
+8. For the Lambda function to access our Google Maps API we need to set the `GOOGLE_MAPS_API_KEY` environment variable. In the current page, locate the **_Environment Variables_** section and set the key field to `GOOGLE_MAPS_API_KEY` and in the value field put your actual Google Maps Api key.
+9. Everything should look somewhat like [this](/assets/images/lambda-text-editor.png). Hit the orange button `[Save]`.
+
 #### AppSync
 
 Access [AppSync's Dashboard](https://us-east-2.console.aws.amazon.com/appsync/home?region=us-east-2) and hit create API. We will create an API called ```foobar_API```, pick the option ```Author from scratch``` since we don't want any defaults. Once created you will be in your API Page where you can see a ```API URL```, ```API ID``` and a ```Auth mode``` as seen [here](/assets/images/app-sync-api-page.png). Please take note of this info as it will be used later in [```aws-config.js```](/react-app/src/aws-config.js). We will come back to this file and learn what it should contain later.
 
 ##### Data Sources
 
-A Data Source is where the data will come from and go to when we interact with the API. As our Data Source we will have the two DynamoDB tables we created earlier ```foobar_events_table``` and ```foobar_establishments```. A data source can be a Lambda Function or a DynamoDB database(our case) among other options. Notice the [menu](/assets/images/app-sync-api-page.png) to the left and hit ```Data Sources```
+A Data Source is where the data will come from and/or go to when we interact with the API. A Data Source can be a Lambda Function or a DynamoDB database among other options. As our main Data Source we will have the two DynamoDB tables we created earlier ```foobar_events_table``` and ```foobar_establishments```. We will also have the Lambda Function we created earlier.
+ 
+To create a data source, notice the [menu](/assets/images/app-sync-api-page.png) to the left and hit ```Data Sources```. Let's start with Dynamo and then Lambda.
 
+##### ⟶  Dynamo as Data Source
 1. Once in the Data Sources page hit ```New``` and fill in the *Data source name* field with ```foobar_establishments_table```. 
 2. *Data source type* should be ```Amazon DynamoDB Table```. 
 3. *Region* the region where you have your DynamoDB table, mine is ```us-east-2```. 
@@ -129,6 +151,18 @@ A Data Source is where the data will come from and go to when we interact with t
 5. Now a new section *Create or use an existing role* should have appeared with two radio buttons. Pick ```New Role```, this will create a new role for AppSync that allows it to interact with DynamoDB more specifically with the table we specified. Here the default are actually pretty good so we can run with them.
 6. Your setup should look something like [this](/assets/images/app-sync-data-source.png). Hit ```Create```. 
 7. Repeat for table ```foobar_events_table```. At the end your Data Sources page should look like [this](/assets/images/app-sync-data-sources-list.png)
+
+
+##### ⟶  Lambda Function as Data Source
+
+Very much like setting a DynamoDB table as data source we set our Lambda Function, with some variations.
+
+1. One more time go to the Data Sources page and hit `New`. Fill in the *Data source name* field with `getGooglePhotoReference`. 
+2. *Data source type* should be `AWS Lambda Function`. 
+3. *Region* the region where you have your Lambda function, mine is `us-east-2`. 
+4. A new drop down list called *Function ARN* should have appeared when you picked the region, here you can pick your actual Lambda Function. Check in the name for `function:getGooglePhotoReference`. If the function does not appear make sure you selected the right region.
+5. Now a new section *Create or use an existing role* should have appeared with two radio buttons. Pick ```New Role```, this will create a new role for AppSync that allows it to call our Lambda Function with the necessary permissions.
+6. This setup should look something like [this](/assets/images/app-sync-lambda-data-source.png). Hit ```Create```. 
 
 ##### Schema
 In the left menu seen before now go to ```Schema```. You will see [this screen](/assets/images/app-sync-schema-page.png). To the left a text editor: **Schema** . Replace its content with the content of [```schema.graphql```](/AWS/AppSync/schema.graphql), then hit ```Save Schema```. 
@@ -175,7 +209,7 @@ Let's setup one of our resolvers, the rest will follow the same pattern:
 6. Replace the content of the **first** editor *Request Mapping Template* with the content of the file under the comment ```## Request template```.
 7. Replace the content of the **second** editor *Response Mapping Template* with the content of the file under the comment ```## Response template```. The third comment if present can be ignored.
 8. At the end your resolver should look like [this](/assets/images/app-sync-first-resolver.png). Hit ```Save Resolver```
-9. Repeat for all the Queries in your **Resolvers** list in the *Schema* page as well as for the Mutations. Each of them have a file with the Request and Response template in [/AWS/AppSync/Resolvers](/AWS/AppSync/Resolvers) to set them up.
+9. Repeat for all the Queries in your **Resolvers** list in the *Schema* page as well as for the Mutations. Also do not forget the resolver for the `googlePhotoReference` in the `Establishment` type. Each of them have a file with the Request and Response template in [/AWS/AppSync/Resolvers](/AWS/AppSync/Resolvers) to set them up.
 
 **Note:** What the Request and Response template are doing is translating a request that comes to the GraphQL API into a request that DynamoDB can understand, same is true for the response, translating the Response from DynamoDB into something GraphQL can work with. This mapping templates are written in a language called VTL(Velocity Template Language) and there is more info about it [here](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference-overview.html) and [here](http://velocity.apache.org/engine/2.0/vtl-reference.html).
 
