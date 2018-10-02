@@ -34,25 +34,53 @@ const userPoolParams = {
   }
 };
 
-const main = () => {
-  identityProvider.listUserPools({ MaxResults: 10 }, (err, data) => {
-    if (err) { return console.log('[Error]', err) }
-
-    const { UserPools } = data
-    let poolAlreadyExists = UserPools.find(pool => pool.Name === userPoolParams.PoolName)
-
-    if (poolAlreadyExists) {
-      console.log('Pool with the same name already exists pool id:', poolAlreadyExists.Id)
-      console.log('=> A new pool will not be created')
-    } else {
-      identityProvider.createUserPool(userPoolParams, (err, data) => {
-        if (err) { return console.log(err) }
-        console.log('New user pool created ')
-        console.log('=> UserPool.Id:', data.UserPool.Id)
-        console.log('=> UserPool.Name:', data.UserPool.Name)
-      })
-    }
+const getUserPools = () => {
+  return new Promise(resolve => {
+    identityProvider.listUserPools({ MaxResults: 10 }, (err, data) => {
+      if (err) { resolve({ err: err }) }
+      else { resolve(data.UserPools) }
+    })
   })
+
+}
+
+const createUserPool = () => {
+  return new Promise(resolve => {
+    identityProvider.createUserPool(userPoolParams, (err, data) => {
+      if (err) { resolve({ err: err }) }
+      let poolId = data.UserPool.Id;
+      console.log('New user pool created ')
+      console.log('=> UserPool.Id:', poolId)
+      console.log('=> UserPool.Name:', data.UserPool.Name)
+      resolve(data)
+    })
+  })
+}
+
+const createUserPoolClient = () => {
+  return new Promise(resolve => {
+    identityProvider.createUserPoolClient(clientParams, (err, data) => {
+      if (err) { resolve({ err: err }) }
+      console.log('User Pool Client created', data)
+      console.log('UserPoolClientId:')
+      resolve(data)
+    })
+  })
+}
+
+const main = async () => {
+  let userPools = await getUserPools();
+  let poolId = null;
+  if (userPool.err) { return console.log('[Error]', userPool.err) }
+
+  let poolAlreadyExists = userPools.find(pool => pool.Name === userPoolParams.PoolName)
+  if (poolAlreadyExists) {
+    poolId = poolAlreadyExists.Id;
+    console.log('Pool with the same name already exists pool id:', poolAlreadyExists.Id)
+    console.log('=> A new pool will not be created')
+  } else {
+    const data = await createUserPool();
+  }
 
 }
 
