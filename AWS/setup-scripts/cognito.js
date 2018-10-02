@@ -57,31 +57,63 @@ const createUserPool = () => {
   })
 }
 
-const createUserPoolClient = () => {
+const createUserPoolClient = (clientParams) => {
   return new Promise(resolve => {
     identityProvider.createUserPoolClient(clientParams, (err, data) => {
       if (err) { resolve({ err: err }) }
       console.log('User Pool Client created', data)
-      console.log('UserPoolClientId:')
+      console.log('UserPoolClientId:', data.ClientId)
       resolve(data)
+    })
+  })
+}
+
+const getUserPoolClients = (poolId) => {
+  let params = {
+    UserPoolId: poolId,
+    MaxResults: 5,
+  }
+  return new Promise(resolve => {
+    identityProvider.listUserPoolClients(params, (err, data) => {
+      if (err) { resolve({ err: err }) }
+      resolve(data.UserPoolClients)
     })
   })
 }
 
 const main = async () => {
   let userPools = await getUserPools();
+  if (userPools.err) { return console.log('[Error]', userPools.err) }
   let poolId = null;
-  if (userPool.err) { return console.log('[Error]', userPool.err) }
-
   let poolAlreadyExists = userPools.find(pool => pool.Name === userPoolParams.PoolName)
   if (poolAlreadyExists) {
     poolId = poolAlreadyExists.Id;
     console.log('Pool with the same name already exists pool id:', poolAlreadyExists.Id)
     console.log('=> A new pool will not be created')
   } else {
-    const data = await createUserPool();
+    const data = await createUserPool(poolId);
+    if (data.err) { return console.log('[Error]', data.err) }
+    poolId = data.UserPool.Id;
   }
 
+  let clientParams = {
+    UserPoolId: poolId,
+    ClientName: 'foobar_app',
+    RefreshTokenValidity: 30,
+    ExplicitAuthFlows: ["USER_PASSWORD_AUTH"],
+    GenerateSecret: false
+  }
+
+  const clients = await getUserPoolClients(poolId);
+  if (clients.err) { return console.log('[Error]', clients.err) }
+
+  let clientAlreadyExits = clients.find(client => client.ClientName === clientParams.ClientName)
+  if (clientAlreadyExits) {
+    console.log('User Pool Client with same name already exists clientId:', clientAlreadyExits.ClientId)
+    console.log('=> A new client will not be created')
+  } else {
+    let client = await createUserPoolClient(clientParams);
+  }
 }
 
 module.exports = main;
