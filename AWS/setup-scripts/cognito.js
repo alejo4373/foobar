@@ -61,9 +61,11 @@ const createUserPoolClient = (clientParams) => {
   return new Promise(resolve => {
     identityProvider.createUserPoolClient(clientParams, (err, data) => {
       if (err) { resolve({ err: err }) }
-      console.log('User Pool Client created', data)
-      console.log('UserPoolClientId:', data.ClientId)
-      resolve(data)
+      const { UserPoolClient } = data
+      console.log('User Pool Client created')
+      console.log('=> UserPoolClient.ClientId', UserPoolClient.ClientId)
+      console.log('=> UserPoolClient.ClientName', UserPoolClient.ClientName)
+      resolve(UserPoolClient)
     })
   })
 }
@@ -82,9 +84,11 @@ const getUserPoolClients = (poolId) => {
 }
 
 const main = async () => {
+  let poolId = null;
+  let clientId = null;
+
   let userPools = await getUserPools();
   if (userPools.err) { return console.log('[Error]', userPools.err) }
-  let poolId = null;
   let poolAlreadyExists = userPools.find(pool => pool.Name === userPoolParams.PoolName)
   if (poolAlreadyExists) {
     poolId = poolAlreadyExists.Id;
@@ -109,10 +113,15 @@ const main = async () => {
 
   let clientAlreadyExits = clients.find(client => client.ClientName === clientParams.ClientName)
   if (clientAlreadyExits) {
+    clientId = clientAlreadyExits.ClientId;
     console.log('User Pool Client with same name already exists clientId:', clientAlreadyExits.ClientId)
     console.log('=> A new client will not be created')
   } else {
-    let client = await createUserPoolClient(clientParams);
+    const client = await createUserPoolClient(clientParams);
+    if (client.err) { return console.log('[Error]', client.err) }
+    clientId = client.ClientId;
+    console.log('poolId ====>', poolId)
+    console.log('clientId ====>', clientId)
   }
 }
 
