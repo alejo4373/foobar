@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const { AWS } = global;
 
 const appSync = new AWS.AppSync();
@@ -16,6 +19,16 @@ const createApi = (params) => {
     appSync.createGraphqlApi(params, (err, data) => {
       if (err) { resolve({ err: err }) }
       console.log('Created GraphQL Api')
+      resolve(data)
+    })
+  })
+}
+
+const startSchemaCreation = (params) => {
+  return new Promise(resolve => {
+    appSync.startSchemaCreation(params, (err, data) => {
+      if (err) { resolve({ err: err }) }
+      console.log('Started schema creation')
       resolve(data)
     })
   })
@@ -42,6 +55,15 @@ const main = async () => {
 
   console.log('==> Api Name:', api.name)
   console.log('==> Api Id:', api.apiId)
+
+  //Read the GraphQL schema.
+  let schema = fs.readFileSync(path.join(__dirname, '../AppSync/schema.graphql'));
+  let schemaParams = {
+    apiId: api.apiId,
+    definition: schema
+  }
+  let schemaData = await startSchemaCreation(schemaParams);
+  console.log('schemaData', schemaData)
 }
 
 module.exports = main;
