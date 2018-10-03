@@ -8,6 +8,7 @@ AWS.config.apiVersions = {
   dynamodb: '2012-08-10',
   cognitoidentityserviceprovider: '2016-04-18',
   cognitoidentity: '2014-06-30',
+  iam: '2010-05-08',
 };
 
 // Loads credentials and region
