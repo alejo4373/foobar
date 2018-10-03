@@ -9,6 +9,7 @@ AWS.config.apiVersions = {
   cognitoidentityserviceprovider: '2016-04-18',
   cognitoidentity: '2014-06-30',
   iam: '2010-05-08',
+  appsync: '2017-07-25',
 };
 
 // Loads credentials and region
@@ -16,10 +17,12 @@ AWS.config.loadFromPath('./aws-config.json');
 
 const setupDynamoDB = require('./AWS/setup-scripts/dynamoDB')
 const setupCognito = require('./AWS/setup-scripts/cognito')
+const setupAppSync = require('./AWS/setup-scripts/appSync');
 
 const main = () => {
   // setupDynamoDB();
-  setupCognito();
+  // setupCognito();
+  setupAppSync()
 }
 
 main();
