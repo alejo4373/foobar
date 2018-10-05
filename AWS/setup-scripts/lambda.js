@@ -19,7 +19,7 @@ const main = async () => {
   let functionZipFile = fs.readFileSync(path.join(__dirname, '../Lambda/getGooglePhotoReference.zip'))
 
   let funcParams = {
-    FunctionName: 'getGooglePhotoReference1',
+    FunctionName: 'getGooglePhotoReference',
     Runtime: 'nodejs8.10',
     //TODO: create new lambda execution role right before creating the function
     Role: 'arn:aws:iam::919273051626:role/lambda_basic_execution',
@@ -33,7 +33,6 @@ const main = async () => {
     Code: {
       ZipFile: functionZipFile
     }
-
   }
 
   let func;
