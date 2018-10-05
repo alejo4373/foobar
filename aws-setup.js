@@ -1,3 +1,6 @@
+// Load .env file
+require('dotenv').config();
+
 // Attach AWS to global object
 global.AWS = require('aws-sdk');
 
@@ -18,11 +21,13 @@ AWS.config.loadFromPath('./aws-config.json');
 const setupDynamoDB = require('./AWS/setup-scripts/dynamoDB')
 const setupCognito = require('./AWS/setup-scripts/cognito')
 const setupAppSync = require('./AWS/setup-scripts/appSync');
+const setupLambda = require('./AWS/setup-scripts/lambda');
 
 const main = () => {
   // setupDynamoDB();
   // setupCognito();
-  setupAppSync()
+  // setupAppSync()
+  setupLambda()
 }
 
 main();

@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "aws-sdk": "^2.324.0"
+    "aws-sdk": "^2.324.0",
+    "dotenv": "^6.0.0"
   },
   "scripts": {
     "start": "cd ./react-app && npm start",
