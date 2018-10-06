@@ -1,40 +1,37 @@
 const fs = require('fs');
 const path = require('path');
 
-const { AWS } = global;
-
 const appSync = new AWS.AppSync();
 
 const listApis = () => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     appSync.listGraphqlApis({}, (err, data) => {
-      if (err) { resolve({ err: err }) }
+      if (err) { reject(err) }
       resolve(data.graphqlApis)
     })
   })
 }
 
 const createApi = (params) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     appSync.createGraphqlApi(params, (err, data) => {
-      if (err) { resolve({ err: err }) }
-      console.log('Created GraphQL Api')
-      resolve(data)
+      if (err) { reject(err) }
+      resolve(data.graphqlApi)
     })
   })
 }
 
 const startSchemaCreation = (params) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     appSync.startSchemaCreation(params, (err, data) => {
-      if (err) { resolve({ err: err }) }
+      if (err) { reject(err) }
       console.log('Uploading schema')
       resolve(data)
     })
   })
 }
 
-// Will ask if the schema is ready once every second and return promise
+// Will ask if the schema is ready once every second and return a promise
 const isSchemaReady = (apiId) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -68,29 +65,35 @@ const waitUntilSchemaIsReady = async (apiId) => {
 }
 
 const main = async () => {
-  let api = null;
-  let schemaReady = false;
-
   let apiParams = {
     authenticationType: 'AWS_IAM',
-    name: 'foobar_api',
+    name: 'Foobar API',
   }
 
-  const apis = await listApis();
-  if (apis.err) { console.log('[Error]', apis.err) }
-  const apiAlreadyExists = apis.find(api => api.name === apiParams.name);
-  if (apiAlreadyExists) {
-    api = apiAlreadyExists;
-    console.log('Create GraphQL Api: Skipping, because another api with same name already exists')
-  } else {
-    api = await createApi(apiParams);
-    if (api.err) { console.log('[Error]', api.err) }
+  let apis;
+  let api;
+
+  try {
+    apis = await listApis();
+    api = apis.find(crrApi => crrApi.name === apiParams.name);
+    if (api) {
+      console.log('Create GraphQL Api: Skipping, because another api with same name already exists')
+    } else {
+      try {
+        api = await createApi(apiParams);
+        console.log('Create GraphQL Api: Success')
+      } catch (err) {
+        console.log('[Error]', err)
+      }
+    }
+  } catch (err) {
+    console.log('[Error]', err);
   }
 
   console.log('==> Api Name:', api.name)
   console.log('==> Api Id:', api.apiId)
 
-  //Read the local GraphQL schema.
+  //Read the local file GraphQL schema.
   let schemaDefinition = fs.readFileSync(path.join(__dirname, '../AppSync/schema.graphql'));
 
   let schemaParams = {
@@ -98,17 +101,20 @@ const main = async () => {
     definition: schemaDefinition
   }
 
-  let schemaData = await startSchemaCreation(schemaParams);
-  if (schemaData.err) { console.log('[Error]', schemaData.err) }
-  else {
+  let schemaReady;
+
+  try {
+    await startSchemaCreation(schemaParams);
+
     // Halt event loop until the schema is ready, since all following steps depend on this one
     schemaReady = await waitUntilSchemaIsReady(api.apiId);
+
+  } catch (err) {
+    console.log('[Error]', err)
   }
+
   console.log('Schema is ready?:', schemaReady);
-
   //TODO Add Data sources
-
-
 }
 
 module.exports = main;
