@@ -116,6 +116,7 @@ const main = async () => {
     console.log('[Error]', err)
   }
 
+  let createdRoleArn;
   try {
     const roleParams = {
       RoleName: 'appsync-datasource-ddb-foobar_establishments-role',
@@ -136,21 +137,19 @@ const main = async () => {
             "dynamodb:Scan",
             "dynamodb:UpdateItem"
           ],
-          "Resource": global.aws_vars.establishmentsTableArn + "/*"
+          "Resource": global.aws_vars.foobar_establishments_tableArn + "/*"
         }
       ]
     }
-    console.log("Resource", global.aws_vars.establishmentsTableArn + "/*");
 
     let policyParams = {
       PolicyDocument: JSON.stringify(policyDoc),
-      PolicyName: 'appsync-datasource-ddb-foobar_establishments-policy',
+      PolicyName: 'appsync-datasource-ddb-foobar_establishments_table-policy',
     };
 
-    let roleArn;
     try {
-      roleArn = await iam.createRoleForAppSyncToAccessDynamo('appsync.amazonaws.com', roleParams, policyParams);
-      console.log('roleArn', roleArn)
+      createdRoleArn = await iam.createRoleForAppSyncToAccessDynamo('appsync.amazonaws.com', roleParams, policyParams);
+      console.log('roleArn', createdRoleArn)
     } catch (err) {
       console.log('[Error]', err)
     }
@@ -166,10 +165,13 @@ const main = async () => {
     typeConfig: {
       tableName: 'foobar_establishments_table'
     },
-    serviceRoleArn
+    serviceRoleArn: createdRoleArn
   }
 
-  //TODO Add Data sources
+  console.log('establishmentsTableDS', establishmentsTableDS);
+
+  // TODO Add Data sources. can happen only once the 
+  // api is created. It doesn't need the schema to be ready
 }
 
 module.exports = main;
