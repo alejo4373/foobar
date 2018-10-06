@@ -15,7 +15,7 @@ const createPolicy = (params) => {
   return new Promise((resolve, reject) => {
     iam.createPolicy(params, (err, data) => {
       if (err) { reject(err) }
-      resolve(data)
+      resolve(data.Policy)
     })
   })
 }
@@ -43,6 +43,17 @@ const attachRolePolicy = (params) => {
     iam.attachRolePolicy(params, (err, data) => {
       if (err) { reject(err) }
       resolve(data)
+    })
+  })
+}
+
+const listPolicies = () => {
+  return new Promise((resolve, reject) => {
+    iam.listPolicies({
+      Scope: 'Local' // To list only customer managed policies
+    }, (err, data) => {
+      if (err) { reject(err) }
+      else { resolve(data.Policies) }
     })
   })
 }
@@ -220,20 +231,26 @@ const createRoleForAppSyncToAccessDynamo = async (principalService, roleParams, 
     console.log('[Error]', err)
   }
 
-  let createPolicyResponse;
-
+  // Create a new policy if no other with same name exists
+  let policies;
+  let policy;
   try {
-    createPolicyResponse = await createPolicy(policyParams)
+    policies = await listPolicies();
+    policy = policies.find(p => p.PolicyName === policyParams.PolicyName);
+    if (policy) {
+      console.log(`Policy with name ${policyParams.PolicyName} already exists. Skipping...`)
+    } else {
+      policy = await createPolicy(policyParams)
+    }
+
   } catch (err) {
     console.log('[Error]', err)
   }
 
-  console.log('createPolicyResponse', createPolicyResponse)
-
-  // const attachRolePolicyParams = {
-  //   PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole', //AWS managed policy
-  //   RoleName: roleParams.RoleName
-  // }
+  const attachRolePolicyParams = {
+    PolicyArn: policy.Arn,
+    RoleName: role.RoleName
+  }
 
   let policyAttached;
 
@@ -244,7 +261,7 @@ const createRoleForAppSyncToAccessDynamo = async (principalService, roleParams, 
   }
 
   if (policyAttached) {
-    console.log(`Role ${role.RoleName} created. Success`)
+    console.log(`Policy ${policy.PolicyName} attached to role: ${role.RoleName}. Success`)
     return role.Arn;
   } else {
     return false;
