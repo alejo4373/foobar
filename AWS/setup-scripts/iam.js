@@ -11,10 +11,28 @@ const createRole = (params) => {
   })
 }
 
+const listRoles = () => {
+  return new Promise((resolve, reject) => {
+    iam.listRoles({}, (err, data) => {
+      if (err) { reject(err) }
+      resolve(data.Roles)
+    })
+  })
+}
+
 const putRolePolicy = (params) => {
   return new Promise(resolve => {
     iam.putRolePolicy(params, (err, data) => {
       if (err) { resolve({ err: err }) }
+      resolve(data)
+    })
+  })
+}
+
+const attachRolePolicy = (params) => {
+  return new Promise((resolve, reject) => {
+    iam.attachRolePolicy(params, (err, data) => {
+      if (err) { reject(err) }
       resolve(data)
     })
   })
@@ -83,7 +101,67 @@ const createAuthorizedRoleForIdentityPoolToAccessAppSync = async (identityPoolId
   console.log('PolicyAttached =====>', policyAttached)
 }
 
+const createExecutionRoleForLambdaFunction = async () => {
+  // The trust relationship policy document that grants an entity permission to assume the role. 
+  let assumeRolePolicyDoc = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "lambda.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  }
+
+  const roleParams = {
+    RoleName: 'lambda_basic_execution',
+    Path: '/',
+    Description: 'Role that grants access to the logs service to the Lambda function',
+    AssumeRolePolicyDocument: JSON.stringify(assumeRolePolicyDoc)
+  };
+
+  let roles;
+  let role;
+
+  try {
+    // Get roles to verify a duplicate role is not created
+    roles = await listRoles();
+    role = roles.find(r => r.RoleName === roleParams.RoleName);
+
+    if (role) {
+      console.log(`Role with name ${role.RoleName} already exists. Skipping...`)
+    } else {
+      role = await createRole(roleParams)
+    }
+  } catch (err) {
+    console.log('[Error]', err)
+  }
+
+  const attachRolePolicyParams = {
+    PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole', //AWS managed policy
+    RoleName: roleParams.RoleName
+  }
+
+  let policyAttached;
+
+  try {
+    policyAttached = await attachRolePolicy(attachRolePolicyParams);
+  } catch (err) {
+    console.log('[Error]', err)
+  }
+
+  if (policyAttached) {
+    console.log(`Role ${role.RoleName} created. Success`)
+    return role.Arn;
+  } else {
+    return false;
+  }
+}
 
 module.exports = {
   createAuthorizedRoleForIdentityPoolToAccessAppSync,
+  createExecutionRoleForLambdaFunction,
 }
