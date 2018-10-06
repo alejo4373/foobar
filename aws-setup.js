@@ -3,6 +3,7 @@ require('dotenv').config();
 
 // Attach AWS to global object
 global.AWS = require('aws-sdk');
+global.aws_vars = {}; //Will hold runtime variables like ARNs to connect services
 
 const { AWS } = global;
 
@@ -23,11 +24,11 @@ const setupCognito = require('./AWS/setup-scripts/cognito')
 const setupAppSync = require('./AWS/setup-scripts/appSync');
 const setupLambda = require('./AWS/setup-scripts/lambda');
 
-const main = () => {
-  // setupDynamoDB();
+const main = async () => {
+  await setupDynamoDB();
   // setupCognito();
-  // setupAppSync()
-  setupLambda()
+  setupAppSync()
+  // setupLambda()
 }
 
 main();

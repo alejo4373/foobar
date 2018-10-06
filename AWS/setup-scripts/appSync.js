@@ -3,6 +3,9 @@ const path = require('path');
 
 const appSync = new AWS.AppSync();
 
+const createDataSource = require('./appSync/createDataSources');
+const iam = require('./iam');
+
 const listApis = () => {
   return new Promise((resolve, reject) => {
     appSync.listGraphqlApis({}, (err, data) => {
@@ -113,7 +116,59 @@ const main = async () => {
     console.log('[Error]', err)
   }
 
+  try {
+    const roleParams = {
+      RoleName: 'appsync-datasource-ddb-foobar_establishments-role',
+      Description: 'Role that grants access to the AppSync service to the DynamoDB Table',
+    };
+
+    const policyDoc = {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Sid": "DynamDBAccess",
+          "Effect": "Allow",
+          "Action": [
+            "dynamodb:DeleteItem",
+            "dynamodb:GetItem",
+            "dynamodb:PutItem",
+            "dynamodb:Query",
+            "dynamodb:Scan",
+            "dynamodb:UpdateItem"
+          ],
+          "Resource": global.aws_vars.establishmentsTableArn + "/*"
+        }
+      ]
+    }
+    console.log("Resource", global.aws_vars.establishmentsTableArn + "/*");
+
+    let policyParams = {
+      PolicyDocument: JSON.stringify(policyDoc),
+      PolicyName: 'appsync-datasource-ddb-foobar_establishments-policy',
+    };
+
+    let roleArn;
+    try {
+      roleArn = await iam.createRoleForAppSyncToAccessDynamo('appsync.amazonaws.com', roleParams, policyParams);
+      console.log('roleArn', roleArn)
+    } catch (err) {
+      console.log('[Error]', err)
+    }
+  } catch (err) {
+    console.log('[Error]', err)
+  }
+
   console.log('Schema is ready?:', schemaReady);
+  let establishmentsTableDS = {
+    name: 'foobar_establishments_table_ds',
+    apiId: api.apiId,
+    type: 'AMAZON_DYNAMODB',
+    typeConfig: {
+      tableName: 'foobar_establishments_table'
+    },
+    serviceRoleArn
+  }
+
   //TODO Add Data sources
 }
 
