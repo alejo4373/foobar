@@ -11,6 +11,15 @@ const createRole = (params) => {
   })
 }
 
+const createPolicy = (params) => {
+  return new Promise((resolve, reject) => {
+    iam.createPolicy(params, (err, data) => {
+      if (err) { reject(err) }
+      resolve(data)
+    })
+  })
+}
+
 const listRoles = () => {
   return new Promise((resolve, reject) => {
     iam.listRoles({}, (err, data) => {
@@ -161,7 +170,89 @@ const createExecutionRoleForLambdaFunction = async () => {
   }
 }
 
+const roleParams = {
+  RoleName: 'lambda_basic_execution',
+  Description: 'Role that grants access to the logs service to the Lambda function',
+};
+
+var policyParams = {
+  PolicyDocument: 'STRING_VALUE', /* required */
+  PolicyName: 'STRING_VALUE', /* required */
+  Description: 'STRING_VALUE',
+  Path: 'STRING_VALUE'
+};
+
+const createRoleForAppSyncToAccessDynamo = async (principalService, roleParams, policyParams) => {
+  // The trust relationship policy document that grants an entity permission to assume the role. 
+  let assumeRolePolicyDoc = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": principalService,
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  }
+
+  roleParams = {
+    AssumeRolePolicyDocument: JSON.stringify(assumeRolePolicyDoc),
+    Path: '/',
+    ...roleParams
+  }
+
+  let roles;
+  let role;
+
+  try {
+    // Get roles to verify a duplicate role is not created
+    roles = await listRoles();
+    role = roles.find(r => r.RoleName === roleParams.RoleName);
+
+    if (role) {
+      console.log(`Role with name ${role.RoleName} already exists. Skipping...`)
+    } else {
+      role = await createRole(roleParams)
+    }
+  } catch (err) {
+    console.log('[Error]', err)
+  }
+
+  let createPolicyResponse;
+
+  try {
+    createPolicyResponse = await createPolicy(policyParams)
+  } catch (err) {
+    console.log('[Error]', err)
+  }
+
+  console.log('createPolicyResponse', createPolicyResponse)
+
+  // const attachRolePolicyParams = {
+  //   PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole', //AWS managed policy
+  //   RoleName: roleParams.RoleName
+  // }
+
+  let policyAttached;
+
+  try {
+    policyAttached = await attachRolePolicy(attachRolePolicyParams);
+  } catch (err) {
+    console.log('[Error]', err)
+  }
+
+  if (policyAttached) {
+    console.log(`Role ${role.RoleName} created. Success`)
+    return role.Arn;
+  } else {
+    return false;
+  }
+}
+
 module.exports = {
   createAuthorizedRoleForIdentityPoolToAccessAppSync,
   createExecutionRoleForLambdaFunction,
+  createRoleForAppSyncToAccessDynamo,
 }
