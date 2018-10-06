@@ -1,5 +1,3 @@
-const { AWS } = global;
-
 let db = new AWS.DynamoDB()
 
 // Just so that we can use await instead of nesting callbacks
@@ -68,26 +66,31 @@ let eventsTableParams = {
   }
 }
 
-const main = () => {
-  // let estTableCheck = await checkTable('foobar_establishments_table')
-  createTableWithPromise(establishmentsTableParams)
-    .then(data => {
-      console.log('Creating table', data.TableDescription.TableName)
-    })
-    .catch(err => {
-      console.log('[Error]', err.message)
-    });
+const main = async () => {
+  let estTableResponse;
+  let evenTableResponse;
+  try {
+    estTableResponse = await createTableWithPromise(establishmentsTableParams)
+    console.log('Creating table', estTableResponse.TableDescription.TableName)
+    global.aws_vars = {
+      establishmentsTableArn: estTableResponse.TableDescription.TableArn,
+      ...global.aws_vars
+    }
+  } catch (err) {
+    console.log('[Error]', err.message)
+  };
 
-  createTableWithPromise(eventsTableParams)
-    .then(data => {
-      console.log('Creating table', data.TableDescription.TableName)
-    })
-    .catch(err => {
-      console.log('[Error]', err.message)
-    });
+  try {
+    evenTableResponse = await createTableWithPromise(eventsTableParams);
+    console.log('Creating table', evenTableResponse.TableDescription.TableName)
+    global.aws_vars = {
+      eventsTableArn: evenTableResponse.TableDescription.TableArn,
+      ...global.aws_vars
+    }
+  } catch (err) {
+    console.log('[Error]', err.message)
+  };
 
-  // if(estTableCheck
-  // let eventsTable = createTableWithPromises(eventsTableParams);
 }
 
 module.exports = main;
