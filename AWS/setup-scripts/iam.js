@@ -260,7 +260,7 @@ const createRoleFor = async (principalService, roleParams, policyParams) => {
 
 const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, dataSourceArn) => {
   const roleParams = {
-    RoleName: `appsync-datasource-ddb-${dataSourceName}-role`,
+    RoleName: `appsync-datasource-${dataSourceName}-role`,
     Description: 'Role that grants access to the AppSync service to the DynamoDB Table',
   };
 
@@ -301,7 +301,7 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
 
   let policyParams = {
     PolicyDocument: JSON.stringify(policyDoc),
-    PolicyName: `appsync-datasource-ddb-${dataSourceName}-policy`,
+    PolicyName: `appsync-datasource-${dataSourceName}-policy`,
   };
 
   let createdRoleArn;
