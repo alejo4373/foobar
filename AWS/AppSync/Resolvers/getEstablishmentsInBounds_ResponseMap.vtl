@@ -1,0 +1,5 @@
+## Response mapping template
+{
+    "establishments": $util.toJson(${context.result.items}),
+    "nextToken": "${context.result.nextToken}"
+}

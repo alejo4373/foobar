@@ -1,0 +1,12 @@
+## Request Mapping Template
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "limit": 1,
+    "query" : {
+        "expression": "id = :id",
+        "expressionValues" : {
+            ":id" : $util.dynamodb.toDynamoDBJson($ctx.args.id)
+        }
+    }
+}
