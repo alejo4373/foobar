@@ -4,12 +4,12 @@ const createDataSource = (params) => {
   return new Promise((resolve, reject) => {
     appSync.createDataSource(params, (err, data) => {
       if (err) { reject(err) }
-      resolve(data)
+      else { resolve(data) }
     })
   })
 }
 
-const main = ({ name, apiId, type, typeConfig, serviceRoleArn }) => {
+const main = async ({ name, apiId, type, typeConfig, serviceRoleArn }) => {
   let params = {
     apiId,
     name,
@@ -34,13 +34,12 @@ const main = ({ name, apiId, type, typeConfig, serviceRoleArn }) => {
   }
 
   let dataSource;
-
   try {
-    dataSource = createDataSource(params);
+    dataSource = await createDataSource(params);
+    return dataSource;
   } catch (err) {
     console.log('[Error]', err)
   }
-  console.log('dataSource', dataSource)
 }
 
 module.exports = main
