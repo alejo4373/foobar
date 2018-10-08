@@ -4,8 +4,8 @@ const iam = new IAM()
 const createRole = (params) => {
   return new Promise(resolve => {
     iam.createRole(params, (err, data) => {
-      if (err) { resolve({ err: err }) }
-      console.log('Creating Role:', params.RoleName);
+      if (err) { reject(err) }
+      else { resolve(data.Role) }
       resolve(data)
     })
   })
@@ -15,7 +15,7 @@ const createPolicy = (params) => {
   return new Promise((resolve, reject) => {
     iam.createPolicy(params, (err, data) => {
       if (err) { reject(err) }
-      resolve(data.Policy)
+      else { resolve(data.Policy) }
     })
   })
 }
@@ -24,7 +24,7 @@ const listRoles = () => {
   return new Promise((resolve, reject) => {
     iam.listRoles({}, (err, data) => {
       if (err) { reject(err) }
-      resolve(data.Roles)
+      else { resolve(data.Roles) }
     })
   })
 }
@@ -32,8 +32,8 @@ const listRoles = () => {
 const putRolePolicy = (params) => {
   return new Promise(resolve => {
     iam.putRolePolicy(params, (err, data) => {
-      if (err) { resolve({ err: err }) }
-      resolve(data)
+      if (err) { reject(err) }
+      else { resolve(data) }
     })
   })
 }
@@ -42,7 +42,7 @@ const attachRolePolicy = (params) => {
   return new Promise((resolve, reject) => {
     iam.attachRolePolicy(params, (err, data) => {
       if (err) { reject(err) }
-      resolve(data)
+      else { resolve(data) }
     })
   })
 }
@@ -181,19 +181,7 @@ const createExecutionRoleForLambdaFunction = async () => {
   }
 }
 
-const roleParams = {
-  RoleName: 'lambda_basic_execution',
-  Description: 'Role that grants access to the logs service to the Lambda function',
-};
-
-var policyParams = {
-  PolicyDocument: 'STRING_VALUE', /* required */
-  PolicyName: 'STRING_VALUE', /* required */
-  Description: 'STRING_VALUE',
-  Path: 'STRING_VALUE'
-};
-
-const createRoleForAppSyncToAccessDynamo = async (principalService, roleParams, policyParams) => {
+const createRoleFor = async (principalService, roleParams, policyParams) => {
   // The trust relationship policy document that grants an entity permission to assume the role. 
   let assumeRolePolicyDoc = {
     "Version": "2012-10-17",
@@ -201,7 +189,7 @@ const createRoleForAppSyncToAccessDynamo = async (principalService, roleParams, 
       {
         "Effect": "Allow",
         "Principal": {
-          "Service": principalService,
+          "Service": `${principalService}.amazonaws.com`
         },
         "Action": "sts:AssumeRole"
       }
@@ -226,6 +214,7 @@ const createRoleForAppSyncToAccessDynamo = async (principalService, roleParams, 
       console.log(`Role with name ${role.RoleName} already exists. Skipping...`)
     } else {
       role = await createRole(roleParams)
+      console.log(`Role with name ${role.RoleName} created. Success...`)
     }
   } catch (err) {
     console.log('[Error]', err)
@@ -241,6 +230,7 @@ const createRoleForAppSyncToAccessDynamo = async (principalService, roleParams, 
       console.log(`Policy with name ${policyParams.PolicyName} already exists. Skipping...`)
     } else {
       policy = await createPolicy(policyParams)
+      console.log(`Policy with name ${policy.PolicyName} created. Success...`)
     }
 
   } catch (err) {
@@ -261,7 +251,7 @@ const createRoleForAppSyncToAccessDynamo = async (principalService, roleParams, 
   }
 
   if (policyAttached) {
-    console.log(`Policy ${policy.PolicyName} attached to role: ${role.RoleName}. Success`)
+    console.log(`Policy attached to role. Success`)
     return role.Arn;
   } else {
     return false;
@@ -271,5 +261,5 @@ const createRoleForAppSyncToAccessDynamo = async (principalService, roleParams, 
 module.exports = {
   createAuthorizedRoleForIdentityPoolToAccessAppSync,
   createExecutionRoleForLambdaFunction,
-  createRoleForAppSyncToAccessDynamo,
+  createRoleFor,
 }
