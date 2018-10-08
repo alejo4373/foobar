@@ -131,10 +131,22 @@ const main = async () => {
     dataSourceArn: global.aws_vars.foobar_events_tableArn
   }
 
+  let lambdaFunctionDsParams = {
+    type: 'AWS_LAMBDA',
+    apiId: api.apiId,
+    dataSourceName: 'getGooglePhotoReference_function',
+    dataSourceArn: global.aws_vars.getGooglePhotoReference
+  }
+
+  console.log('================')
+  console.log('aws_vars', global.aws_vars)
+
   let establishmentTableDs = await createDataSource(establishmentTableDsParams)
   let eventsTableDs = await createDataSource(eventsTableDsParams)
+  let lambdaFunctionDs = await createDataSource(lambdaFunctionDsParams)
   console.log('establishmentTableDs', establishmentTableDs)
   console.log('eventsTableDs', eventsTableDs)
+  console.log('lambdaFunctionDs', lambdaFunctionDs)
 
 }
 

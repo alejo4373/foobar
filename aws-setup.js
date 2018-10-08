@@ -26,9 +26,9 @@ const setupLambda = require('./AWS/setup-scripts/lambda');
 
 const main = async () => {
   await setupDynamoDB();
+  await setupLambda()
   // setupCognito();
   setupAppSync()
-  // setupLambda()
 }
 
 main();

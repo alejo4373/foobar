@@ -45,10 +45,9 @@ const main = async ({ type, apiId, dataSourceName, dataSourceArn }) => {
     switch (type) {
       case 'AWS_LAMBDA':
         params.lambdaConfig = {
-          lambdaFunctionArn: dataSourceName
+          lambdaFunctionArn: dataSourceArn
         }
         try {
-          // TODO create role for lambda
           params.serviceRoleArn = await iam.createRoleForAppSyncToAccessDataSource('lambdaFunction', dataSourceName, dataSourceArn)
         } catch (err) {
           console.log('[Error]', err)
