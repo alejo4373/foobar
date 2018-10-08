@@ -138,9 +138,7 @@ const main = async () => {
     dataSourceArn: global.aws_vars.getGooglePhotoReference
   }
 
-  console.log('================')
-  console.log('aws_vars', global.aws_vars)
-
+  // The following statements could happen asynchronously but due to confusing log messages I decided against it.
   let establishmentTableDs = await createDataSource(establishmentTableDsParams)
   let eventsTableDs = await createDataSource(eventsTableDsParams)
   let lambdaFunctionDs = await createDataSource(lambdaFunctionDsParams)
