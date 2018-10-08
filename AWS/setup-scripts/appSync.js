@@ -115,63 +115,27 @@ const main = async () => {
   } catch (err) {
     console.log('[Error]', err)
   }
-
-  let createdRoleArn;
-  try {
-    const roleParams = {
-      RoleName: 'appsync-datasource-ddb-foobar_establishments-role',
-      Description: 'Role that grants access to the AppSync service to the DynamoDB Table',
-    };
-
-    const policyDoc = {
-      "Version": "2012-10-17",
-      "Statement": [
-        {
-          "Sid": "DynamDBAccess",
-          "Effect": "Allow",
-          "Action": [
-            "dynamodb:DeleteItem",
-            "dynamodb:GetItem",
-            "dynamodb:PutItem",
-            "dynamodb:Query",
-            "dynamodb:Scan",
-            "dynamodb:UpdateItem"
-          ],
-          "Resource": global.aws_vars.foobar_establishments_tableArn + "/*"
-        }
-      ]
-    }
-
-    let policyParams = {
-      PolicyDocument: JSON.stringify(policyDoc),
-      PolicyName: 'appsync-datasource-ddb-foobar_establishments_table-policy',
-    };
-
-    try {
-      createdRoleArn = await iam.createRoleForAppSyncToAccessDynamo('appsync.amazonaws.com', roleParams, policyParams);
-      console.log('roleArn', createdRoleArn)
-    } catch (err) {
-      console.log('[Error]', err)
-    }
-  } catch (err) {
-    console.log('[Error]', err)
-  }
-
   console.log('Schema is ready?:', schemaReady);
-  let establishmentsTableDS = {
-    name: 'foobar_establishments_table_ds',
-    apiId: api.apiId,
+
+  let establishmentTableDsParams = {
     type: 'AMAZON_DYNAMODB',
-    typeConfig: {
-      tableName: 'foobar_establishments_table'
-    },
-    serviceRoleArn: createdRoleArn
+    apiId: api.apiId,
+    dataSourceName: 'foobar_establishments_table',
+    dataSourceArn: global.aws_vars.foobar_establishments_tableArn
   }
 
-  console.log('establishmentsTableDS', establishmentsTableDS);
+  let eventsTableDsParams = {
+    type: 'AMAZON_DYNAMODB',
+    apiId: api.apiId,
+    dataSourceName: 'foobar_events_table',
+    dataSourceArn: global.aws_vars.foobar_events_tableArn
+  }
 
-  // TODO Add Data sources. can happen only once the 
-  // api is created. It doesn't need the schema to be ready
+  let establishmentTableDs = await createDataSource(establishmentTableDsParams)
+  let eventsTableDs = await createDataSource(eventsTableDsParams)
+  console.log('establishmentTableDs', establishmentTableDs)
+  console.log('eventsTableDs', eventsTableDs)
+
 }
 
 module.exports = main;

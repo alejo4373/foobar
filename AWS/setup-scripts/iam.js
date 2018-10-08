@@ -258,8 +258,64 @@ const createRoleFor = async (principalService, roleParams, policyParams) => {
   }
 }
 
+const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, dataSourceArn) => {
+  const roleParams = {
+    RoleName: `appsync-datasource-ddb-${dataSourceName}-role`,
+    Description: 'Role that grants access to the AppSync service to the DynamoDB Table',
+  };
+
+  const policyDoc = {
+    Version: "2012-10-17",
+    Statement: [
+      {
+        Sid: `${type}Access`,
+        Effect: "Allow",
+        Action: [], //Will be set based on the type of data source below
+        Resource: "" //Will be set based on the type of data source below
+      }
+    ]
+  }
+
+  // Define policyDoc Action and Resource based on data source type
+  switch (type) {
+    case 'dynamoDBTable':
+      policyDoc.Statement[0].Action = [
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+      ]
+      policyDoc.Statement[0].Resource = dataSourceArn + '/*'
+      break;
+
+    case 'lambdaFunction':
+      policyDoc.Statement[0].Action = [
+        "lambda:invokeFunction"
+      ]
+      policyDoc.Statement[0].Resource = dataSourceArn + ':*'
+      break;
+  }
+
+
+  let policyParams = {
+    PolicyDocument: JSON.stringify(policyDoc),
+    PolicyName: `appsync-datasource-ddb-${dataSourceName}-policy`,
+  };
+
+  let createdRoleArn;
+  try {
+    // Create role for AppSync to access dynamodb
+    createdRoleArn = await createRoleFor('appsync', roleParams, policyParams);
+    return createdRoleArn;
+  } catch (err) {
+    console.log('[Error]', err)
+  }
+}
+
 module.exports = {
   createAuthorizedRoleForIdentityPoolToAccessAppSync,
   createExecutionRoleForLambdaFunction,
-  createRoleFor,
+  createRoleForAppSyncToAccessDataSource,
 }
