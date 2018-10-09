@@ -2,7 +2,7 @@ const IAM = require('aws-sdk/clients/iam');
 const iam = new IAM()
 
 const createRole = (params) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     iam.createRole(params, (err, data) => {
       if (err) { reject(err) }
       else { resolve(data.Role) }
@@ -29,15 +29,6 @@ const listRoles = () => {
   })
 }
 
-const putRolePolicy = (params) => {
-  return new Promise(resolve => {
-    iam.putRolePolicy(params, (err, data) => {
-      if (err) { reject(err) }
-      else { resolve(data) }
-    })
-  })
-}
-
 const attachRolePolicy = (params) => {
   return new Promise((resolve, reject) => {
     iam.attachRolePolicy(params, (err, data) => {
@@ -58,21 +49,7 @@ const listPolicies = () => {
   })
 }
 
-const createAuthorizedRoleForIdentityPoolToAccessAppSync = async (identityPoolId, appSyncApiId) => {
-  let policyDoc = {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Sid": "VisualEditor0",
-        "Effect": "Allow",
-        "Action": "appsync:GraphQL",
-        "Resource": `arn:aws:appsync:${global.AWS.config.region}:*:apis/${appSyncApiId}/types/*/fields/*`
-      }
-    ]
-  }
-
-  // Somewhat explains what assumeRolePolicyDoc is about
-  // https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html?icmpid=docs_iam_console
+const createUnauthenticatedRoleForIdentityPoolToAccessAppSync = async (identityPoolId, appSyncApiId) => {
   let assumeRolePolicyDoc = {
     "Version": "2012-10-17",
     "Statement": [
@@ -87,38 +64,45 @@ const createAuthorizedRoleForIdentityPoolToAccessAppSync = async (identityPoolId
             "cognito-identity.amazonaws.com:aud": identityPoolId
           },
           "ForAnyValue:StringLike": {
-            "cognito-identity.amazonaws.com:amr": "authenticated"
+            "cognito-identity.amazonaws.com:amr": "unauthenticated"
           }
         }
+      },
+    ]
+  }
+
+  let policyDoc = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "VisualEditor0",
+        "Effect": "Allow",
+        "Action": "appsync:GraphQL",
+        "Resource": `arn:aws:appsync:${global.AWS.config.region}:*:apis/${appSyncApiId}/types/Query/fields/*`
       }
     ]
   }
 
   const roleParams = {
-    RoleName: 'foobar_identity_pool_authorized_role',
-    Path: '/',
+    RoleName: 'foobar_identity_pool_unauthenticated-role',
     Description: 'Role that grants only access to the query type of a given GraphQL API',
-    AssumeRolePolicyDocument: JSON.stringify(assumeRolePolicyDoc)
   };
 
-  let role = await createRole(roleParams)
-  if (role.err) {
-    if (role.err.code === 'EntityAlreadyExists') {
-      console.log(role.err.message, 'Skipping...')
-    } else {
-      console.log('[Error]', role.err)
-    }
-  }
-
-  const putRolePolicyParams = {
+  const policyParams = {
     PolicyDocument: JSON.stringify(policyDoc),
-    PolicyName: 'AppSyncQueryAccess',
-    RoleName: roleParams.RoleName
+    PolicyName: 'foobar_identity_pool_unauthenticated-policy',
   }
 
-  let policyAttached = await putRolePolicy(putRolePolicyParams);
-  if (policyAttached.err) { console.log('[Error]', policyAttached.err) }
-  console.log('PolicyAttached =====>', policyAttached)
+  let createdRoleArn;
+  try {
+    // Create role for cognito identity pool to access AppSync
+    createdRoleArn = await createRoleFor(assumeRolePolicyDoc, roleParams, policyParams);
+    console.log('createdRoleArn', createdRoleArn)
+    return createdRoleArn;
+  } catch (err) {
+    console.log('[Error]', err)
+  }
+
 }
 
 const createExecutionRoleForLambdaFunction = async () => {
@@ -181,21 +165,7 @@ const createExecutionRoleForLambdaFunction = async () => {
   }
 }
 
-const createRoleFor = async (principalService, roleParams, policyParams) => {
-  // The trust relationship policy document that grants an entity permission to assume the role. 
-  let assumeRolePolicyDoc = {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Principal": {
-          "Service": `${principalService}.amazonaws.com`
-        },
-        "Action": "sts:AssumeRole"
-      }
-    ]
-  }
-
+const createRoleFor = async (assumeRolePolicyDoc, roleParams, policyParams) => {
   roleParams = {
     AssumeRolePolicyDocument: JSON.stringify(assumeRolePolicyDoc),
     Path: '/',
@@ -259,6 +229,21 @@ const createRoleFor = async (principalService, roleParams, policyParams) => {
 }
 
 const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, dataSourceArn) => {
+
+  // The trust relationship policy document that grants an entity permission to assume the role. 
+  let assumeRolePolicyDoc = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "appsync.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole",
+      },
+    ]
+  }
+
   const roleParams = {
     RoleName: `appsync-datasource-${dataSourceName}-role`,
     Description: 'Role that grants access to the AppSync service to the DynamoDB Table',
@@ -307,7 +292,7 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
   let createdRoleArn;
   try {
     // Create role for AppSync to access dynamodb
-    createdRoleArn = await createRoleFor('appsync', roleParams, policyParams);
+    createdRoleArn = await createRoleFor(assumeRolePolicyDoc, roleParams, policyParams);
     return createdRoleArn;
   } catch (err) {
     console.log('[Error]', err)
@@ -315,7 +300,7 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
 }
 
 module.exports = {
-  createAuthorizedRoleForIdentityPoolToAccessAppSync,
+  createUnauthenticatedRoleForIdentityPoolToAccessAppSync,
   createExecutionRoleForLambdaFunction,
   createRoleForAppSyncToAccessDataSource,
 }
