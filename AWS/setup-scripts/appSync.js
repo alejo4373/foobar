@@ -3,6 +3,7 @@ const path = require('path');
 
 const appSync = new AWS.AppSync();
 
+const { setGlobalVar } = require('./utils');
 const createDataSource = require('./appSync/createDataSources');
 const createResolvers = require('./appSync/createResolvers');
 
@@ -95,6 +96,7 @@ const main = async () => {
 
   console.log('==> Api Name:', api.name)
   console.log('==> Api Id:', api.apiId)
+  setGlobalVar('GRAPHQL_ENDPOINT', api.uris.GRAPHQL);
 
   //Read the local file GraphQL schema.
   let schemaDefinition = fs.readFileSync(path.join(__dirname, '../AppSync/schema.graphql'));
