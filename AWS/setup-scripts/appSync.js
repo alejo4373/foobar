@@ -4,7 +4,7 @@ const path = require('path');
 const appSync = new AWS.AppSync();
 
 const createDataSource = require('./appSync/createDataSources');
-const iam = require('./iam');
+const createResolvers = require('./appSync/createResolvers');
 
 const listApis = () => {
   return new Promise((resolve, reject) => {
@@ -117,6 +117,7 @@ const main = async () => {
   }
   console.log('Schema is ready?:', schemaReady);
 
+  // Set up data sources
   let establishmentTableDsParams = {
     type: 'AMAZON_DYNAMODB',
     apiId: api.apiId,
@@ -142,10 +143,12 @@ const main = async () => {
   let establishmentTableDs = await createDataSource(establishmentTableDsParams)
   let eventsTableDs = await createDataSource(eventsTableDsParams)
   let lambdaFunctionDs = await createDataSource(lambdaFunctionDsParams)
-  console.log('establishmentTableDs', establishmentTableDs)
-  console.log('eventsTableDs', eventsTableDs)
-  console.log('lambdaFunctionDs', lambdaFunctionDs)
 
+  /*
+  * Set up resolvers
+  */
+  let dataSources = [establishmentTableDs.name, eventsTableDs.name, lambdaFunctionDs.name];
+  createResolvers(api.apiId, dataSources);
 }
 
 module.exports = main;
