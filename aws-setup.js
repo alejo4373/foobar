@@ -6,6 +6,7 @@ global.AWS = require('aws-sdk');
 global.aws_vars = {}; //Will hold runtime variables like ARNs to connect services
 
 const { AWS } = global;
+const { exportEnvVarsFile } = require('./AWS/setup-scripts/utils');
 
 // Set APIs versions
 AWS.config.apiVersions = {
@@ -27,8 +28,9 @@ const setupLambda = require('./AWS/setup-scripts/lambda');
 const main = async () => {
   await setupDynamoDB();
   await setupLambda()
-  // setupCognito();
-  setupAppSync()
+  await setupAppSync()
+  await setupCognito();
+  exportEnvVarsFile();
 }
 
 main();
