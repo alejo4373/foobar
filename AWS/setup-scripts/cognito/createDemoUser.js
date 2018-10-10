@@ -72,7 +72,11 @@ const createDemoUser = async (userPoolId, clientId) => {
       console.log('[Error]\n', err)
     }
   } catch (err) {
-    console.log('[Error]\n', err)
+    if (err.code === 'UsernameExistsException') {
+      console.log(`Demo user ${createUserParams.Username} already exits. Skipping...`);
+    } else {
+      console.log('[Error]\n', err)
+    }
   }
 }
 
