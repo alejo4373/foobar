@@ -346,7 +346,6 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
   try {
     // Create role for AppSync to access dynamodb
     createdRoleArn = await createRoleFor(assumeRolePolicyDoc, roleParams, policyParams);
-    return createdRoleArn;
   } catch (err) {
     console.log('[Error]', err)
   }

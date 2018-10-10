@@ -97,7 +97,7 @@ const main = async () => {
   console.log('==> Api Name:', api.name)
   console.log('==> Api Id:', api.apiId)
   setGlobalVar('api', {
-    id: api.id,
+    id: api.apiId,
     GRAPHQL_ENDPOINT: api.uris.GRAPHQL
   });
 
