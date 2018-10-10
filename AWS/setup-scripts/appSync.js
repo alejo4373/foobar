@@ -96,7 +96,10 @@ const main = async () => {
 
   console.log('==> Api Name:', api.name)
   console.log('==> Api Id:', api.apiId)
-  setGlobalVar('GRAPHQL_ENDPOINT', api.uris.GRAPHQL);
+  setGlobalVar('api', {
+    id: api.id,
+    GRAPHQL_ENDPOINT: api.uris.GRAPHQL
+  });
 
   //Read the local file GraphQL schema.
   let schemaDefinition = fs.readFileSync(path.join(__dirname, '../AppSync/schema.graphql'));
