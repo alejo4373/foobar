@@ -102,7 +102,61 @@ const createUnauthenticatedRoleForIdentityPoolToAccessAppSync = async (identityP
   } catch (err) {
     console.log('[Error]', err)
   }
+}
 
+const createAuthenticatedRoleForIdentityPoolToAccessAppSync = async (identityPoolId, appSyncApiId) => {
+  let assumeRolePolicyDoc = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Federated": "cognito-identity.amazonaws.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+          "StringEquals": {
+            "cognito-identity.amazonaws.com:aud": identityPoolId
+          },
+          "ForAnyValue:StringLike": {
+            "cognito-identity.amazonaws.com:amr": "authenticated"
+          }
+        }
+      },
+    ]
+  }
+
+  let policyDoc = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "VisualEditor0",
+        "Effect": "Allow",
+        "Action": "appsync:GraphQL",
+        "Resource": `arn:aws:appsync:${global.AWS.config.region}:*:apis/${appSyncApiId}/types/*/fields/*`
+      }
+    ]
+  }
+
+  const roleParams = {
+    RoleName: 'foobar_identity_pool_authenticated-role',
+    Description: 'Role that grants access to all the types of a given GraphQL API',
+  };
+
+  const policyParams = {
+    PolicyDocument: JSON.stringify(policyDoc),
+    PolicyName: 'foobar_identity_pool_authenticated-policy',
+  }
+
+  let createdRoleArn;
+  try {
+    // Create role for cognito identity pool to access AppSync
+    createdRoleArn = await createRoleFor(assumeRolePolicyDoc, roleParams, policyParams);
+    console.log('createdRoleArn', createdRoleArn)
+    return createdRoleArn;
+  } catch (err) {
+    console.log('[Error]', err)
+  }
 }
 
 const createExecutionRoleForLambdaFunction = async () => {
@@ -301,6 +355,7 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
 
 module.exports = {
   createUnauthenticatedRoleForIdentityPoolToAccessAppSync,
+  createAuthenticatedRoleForIdentityPoolToAccessAppSync,
   createExecutionRoleForLambdaFunction,
   createRoleForAppSyncToAccessDataSource,
 }
