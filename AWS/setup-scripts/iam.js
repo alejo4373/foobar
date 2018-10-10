@@ -75,7 +75,7 @@ const createUnauthenticatedRoleForIdentityPoolToAccessAppSync = async (identityP
     "Version": "2012-10-17",
     "Statement": [
       {
-        "Sid": "VisualEditor0",
+        "Sid": "AppSyncQueryTypeAccessOnly",
         "Effect": "Allow",
         "Action": "appsync:GraphQL",
         "Resource": `arn:aws:appsync:${global.AWS.config.region}:*:apis/${appSyncApiId}/types/Query/fields/*`
@@ -130,7 +130,7 @@ const createAuthenticatedRoleForIdentityPoolToAccessAppSync = async (identityPoo
     "Version": "2012-10-17",
     "Statement": [
       {
-        "Sid": "VisualEditor0",
+        "Sid": "AppSyncAllTypesAccess",
         "Effect": "Allow",
         "Action": "appsync:GraphQL",
         "Resource": `arn:aws:appsync:${global.AWS.config.region}:*:apis/${appSyncApiId}/types/*/fields/*`
@@ -152,7 +152,6 @@ const createAuthenticatedRoleForIdentityPoolToAccessAppSync = async (identityPoo
   try {
     // Create role for cognito identity pool to access AppSync
     createdRoleArn = await createRoleFor(assumeRolePolicyDoc, roleParams, policyParams);
-    console.log('createdRoleArn', createdRoleArn)
     return createdRoleArn;
   } catch (err) {
     console.log('[Error]', err)
