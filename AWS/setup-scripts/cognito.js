@@ -5,6 +5,7 @@ const identityProvider = new cognito_idp();
 const cognitoIdentity = new cognito_identity();
 
 const iam = require('./iam');
+const { setGlobalVar } = require('./utils');
 
 const userPoolParams = {
   PoolName: 'foobar_user_pool',
@@ -236,7 +237,6 @@ const main = async () => {
       iam.createUnauthenticatedRoleForIdentityPoolToAccessAppSync(identityPoolId, global.aws_vars.api.id)
     ])
 
-    console.log('identityPoolRoles', identityPoolRoles)
     let setIdentityPoolRolesParams = {
       IdentityPoolId: identityPoolId,
       Roles: {
@@ -252,6 +252,11 @@ const main = async () => {
   } catch (err) {
     return console.log('[Error]', err)
   }
+  setGlobalVar('cognito', {
+    IDENTITY_POOL_ID: identityPoolId,
+    USER_POOL_ID: userPoolId,
+    USER_POOL_CLIENT_ID: clientId
+  })
 }
 
 module.exports = main;
