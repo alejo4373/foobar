@@ -309,7 +309,7 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
         Sid: `${type}Access`,
         Effect: "Allow",
         Action: [], //Will be set based on the type of data source below
-        Resource: "" //Will be set based on the type of data source below
+        Resource: [] //Will be set based on the type of data source below
       }
     ]
   }
@@ -325,14 +325,14 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
         "dynamodb:Scan",
         "dynamodb:UpdateItem"
       ]
-      policyDoc.Statement[0].Resource = dataSourceArn + '/*'
+      policyDoc.Statement[0].Resource = [dataSourceArn, dataSourceArn + '/*']
       break;
 
     case 'lambdaFunction':
       policyDoc.Statement[0].Action = [
         "lambda:invokeFunction"
       ]
-      policyDoc.Statement[0].Resource = dataSourceArn + ':*'
+      policyDoc.Statement[0].Resource = [dataSourceArn, dataSourceArn + ':*']
       break;
   }
 
