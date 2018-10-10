@@ -166,7 +166,10 @@ const main = async () => {
     UserPoolId: userPoolId,
     ClientName: 'foobar_app',
     RefreshTokenValidity: 30,
-    ExplicitAuthFlows: ["USER_PASSWORD_AUTH"],
+    ExplicitAuthFlows: [
+      "USER_PASSWORD_AUTH",
+      "ADMIN_NO_SRP_AUTH" //Only needed because we want to create a demo user programmatically later 
+    ],
     GenerateSecret: false
   }
 
