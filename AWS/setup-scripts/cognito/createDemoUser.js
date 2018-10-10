@@ -3,12 +3,10 @@ const identityProvider = new cognito_idp();
 
 const createDemoUser = async (userPoolId, clientId) => {
   console.log('####### Creating Demo User ########')
-  userPoolId = 'us-east-1_Q2jqKrgNp';
-  clientId = 'h0ou2umnueshapqfdd6732qc7'
 
   let createUserParams = {
     UserPoolId: userPoolId,
-    Username: 'EstablishmentManagerDemoUser',
+    Username: 'AEstablishmentManagerUser',
     UserAttributes: [
       {
         Name: 'email',

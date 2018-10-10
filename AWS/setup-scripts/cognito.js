@@ -4,8 +4,9 @@ const cognito_identity = require('aws-sdk/clients/cognitoidentity');
 const identityProvider = new cognito_idp();
 const cognitoIdentity = new cognito_identity();
 
-const iam = require('./iam');
 const { setGlobalVar } = require('./utils');
+const iam = require('./iam');
+const createDemoUser = require('./cognito/createDemoUser');
 
 const userPoolParams = {
   PoolName: 'foobar_user_pool',
@@ -255,6 +256,14 @@ const main = async () => {
   } catch (err) {
     return console.log('[Error]', err)
   }
+
+  try {
+    // To allow demo login later
+    await createDemoUser(userPoolId, clientId);
+  } catch (err) {
+    console.log('[Error]', err)
+  }
+
   setGlobalVar('cognito', {
     IDENTITY_POOL_ID: identityPoolId,
     USER_POOL_ID: userPoolId,
