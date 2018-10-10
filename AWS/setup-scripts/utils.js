@@ -14,7 +14,8 @@ const exportEnvVarsFile = () => {
 
   let fileLines = [
     `${prefix}GRAPHQL_ENDPOINT=${apiEndpoint}`,
-    `${prefix}GOOGLE_MAPS_API_KEY=${process.env.GOOGLE_MAPS_API_KEY}` //Bring google maps api key to this other .env file as well
+    `${prefix}GOOGLE_MAPS_API_KEY=${process.env.GOOGLE_MAPS_API_KEY}`, //Bring google maps api key to this other .env file as well
+    `${prefix}AWS_REGION=${global.AWS.config.region}`
   ]
 
   for (key in cognito) {
