@@ -4,6 +4,8 @@ const cognito_identity = require('aws-sdk/clients/cognitoidentity');
 const identityProvider = new cognito_idp();
 const cognitoIdentity = new cognito_identity();
 
+const iam = require('./iam');
+
 const userPoolParams = {
   PoolName: 'foobar_user_pool',
   Policies: {
@@ -119,6 +121,17 @@ const createIdentityPool = (params) => {
   })
 }
 
+const setIdentityPoolRoles = (params) => {
+  return new Promise((resolve, reject) => {
+    cognitoIdentity.setIdentityPoolRoles(params, (err, data) => {
+      if (err) { reject(err) }
+      else {
+        resolve(data)
+      }
+    })
+  })
+}
+
 const main = async () => {
   let userPoolId = null;
   let clientId = null;
@@ -214,6 +227,30 @@ const main = async () => {
     } catch (err) {
       return console.log('[Error]', err)
     }
+  }
+
+  // Setup Identity Pool Roles
+  try {
+    let identityPoolRoles = await Promise.all([
+      iam.createAuthenticatedRoleForIdentityPoolToAccessAppSync(identityPoolId, global.aws_vars.api.id),
+      iam.createUnauthenticatedRoleForIdentityPoolToAccessAppSync(identityPoolId, global.aws_vars.api.id)
+    ])
+
+    console.log('identityPoolRoles', identityPoolRoles)
+    let setIdentityPoolRolesParams = {
+      IdentityPoolId: identityPoolId,
+      Roles: {
+        authenticated: identityPoolRoles[0],
+        unauthenticated: identityPoolRoles[1],
+      }
+    }
+    try {
+      await setIdentityPoolRoles(setIdentityPoolRolesParams)
+    } catch (err) {
+      return console.log('[Error]', err)
+    }
+  } catch (err) {
+    return console.log('[Error]', err)
   }
 }
 
