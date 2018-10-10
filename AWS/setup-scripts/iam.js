@@ -349,6 +349,8 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
   } catch (err) {
     console.log('[Error]', err)
   }
+
+  return createdRoleArn
 }
 
 module.exports = {
