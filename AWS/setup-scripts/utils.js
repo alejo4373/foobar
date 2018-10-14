@@ -7,6 +7,17 @@ const setGlobalVar = (name, value) => {
   }
 }
 
+const addToCreatedInGlobalVar = (name, value) => {
+  let prevCreated = global.aws_vars.created
+  global.aws_vars = {
+    created: {
+      [name]: value,
+      ...prevCreated
+    },
+    ...global.aws_vars
+  }
+}
+
 const exportEnvVarsFile = () => {
   let prefix = 'REACT_APP_' // Since the .env file will be used by a React App bootstrapped with create-react-app
   let cognito = global.aws_vars.cognito;
@@ -27,7 +38,14 @@ const exportEnvVarsFile = () => {
   fs.writeFileSync('./react-app/.env.new', fileContent, 'utf8')
 }
 
+const exportCreatedResourcesAsJson = () => {
+  let fileContent = JSON.stringify(global.aws_vars.created);
+  fs.writeFileSync('./awsResourcesCreated.json', fileContent, 'utf8')
+}
+
 module.exports = {
   setGlobalVar,
-  exportEnvVarsFile
+  exportEnvVarsFile,
+  addToCreatedInGlobalVar,
+  exportCreatedResourcesAsJson
 }
