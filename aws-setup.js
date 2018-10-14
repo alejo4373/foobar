@@ -6,7 +6,7 @@ global.AWS = require('aws-sdk');
 global.aws_vars = {}; //Will hold runtime variables like ARNs to connect services
 
 const { AWS } = global;
-const { exportEnvVarsFile } = require('./AWS/setup-scripts/utils');
+const { exportEnvVarsFile, exportCreatedResourcesAsJson } = require('./AWS/setup-scripts/utils');
 
 // Set APIs versions
 AWS.config.apiVersions = {
@@ -31,6 +31,7 @@ const main = async () => {
   await setupAppSync()
   await setupCognito();
   exportEnvVarsFile();
+  exportCreatedResourcesAsJson();
 }
 
 main();

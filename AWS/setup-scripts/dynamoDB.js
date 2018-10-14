@@ -1,6 +1,5 @@
-let { setGlobalVar } = require('./utils');
-
-let db = new AWS.DynamoDB()
+const { setGlobalVar, addToCreatedInGlobalVar } = require('./utils');
+const db = new AWS.DynamoDB()
 
 // Just so that we can use await instead of nesting callbacks
 const awsCreateTable = (tableParams) => {
@@ -98,7 +97,7 @@ const createTable = (tableParams) => {
       .then(table => {
         console.log(`Table with name ${table.TableName} already exists. Skipping...`)
         setGlobalVar([`${table.TableName}Arn`], table.TableArn)
-        resolve(true);
+        resolve(table);
       })
       .catch(err => {
         awsCreateTable(tableParams)
@@ -118,10 +117,17 @@ const createTable = (tableParams) => {
 const main = async () => {
   let establishmentsTablePromise = createTable(establishmentsTableParams)
   let eventsTablePromise = createTable(eventsTableParams)
-
   try {
     // Concurrently create tables
-    await Promise.all([establishmentsTablePromise, eventsTablePromise])
+    let [
+      establishmentsTable,
+      eventsTable
+    ] = await Promise.all([establishmentsTablePromise, eventsTablePromise])
+
+    //Add to aws_vars.created to export as json and delete when cleaning up
+    addToCreatedInGlobalVar('dynamoDBTables',
+      [establishmentsTable.TableName, eventsTable.TableName]
+    )
   } catch (err) {
     console.log('Promise.all err:', err);
   }
