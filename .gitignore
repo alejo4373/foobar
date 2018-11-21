@@ -1,6 +1,7 @@
 #alejo
 misc_ignored/
 aws-config*
+.vscode
 
 # Logs
 logs
