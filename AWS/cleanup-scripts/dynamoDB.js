@@ -14,7 +14,7 @@ const deleteTable = (tableName) => {
 
 const main = async ({ dynamoDBTables }) => {
   let tables = dynamoDBTables;
-  if (tables.length) {
+  if (tables !== undefined && tables.length) {
     let deletePromises = tables.map(t => deleteTable(t))
     try {
       await Promise.all(deletePromises);
