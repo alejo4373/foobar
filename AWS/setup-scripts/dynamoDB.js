@@ -104,7 +104,7 @@ const createTable = (tableParams) => {
           .then(table => {
             console.log('Creating table', table.TableName)
             setGlobalVar([`${table.TableName}Arn`], table.TableArn)
-            resolve(true);
+            resolve(table);
           })
           .catch(err => {
             console.log('[Error]', err)
@@ -124,6 +124,8 @@ const main = async () => {
       eventsTable
     ] = await Promise.all([establishmentsTablePromise, eventsTablePromise])
 
+    console.log("establishmentsTable", establishmentsTable);
+    console.log("eventsTable", eventsTable);
     //Add to aws_vars.created to export as json and delete when cleaning up
     addToCreatedInGlobalVar('dynamoDBTables',
       [establishmentsTable.TableName, eventsTable.TableName]
