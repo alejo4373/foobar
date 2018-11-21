@@ -124,8 +124,6 @@ const main = async () => {
       eventsTable
     ] = await Promise.all([establishmentsTablePromise, eventsTablePromise])
 
-    console.log("establishmentsTable", establishmentsTable);
-    console.log("eventsTable", eventsTable);
     //Add to aws_vars.created to export as json and delete when cleaning up
     addToCreatedInGlobalVar('dynamoDBTables',
       [establishmentsTable.TableName, eventsTable.TableName]
