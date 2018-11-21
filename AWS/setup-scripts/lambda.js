@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { createExecutionRoleForLambdaFunction } = require('./iam');
-const { setGlobalVar } = require('./utils');
+const { setGlobalVar, addToCreatedInGlobalVar } = require('./utils');
 
 const AWS = require('aws-sdk');
 const lambda = new AWS.Lambda();
@@ -69,7 +69,8 @@ const main = async () => {
 
   if (func) {
     //Make available the function arn as a global variable with the function name
-    setGlobalVar(func.FunctionName, func.FunctionArn)
+    setGlobalVar(func.FunctionName, func.FunctionArn);
+    addToCreatedInGlobalVar('lambdaFunction', func.FunctionName);
     return func.FunctionArn;
   } else {
     return false

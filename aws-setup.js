@@ -26,12 +26,16 @@ const setupAppSync = require('./AWS/setup-scripts/appSync');
 const setupLambda = require('./AWS/setup-scripts/lambda');
 
 const main = async () => {
-  await setupDynamoDB();
-  await setupLambda()
-  await setupAppSync()
-  await setupCognito();
-  exportEnvVarsFile();
-  exportCreatedResourcesAsJson();
+  try {
+    await setupDynamoDB();
+    await setupLambda()
+    await setupAppSync()
+    await setupCognito();
+    exportEnvVarsFile();
+    exportCreatedResourcesAsJson();
+  } catch (err) {
+    console.log("[Error]:", err);
+  }
 }
 
 main();

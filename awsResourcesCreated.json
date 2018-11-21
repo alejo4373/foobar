@@ -1,1 +1,1 @@
-{"dynamoDBTables":["foobar_establishments_table","foobar_events_table"]}
+{"dynamoDBTables":["foobar_establishments_table","foobar_events_table"],"lambdaFunction":"getGooglePhotoReference"}

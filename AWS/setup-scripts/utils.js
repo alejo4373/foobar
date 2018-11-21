@@ -8,20 +8,24 @@ const setGlobalVar = (name, value) => {
 }
 
 const addToCreatedInGlobalVar = (name, value) => {
-  let prevCreated = global.aws_vars.created
+  let prevAws_vars = global.aws_vars
+  let prevCreated = prevAws_vars.created
   global.aws_vars = {
+    ...prevAws_vars,
     created: {
-      [name]: value,
-      ...prevCreated
-    },
-    ...global.aws_vars
+      ...prevCreated,
+      [name]: value
+    }
   }
 }
 
 const exportEnvVarsFile = () => {
   let prefix = 'REACT_APP_' // Since the .env file will be used by a React App bootstrapped with create-react-app
   let cognito = global.aws_vars.cognito;
-  let apiEndpoint = global.aws_vars.api.GRAPHQL_ENDPOINT;
+  let apiEndpoint = '';
+  if (aws_vars.api) {
+    apiEndpoint = global.aws_vars.api.GRAPHQL_ENDPOINT;
+  }
 
   let fileLines = [
     `${prefix}GRAPHQL_ENDPOINT=${apiEndpoint}`,
