@@ -22,6 +22,7 @@ AWS.config.update({
 });
 
 const cleanupDynamoDB = require('./AWS/cleanup-scripts/dynamoDB.js')
+const cleanupLambda = require('./AWS/cleanup-scripts/lambda.js')
 
 const awsResourcesCreated = JSON.parse(
   fs.readFileSync(
@@ -33,6 +34,7 @@ const awsResourcesCreated = JSON.parse(
 const main = async () => {
   try {
     cleanupDynamoDB(awsResourcesCreated);
+    cleanupLambda(awsResourcesCreated);
   } catch (err) {
     console.log('[Error]:', err);
   }
