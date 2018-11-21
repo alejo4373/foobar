@@ -12,12 +12,20 @@ const deleteTable = (tableName) => {
   })
 }
 
-const main = async (tables) => {
-  let deletePromises = tables.map(t => deleteTable(t))
-  try {
-    await Promise.all(deletePromises);
-  } catch (err) {
-    console.log('[Error] => Deleting tables', err)
+const main = async ({ dynamoDBTables }) => {
+  let tables = dynamoDBTables;
+  if (tables.length) {
+    let deletePromises = tables.map(t => deleteTable(t))
+    try {
+      await Promise.all(deletePromises);
+      tables.forEach(table => {
+        console.log('Removing table:', table);
+      });
+    } catch (err) {
+      console.log('[Error] => Deleting tables', err)
+    }
+  } else {
+    console.log('No tables to delete')
   }
 }
 

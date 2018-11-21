@@ -21,7 +21,7 @@ AWS.config.update({
   region: process.env.AWS_REGION
 });
 
-const dynamoDBCleanup = require('./AWS/cleanup-scripts/dynamoDB.js')
+const cleanupDynamoDB = require('./AWS/cleanup-scripts/dynamoDB.js')
 
 const awsResourcesCreated = JSON.parse(
   fs.readFileSync(
@@ -31,10 +31,10 @@ const awsResourcesCreated = JSON.parse(
 )
 
 const main = async () => {
-  if (awsResourcesCreated.dynamoDBTables) {
-    dynamoDBCleanup(awsResourcesCreated.dynamoDBTables);
-  } else {
-    console.log('No tables to delete')
+  try {
+    cleanupDynamoDB(awsResourcesCreated);
+  } catch (err) {
+    console.log('[Error]:', err);
   }
 }
 
