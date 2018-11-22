@@ -18,10 +18,11 @@ const main = async ({ lambdaFunction }) => {
       await deleteFunction(lambdaFunction);
       console.log('Removing function:', lambdaFunction);
     } catch (err) {
+      console.log('[Error] => Deleting lambda function.');
       if (err.code === 'ResourceNotFoundException') {
-        console.log(`Function ${lambdaFunction} doesn't exists`);
+        console.log(err.message);
       } else {
-        console.log('[Error] => Deleting lambda function', err);
+        console.log(err);
       }
     }
   } else {

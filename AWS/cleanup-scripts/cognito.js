@@ -31,10 +31,11 @@ const main = async ({ userPool, identityPool }) => {
       await deleteIdentityPool(identityPool.id);
       console.log(`Removing identity pool with name: ${identityPool.name}, id: ${identityPool.id}`);
     } catch (err) {
+      console.log('[Error] => Deleting Identity pool');
       if (err.code === 'ResourceNotFoundException') {
-        console.log(`Identity pool ${identityPool.name} doesn't exists`);
+        console.log('[Error] => Deleting Identity pool', err.message);
       } else {
-        console.log('[Error] => Deleting Identity pool', err);
+        console.log(err);
       }
     }
   } else {
@@ -46,10 +47,11 @@ const main = async ({ userPool, identityPool }) => {
       await deleteUserPool(userPool.id);
       console.log(`Removing user pool with name: ${userPool.name}, id: ${userPool.id}`);
     } catch (err) {
+      console.log('[Error] => Deleting User pool.');
       if (err.code === 'ResourceNotFoundException') {
-        console.log(`User pool ${userPool.name} doesn't exists`);
+        console.log(err.message);
       } else {
-        console.log('[Error] => Deleting User pool', err);
+        console.log(err);
       }
     }
   } else {

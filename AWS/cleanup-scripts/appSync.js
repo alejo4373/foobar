@@ -19,7 +19,7 @@ const main = async ({ graphqlApiId }) => {
       console.log('Deleting GraphQL API with ID:', graphqlApiId);
     } catch (err) {
       if (err.code === 'NotFoundException') {
-        console.log(`GraphQl API with ID ${graphqlApiId} doesn't exists`);
+        console.log('[Error] => Deleting GraphQl API.', err.message);
       } else {
         console.log('[Error] => Deleting GraphQL API', err);
       }

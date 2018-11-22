@@ -22,7 +22,11 @@ const main = async ({ dynamoDBTables }) => {
         console.log('Removing table:', table);
       });
     } catch (err) {
-      console.log('[Error] => Deleting tables', err)
+      if (err.code === 'ResourceNotFoundException') {
+        console.log('[Error] => Deleting tables.', err.message)
+      } else {
+        console.log('[Error] => Deleting tables', err)
+      }
     }
   } else {
     console.log('No tables to delete')
