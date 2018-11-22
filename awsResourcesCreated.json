@@ -1,1 +1,42 @@
-{"dynamoDBTables":["foobar_establishments_table","foobar_events_table"],"lambdaFunction":"getGooglePhotoReference"}
+{
+  "dynamoDBTables": [
+    "foobar_establishments_table",
+    "foobar_events_table"
+  ],
+  "IAMRolesAndPolicies": [
+    {
+      "RoleName": "lambda_basic_execution-role",
+      "PolicyArn": "arn:aws:iam::919273051626:policy/lambda_basic_execution-policy"
+    },
+    {
+      "RoleName": "appsync-datasource-foobar_establishments_table-role",
+      "PolicyArn": "arn:aws:iam::919273051626:policy/appsync-datasource-foobar_establishments_table-policy"
+    },
+    {
+      "RoleName": "appsync-datasource-foobar_events_table-role",
+      "PolicyArn": "arn:aws:iam::919273051626:policy/appsync-datasource-foobar_events_table-policy"
+    },
+    {
+      "RoleName": "appsync-datasource-getGooglePhotoReference_function-role",
+      "PolicyArn": "arn:aws:iam::919273051626:policy/appsync-datasource-getGooglePhotoReference_function-policy"
+    },
+    {
+      "RoleName": "foobar_identity_pool_authenticated-role",
+      "PolicyArn": "arn:aws:iam::919273051626:policy/foobar_identity_pool_authenticated-policy"
+    },
+    {
+      "RoleName": "foobar_identity_pool_unauthenticated-role",
+      "PolicyArn": "arn:aws:iam::919273051626:policy/foobar_identity_pool_unauthenticated-policy"
+    }
+  ],
+  "lambdaFunction": "getGooglePhotoReference",
+  "graphqlApiId": "xswk5fkhxbg4xov3yjgvg2pqiy",
+  "userPool": {
+    "id": "us-east-1_GVVRmUMi3",
+    "name": "foobar_user_pool"
+  },
+  "identityPool": {
+    "id": "us-east-1:0267f2f3-0480-4984-815b-9d50d7e3ba17",
+    "name": "foobar_identity_pool"
+  }
+}
