@@ -24,6 +24,8 @@ AWS.config.update({
 const cleanupDynamoDB = require('./AWS/cleanup-scripts/dynamoDB.js');
 const cleanupLambda = require('./AWS/cleanup-scripts/lambda.js');
 const cleanupAppSync = require('./AWS/cleanup-scripts/appSync.js');
+const cleanupCognito = require('./AWS/cleanup-scripts/cognito.js');
+const cleanupIAMRolesAndPolicies = require('./AWS/cleanup-scripts/iam.js');
 
 const awsResourcesCreated = JSON.parse(
   fs.readFileSync(
@@ -37,6 +39,8 @@ const main = async () => {
     cleanupDynamoDB(awsResourcesCreated);
     cleanupLambda(awsResourcesCreated);
     cleanupAppSync(awsResourcesCreated);
+    cleanupCognito(awsResourcesCreated);
+    cleanupIAMRolesAndPolicies(awsResourcesCreated);
   } catch (err) {
     console.log('[Error]:', err);
   }
