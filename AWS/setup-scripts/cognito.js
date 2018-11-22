@@ -4,11 +4,11 @@ const cognito_identity = require('aws-sdk/clients/cognitoidentity');
 const identityProvider = new cognito_idp();
 const cognitoIdentity = new cognito_identity();
 
-const { setGlobalVar } = require('./utils');
+const { setGlobalVar, addToCreatedInGlobalVar } = require('./utils');
 const iam = require('./iam');
 const createDemoUser = require('./cognito/createDemoUser');
 
-const userPoolParams = {
+const newUserPoolParams = {
   PoolName: 'foobar_user_pool',
   Policies: {
     PasswordPolicy: {
@@ -50,9 +50,9 @@ const getUserPools = () => {
 
 }
 
-const createUserPool = (userPoolParams) => {
+const createUserPool = (newUserPoolParams) => {
   return new Promise((resolve, reject) => {
-    identityProvider.createUserPool(userPoolParams, (err, data) => {
+    identityProvider.createUserPool(newUserPoolParams, (err, data) => {
       if (err) { reject(err) }
       else {
         let userPoolId = data.UserPool.Id;
@@ -65,9 +65,9 @@ const createUserPool = (userPoolParams) => {
   })
 }
 
-const createUserPoolClient = (clientParams) => {
+const createUserPoolClient = (newClientParams) => {
   return new Promise((resolve, reject) => {
-    identityProvider.createUserPoolClient(clientParams, (err, data) => {
+    identityProvider.createUserPoolClient(newClientParams, (err, data) => {
       if (err) { reject(err) }
       else {
         const { UserPoolClient } = data
@@ -135,36 +135,50 @@ const setIdentityPoolRoles = (params) => {
 }
 
 const main = async () => {
-  let userPoolId = null;
-  let clientId = null;
-  let identityPoolId = null;
+  let userPool;
+  let userPools;
+
+  let identityPool;
+  let identityPools;
+  let newIdentityPoolParams
+  let identityPoolRoles;
+
+  let client;
+  let clients
+  let newClientParams;
+
+  let setIdentityPoolRolesParams;
 
   // UserPool Setup
-  let userPools;
   try {
     userPools = await getUserPools();
   } catch (err) {
     return console.log('[Error]', err)
   }
 
-  let poolAlreadyExists = userPools.find(pool => pool.Name === userPoolParams.PoolName)
-  if (poolAlreadyExists) {
-    userPoolId = poolAlreadyExists.Id;
-    console.log('Pool with the same name already exists pool id:', poolAlreadyExists.Id)
+  userPool = userPools.find(pool => pool.Name === newUserPoolParams.PoolName)
+  if (userPool) {
+    console.log('Pool with the same name already exists pool id:', userPool.Id)
     console.log('=> A new pool will not be created')
   } else {
-    let userPool;
     try {
-      userPool = await createUserPool(userPoolParams);
+      userPool = await createUserPool(newUserPoolParams);
     } catch (err) {
       return console.log('[Error]', err)
     }
-    userPoolId = userPool.Id;
   }
 
-  // Client Setup
-  let clientParams = {
-    UserPoolId: userPoolId,
+  /*
+   * Client Setup
+   */
+  try {
+    clients = await getUserPoolClients(userPool.Id);
+  } catch (err) {
+    return console.log('[Error]', err)
+  }
+
+  newClientParams = {
+    UserPoolId: userPool.Id,
     ClientName: 'foobar_app',
     RefreshTokenValidity: 30,
     ExplicitAuthFlows: [
@@ -174,61 +188,46 @@ const main = async () => {
     GenerateSecret: false
   }
 
-  let clients
-  try {
-    clients = await getUserPoolClients(userPoolId);
-  } catch (err) {
-    return console.log('[Error]', err)
-  }
-
-  let clientAlreadyExits = clients.find(client => client.ClientName === clientParams.ClientName)
-  if (clientAlreadyExits) {
-    clientId = clientAlreadyExits.ClientId;
-    console.log('User Pool Client with same name already exists clientId:', clientAlreadyExits.ClientId)
+  client = clients.find(c => c.ClientName === newClientParams.ClientName)
+  if (client) {
+    console.log('User Pool Client with same name already exists clientId:', client.ClientId)
     console.log('=> A new client will not be created')
   } else {
-    let client;
     try {
-      client = await createUserPoolClient(clientParams);
+      client = await createUserPoolClient(newClientParams);
     } catch (err) {
       return console.log('[Error]', err)
     }
-    clientId = client.ClientId;
-    console.log('userPoolId ====>', userPoolId)
-    console.log('clientId ====>', clientId)
+    console.log('userPoolId ====>', userPool.Id)
+    console.log('clientId ====>', client.ClientId)
   }
 
   // Identity Pool setup
-  let identityPoolParams = {
+  newIdentityPoolParams = {
     IdentityPoolName: 'foobar_identity_pool',
     AllowUnauthenticatedIdentities: true,
     CognitoIdentityProviders: [{
-      ClientId: clientId,
-      ProviderName: `cognito-idp.${global.AWS.config.region}.amazonaws.com/${userPoolId}`,
+      ClientId: client.ClientId,
+      ProviderName: `cognito-idp.${global.AWS.config.region}.amazonaws.com/${userPool.Id}`,
       ServerSideTokenCheck: false,
     }]
   }
 
-  let identityPools;
   try {
     identityPools = await getIdentityPools();
   } catch (err) {
     return console.log('[Error]', err)
   }
 
-  let identityPoolAlreadyExists = identityPools.find(pool => pool.IdentityPoolName === identityPoolParams.IdentityPoolName)
-  if (identityPoolAlreadyExists) {
-    identityPoolId = identityPoolAlreadyExists.IdentityPoolId;
+  identityPool = identityPools.find(pool => pool.IdentityPoolName === newIdentityPoolParams.IdentityPoolName)
+  if (identityPool) {
     console.log('Identity Pool with same name already exists')
-    console.log('=> IdentityPool Name:', identityPoolAlreadyExists.IdentityPoolName)
-    console.log('=> IdentityPool Id:', identityPoolAlreadyExists.IdentityPoolId)
+    console.log('=> IdentityPool Name:', identityPool.IdentityPoolName)
+    console.log('=> IdentityPool Id:', identityPool.IdentityPoolId)
     console.log('=> A new IdentityPool will not be created');
-
   } else {
-    let identityPool;
     try {
-      identityPool = await createIdentityPool(identityPoolParams);
-      identityPoolId = identityPool.IdentityPoolId
+      identityPool = await createIdentityPool(newIdentityPoolParams);
     } catch (err) {
       return console.log('[Error]', err)
     }
@@ -236,13 +235,13 @@ const main = async () => {
 
   // Setup Identity Pool Roles
   try {
-    let identityPoolRoles = await Promise.all([
-      iam.createAuthenticatedRoleForIdentityPoolToAccessAppSync(identityPoolId, global.aws_vars.api.id),
-      iam.createUnauthenticatedRoleForIdentityPoolToAccessAppSync(identityPoolId, global.aws_vars.api.id)
+    identityPoolRoles = await Promise.all([
+      iam.createAuthenticatedRoleForIdentityPoolToAccessAppSync(identityPool.IdentityPoolId, global.aws_vars.api.id),
+      iam.createUnauthenticatedRoleForIdentityPoolToAccessAppSync(identityPool.IdentityPoolId, global.aws_vars.api.id)
     ])
 
-    let setIdentityPoolRolesParams = {
-      IdentityPoolId: identityPoolId,
+    setIdentityPoolRolesParams = {
+      IdentityPoolId: identityPool.IdentityPoolId,
       Roles: {
         authenticated: identityPoolRoles[0],
         unauthenticated: identityPoolRoles[1],
@@ -259,16 +258,18 @@ const main = async () => {
 
   try {
     // To allow demo login later
-    await createDemoUser(userPoolId, clientId);
+    await createDemoUser(userPool.Id, client.ClientId);
   } catch (err) {
     console.log('[Error]', err)
   }
 
   setGlobalVar('cognito', {
-    IDENTITY_POOL_ID: identityPoolId,
-    USER_POOL_ID: userPoolId,
-    USER_POOL_CLIENT_ID: clientId
+    IDENTITY_POOL_ID: identityPool.IdentityPoolId,
+    USER_POOL_ID: userPool.Id,
+    USER_POOL_CLIENT_ID: client.ClientId
   })
+  addToCreatedInGlobalVar('userPool', { id: userPool.Id, name: userPool.Name });
+  addToCreatedInGlobalVar('identityPool', { id: identityPool.IdentityPoolId, name: identityPool.IdentityPoolName });
 }
 
 module.exports = main;
