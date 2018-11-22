@@ -1,4 +1,5 @@
 const IAM = require('aws-sdk/clients/iam');
+const { addIAMRoleAndPolicyToCreated } = require('./utils');
 const iam = new IAM()
 
 const createRole = (params) => {
@@ -97,7 +98,6 @@ const createUnauthenticatedRoleForIdentityPoolToAccessAppSync = async (identityP
   try {
     // Create role for cognito identity pool to access AppSync
     createdRoleArn = await createRoleFor(assumeRolePolicyDoc, roleParams, policyParams);
-    console.log('createdRoleArn', createdRoleArn)
     return createdRoleArn;
   } catch (err) {
     console.log('[Error]', err)
@@ -173,48 +173,38 @@ const createExecutionRoleForLambdaFunction = async () => {
     ]
   }
 
+  let policyDoc = {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "*"
+        }
+    ]
+  }
+
   const roleParams = {
-    RoleName: 'lambda_basic_execution',
-    Path: '/',
+    RoleName: 'lambda_basic_execution-role',
     Description: 'Role that grants access to the logs service to the Lambda function',
-    AssumeRolePolicyDocument: JSON.stringify(assumeRolePolicyDoc)
   };
 
-  let roles;
-  let role;
+  const policyParams = {
+    PolicyDocument: JSON.stringify(policyDoc),
+    PolicyName: 'lambda_basic_execution-policy'
+  }
 
+  let createdRoleArn;
   try {
-    // Get roles to verify a duplicate role is not created
-    roles = await listRoles();
-    role = roles.find(r => r.RoleName === roleParams.RoleName);
-
-    if (role) {
-      console.log(`Role with name ${role.RoleName} already exists. Skipping...`)
-    } else {
-      role = await createRole(roleParams)
-    }
+    // Create role for lambda to be able to put logs in CloudWatch
+    createdRoleArn = await createRoleFor(assumeRolePolicyDoc, roleParams, policyParams);
+    return createdRoleArn;
   } catch (err) {
     console.log('[Error]', err)
-  }
-
-  const attachRolePolicyParams = {
-    PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole', //AWS managed policy
-    RoleName: roleParams.RoleName
-  }
-
-  let policyAttached;
-
-  try {
-    policyAttached = await attachRolePolicy(attachRolePolicyParams);
-  } catch (err) {
-    console.log('[Error]', err)
-  }
-
-  if (policyAttached) {
-    console.log(`Role ${role.RoleName} created. Success`)
-    return role.Arn;
-  } else {
-    return false;
   }
 }
 
@@ -265,18 +255,13 @@ const createRoleFor = async (assumeRolePolicyDoc, roleParams, policyParams) => {
     RoleName: role.RoleName
   }
 
-  let policyAttached;
-
   try {
-    policyAttached = await attachRolePolicy(attachRolePolicyParams);
+    await attachRolePolicy(attachRolePolicyParams);
+    console.log(`Policy "${policy.PolicyName}" attached to role "${role.RoleName}". Success`)
+    addIAMRoleAndPolicyToCreated({ RoleName: role.RoleName, PolicyArn: policy.Arn });
+    return (role.Arn);
   } catch (err) {
     console.log('[Error]', err)
-  }
-
-  if (policyAttached) {
-    console.log(`Policy attached to role. Success`)
-    return role.Arn;
-  } else {
     return false;
   }
 }
