@@ -19,6 +19,23 @@ const addToCreatedInGlobalVar = (name, value) => {
   }
 }
 
+/**
+ * Adds newIAMRoleAndPolicy object to array kept in aws_vars global var
+ * @param {object} newIAMRoleAndPolicy 
+ */
+const addIAMRoleAndPolicyToCreated = (newIAMRoleAndPolicy) => {
+  let IAMRolesAndPolicies = global.aws_vars.created.IAMRolesAndPolicies || [];
+  let prevAws_vars = global.aws_vars;
+  let prevCreated = prevAws_vars.created;
+  global.aws_vars = {
+    ...prevAws_vars,
+    created: {
+      ...prevCreated,
+      IAMRolesAndPolicies: [...IAMRolesAndPolicies, newIAMRoleAndPolicy]
+    }
+  }
+}
+
 const exportEnvVarsFile = () => {
   let prefix = 'REACT_APP_' // Since the .env file will be used by a React App bootstrapped with create-react-app
   let cognito = global.aws_vars.cognito;
@@ -51,5 +68,6 @@ module.exports = {
   setGlobalVar,
   exportEnvVarsFile,
   addToCreatedInGlobalVar,
+  addIAMRoleAndPolicyToCreated,
   exportCreatedResourcesAsJson
 }
