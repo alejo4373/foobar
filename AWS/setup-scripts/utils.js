@@ -56,7 +56,7 @@ const exportEnvVarsFile = () => {
 
   // Format and write to file
   let fileContent = fileLines.join('\n');
-  fs.writeFileSync('./react-app/.env.new', fileContent, 'utf8')
+  fs.writeFileSync('./react-app/.env', fileContent, 'utf8')
 }
 
 const exportCreatedResourcesAsJson = () => {
