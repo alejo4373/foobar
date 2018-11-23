@@ -1,9 +1,13 @@
-// Load .env file
+// Load AWS credentials from Environment Variables
 require('dotenv').config();
 
 // Attach AWS to global object
 global.AWS = require('aws-sdk');
-global.aws_vars = {}; //Will hold runtime variables like ARNs to connect services
+
+// Will hold runtime variables like ARNs to connect services
+global.aws_vars = {
+  created: {} // Will hold AWS resources created to be exported as awsResourcesCreated.json
+};
 
 const { AWS } = global;
 const { exportEnvVarsFile, exportCreatedResourcesAsJson } = require('./AWS/setup-scripts/utils');
@@ -16,9 +20,6 @@ AWS.config.apiVersions = {
   iam: '2010-05-08',
   appsync: '2017-07-25',
 };
-
-// Loads credentials and region
-AWS.config.loadFromPath('./aws-config.json');
 
 const setupDynamoDB = require('./AWS/setup-scripts/dynamoDB');
 const setupCognito = require('./AWS/setup-scripts/cognito');

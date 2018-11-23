@@ -1,4 +1,4 @@
-// Load .env file
+// Load AWS credentials from Environment Variables
 require('dotenv').config();
 const fs = require('fs');
 
@@ -13,13 +13,6 @@ AWS.config.apiVersions = {
   iam: '2010-05-08',
   appsync: '2017-07-25',
 };
-
-// Loads credentials and region
-AWS.config.update({
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  region: process.env.AWS_REGION
-});
 
 const cleanupDynamoDB = require('./AWS/cleanup-scripts/dynamoDB.js');
 const cleanupLambda = require('./AWS/cleanup-scripts/lambda.js');
