@@ -45,14 +45,14 @@ class MapComponent extends Component {
     console.log('tiles loaded ===>')
     const zoom = map.zoom;
     const bounds = map.getBounds()
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
     const areaBounds = {
-      latMax: bounds.f.f,
-      latMin: bounds.f.b,
-      lngMax: bounds.b.b,
-      lngMin: bounds.b.f
+      latMax: ne.lat(),
+      latMin: sw.lat(),
+      lngMax: sw.lng(),
+      lngMin: ne.lng()
     }
-    console.log('boundsArea', areaBounds)
-    console.log('zoom', zoom)
     if (zoom >= 14) {
       getEstablishmentsInBounds(areaBounds, (err, establishments) => {
         if (err) {
