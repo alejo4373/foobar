@@ -34,18 +34,7 @@ const attachRolePolicy = (params) => {
   return new Promise((resolve, reject) => {
     iam.attachRolePolicy(params, (err, data) => {
       if (err) { reject(err) }
-      else {
-        // Need to wait due to AWS or the SDK not providing a waiter since it seems IAM
-        // changes take some time to be replicated, causing specifically the Lambda
-        // function creation to fail with error message: 'The role defined for the function
-        // cannot be assumed by Lambda.' 
-        // https://github.com/boto/boto3/issues/1466
-        // https://stackoverflow.com/questions/36419442/the-role-defined-for-the-function-cannot-be-assumed-by-lambda
-        console.log('Waiting 10s for role to be ready...');
-        setTimeout(() => {
-          resolve(data)
-        }, 10000)
-      }
+      else { resolve(data) }
     })
   })
 }
@@ -272,7 +261,6 @@ const createRoleFor = async (assumeRolePolicyDoc, roleParams, policyParams) => {
     addIAMRoleAndPolicyToCreated({ RoleName: role.RoleName, PolicyArn: policy.Arn });
     return (role.Arn);
   } catch (err) {
-    console.log('[Error]', err)
     return false;
   }
 }
