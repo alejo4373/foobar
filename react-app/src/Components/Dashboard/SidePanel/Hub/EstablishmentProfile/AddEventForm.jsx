@@ -27,7 +27,7 @@ class AddEventForm extends Component {
       teams: [],
       leagueId: '',
       event: {
-        establishmentId: props.establishmentId,
+        atEstablishmentId: props.establishmentId,
         sportsDbId: 'helloId',
         homeTeam: '',
         awayTeam: '',

@@ -51,7 +51,7 @@ export async function addEvent(newEvent, callback){
   try {
     const res = await API.graphql(graphqlOperation(
       `mutation AddEvent(
-        $establishmentId: String!
+        $atEstablishmentId: String!
         $awayTeam: String!,
         $awayTeamBadge: String,
         $homeTeam: String!,
@@ -63,7 +63,7 @@ export async function addEvent(newEvent, callback){
         $description: String
       ){
         putEvent(
-          establishmentId: $establishmentId
+          atEstablishmentId: $atEstablishmentId
           awayTeam: $awayTeam,
           awayTeamBadge: $awayTeamBadge,
           homeTeam: $homeTeam,
@@ -75,7 +75,7 @@ export async function addEvent(newEvent, callback){
           description: $description,
         ){
           id
-          establishmentId
+          atEstablishmentId
           awayTeam
           awayTeamBadge
           homeTeam
@@ -175,14 +175,14 @@ export async function addEstablishment(newEstablishment, callback) {
 
 /**
  * Gets events by establishment
- * @param {String} establishmentId - A string identifying the establishment to get events from
+ * @param {String} atEstablishmentId - A string identifying the establishment to get events from
  * @param {Function} callback  - Handles response and error
  */
-export async function getEvents(establishmentId, callback) {
+export async function getEvents(atEstablishmentId, callback) {
   try {
     const res = await API.graphql(graphqlOperation(`
-      query GetEventsFromEstablishment($establishmentId: String!) {
-        getEvents(establishmentId: $establishmentId){
+      query GetEventsFromEstablishment($atEstablishmentId: String!) {
+        getEvents(atEstablishmentId: $atEstablishmentId){
           events {
             id
             sportsDbId
@@ -196,7 +196,7 @@ export async function getEvents(establishmentId, callback) {
             description
           }
         }
-      }`, { establishmentId: establishmentId })
+      }`, { atEstablishmentId: atEstablishmentId })
     )
     const { events } = res.data.getEvents
     callback(null, events)
