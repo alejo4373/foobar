@@ -3,9 +3,12 @@
     "version" : "2017-02-28",
     "operation" : "PutItem",
     "key" : {
-        ## If object "id" should come from GraphQL arguments, change to $util.dynamodb.toDynamoDBJson($ctx.args.id)
-        "id": $util.dynamodb.toDynamoDBJson($util.autoId()),
-        "league_id": $util.dynamodb.toDynamoDBJson($ctx.args.leagueId)
+        "atEstablishmentId": $util.dynamodb.toDynamoDBJson($ctx.args.atEstablishmentId),
+        "timeStart": $util.dynamodb.toDynamoDBJson($ctx.args.timeStart)
     },
-    "attributeValues" : $util.dynamodb.toMapValuesJson($ctx.args)
+
+    #set ( $eventObj = $util.dynamodb.toMapValues($ctx.args) )
+    #set ( $eventObj.id = $util.dynamodb.toString($util.autoId()) )
+
+    "attributeValues" : $util.toJson($eventObj)
 }

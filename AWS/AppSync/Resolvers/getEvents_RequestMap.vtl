@@ -4,12 +4,11 @@
     "operation" : "Query",
     "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
     "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null)),
-    "index" : "establishmentId-startTime-index",
     "query" : {
-        "expression": "establishmentId = :estId",
+        "expression": "atEstablishmentId = :estId",
         "expressionValues" : {
             ":estId" : {
-                "S" : "$ctx.args.establishmentId"
+                "S" : "$ctx.args.atEstablishmentId"
             }
         }
     }

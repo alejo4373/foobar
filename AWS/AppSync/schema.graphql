@@ -14,7 +14,7 @@ type PaginatedEstablishments {
 
 type Event {
   id: ID
-  establishmentId: String!
+  atEstablishmentId: String!
   awayTeam: String!
   awayTeamBadge: String
   homeTeam: String!
@@ -43,7 +43,7 @@ type Mutation {
   #  If an item exists it's updated. If it does not it's created.
   putEvent(
     id: ID,
-    establishmentId: String!
+    atEstablishmentId: String!
     awayTeam: String!,
     awayTeamBadge: String
     homeTeam: String!,
@@ -69,7 +69,7 @@ type Mutation {
 }
 
 type Query {
-  getEvents(limit: Int, nextToken: String, establishmentId: String!): PaginatedEvents!
+  getEvents(limit: Int, nextToken: String, atEstablishmentId: String!): PaginatedEvents!
   getEstablishmentsUserManages(limit: Int, nextToken: String): PaginatedEstablishments!
   getEstablishmentById(id: String!): Establishment!
   getEstablishmentsInBounds(limit: Int, latMin: String!, latMax: String!, lngMin: String!, lngMax: String!): PaginatedEstablishments!
