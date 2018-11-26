@@ -56,21 +56,21 @@ let eventsTableParams = {
   TableName: 'foobar_events_table',
   AttributeDefinitions: [
     {
-      AttributeName: 'id',
+      AttributeName: 'atEstablishmentId',
       AttributeType: 'S'
     },
     {
-      AttributeName: 'leagueId',
+      AttributeName: 'startTime',
       AttributeType: 'S'
     }
   ],
   KeySchema: [
     {
-      AttributeName: 'id',
+      AttributeName: 'atEstablishmentId',
       KeyType: 'HASH'
     },
     {
-      AttributeName: 'leagueId',
+      AttributeName: 'startTime',
       KeyType: 'RANGE'
     }
   ],
