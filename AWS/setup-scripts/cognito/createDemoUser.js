@@ -6,7 +6,7 @@ const createDemoUser = async (userPoolId, clientId) => {
 
   let createUserParams = {
     UserPoolId: userPoolId,
-    Username: 'AEstablishmentManagerUser',
+    Username: 'AnEstablishmentManagerUser',
     UserAttributes: [
       {
         Name: 'email',
