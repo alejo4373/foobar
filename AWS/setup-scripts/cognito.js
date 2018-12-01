@@ -4,7 +4,7 @@ const cognito_identity = require('aws-sdk/clients/cognitoidentity');
 const identityProvider = new cognito_idp();
 const cognitoIdentity = new cognito_identity();
 
-const { setGlobalVar, addToCreatedInGlobalVar } = require('./utils');
+const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
 const iam = require('./iam');
 const createDemoUser = require('./cognito/createDemoUser');
 

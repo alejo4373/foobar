@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { createExecutionRoleForLambdaFunction } = require('./iam');
-const { setGlobalVar, addToCreatedInGlobalVar } = require('./utils');
+const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
 
 const AWS = require('aws-sdk');
 const lambda = new AWS.Lambda();

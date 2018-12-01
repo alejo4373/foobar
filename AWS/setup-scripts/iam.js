@@ -1,5 +1,5 @@
 const IAM = require('aws-sdk/clients/iam');
-const { addIAMRoleAndPolicyToCreated } = require('./utils');
+const { addIAMRoleAndPolicyToCreated } = require('../../utils');
 const iam = new IAM()
 
 const createRole = (params) => {

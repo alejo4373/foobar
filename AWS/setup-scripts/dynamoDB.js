@@ -1,4 +1,4 @@
-const { setGlobalVar, addToCreatedInGlobalVar } = require('./utils');
+const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
 const db = new AWS.DynamoDB()
 
 // Just so that we can use await instead of nesting callbacks

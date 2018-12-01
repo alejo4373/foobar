@@ -1,4 +1,6 @@
 const fs = require('fs');
+const url = require('url');
+const https = require('https');
 
 const setGlobalVar = (name, value) => {
   global.aws_vars = {
@@ -64,10 +66,32 @@ const exportCreatedResourcesAsJson = () => {
   fs.writeFileSync('./awsResourcesCreated.json', fileContent, 'utf8')
 }
 
+const networkRequest = (path) => {
+  const URL = url.parse(path);
+  let buffer = [];
+  return new Promise((resolve, reject) => {
+    const req = https.request(URL, (res) => {
+
+      res.on('data', (chunk) => {
+        buffer.push(chunk);
+      })
+
+      res.on('error', (err) => {
+        reject(err);
+      })
+      res.on('end', () => {
+        resolve(JSON.parse(buffer.join('')));
+      })
+    })
+    req.end();
+  })
+}
+
 module.exports = {
   setGlobalVar,
   exportEnvVarsFile,
   addToCreatedInGlobalVar,
   addIAMRoleAndPolicyToCreated,
-  exportCreatedResourcesAsJson
+  exportCreatedResourcesAsJson,
+  networkRequest
 }

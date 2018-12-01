@@ -3,7 +3,7 @@ const path = require('path');
 
 const appSync = new AWS.AppSync();
 
-const { setGlobalVar, addToCreatedInGlobalVar } = require('./utils');
+const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
 const createDataSource = require('./appSync/createDataSources');
 const createResolvers = require('./appSync/createResolvers');
 
