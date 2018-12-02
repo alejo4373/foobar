@@ -109,6 +109,39 @@ const insertItemToTable = (item, table) => {
   })
 }
 
+const generateRandomDate = () => {
+  let start = new Date();
+  let aMonthInMilliseconds = 1000 * 60 * 60 * 24 * 30;
+  let end = new Date(start.getTime() + aMonthInMilliseconds);
+  return new Date(start.getTime() + (Math.random() * (end.getTime() - start.getTime())));
+}
+
+const pickRandomTeams = (teams) => {
+  let i = Math.floor(Math.random() * teams.length);
+  let j = Math.floor(Math.random() * teams.length);
+  if (i != j) {
+    return {
+      homeTeam: teams[i].strTeam,
+      awayTeam: teams[j].strTeam
+    }
+  }
+  pickRandomTeams(teams);
+}
+
+const generateRandomEvent = (atEstablishment, leagueId, teams) => {
+  let { homeTeam, awayTeam } = pickRandomTeams(teams);
+  let event = {
+    atEstablishment,
+    leagueId,
+    homeTeam,
+    awayTeam,
+    startTime: generateRandomDate().toISOString(),
+    coverCharge: false,
+    description: 'Some description of the event/show or additional notes.'
+  }
+  return event;
+}
+
 const seedEstablishmentsForCity = async (city) => {
   let nycEst = await fetchEstablishmentsForCity(city);
   let estTable = awsResourcesCreated.dynamoDBTables[0];
@@ -120,7 +153,10 @@ const seedEstablishmentsForCity = async (city) => {
 }
 
 const main = async () => {
-  await seedEstablishmentsForCity('new york city');
+  // await seedEstablishmentsForCity('new york city');
+  let leaguesAndTeams = await mapLeaguesToTeams()
+  let event = generateRandomEvent('1234', 4380, leaguesAndTeams['4380'])
+  console.log(event);
 };
 
 main();
