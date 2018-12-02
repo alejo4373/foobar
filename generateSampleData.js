@@ -1,11 +1,19 @@
 require('dotenv').config();
+const fs = require('fs');
 const uuidv1 = require('uuid/v1');
+const AWS = require('aws-sdk');
 const { networkRequest } = require('./utils');
 const googleMapsClient = require('@google/maps').createClient({
   key: process.env.GOOGLE_MAPS_API_KEY,
   Promise: Promise
 });
-
+const ddb = new AWS.DynamoDB();
+const awsResourcesCreated = JSON.parse(
+  fs.readFileSync(
+    './awsResourcesCreated.json',
+    'utf8'
+  )
+)
 const usMajorCities = [
   "seattle",
   "portland",
@@ -69,21 +77,50 @@ const createEstablishmentObj = (place) => {
   const establishment = {
     id: uuidv1(),
     managerUsername: 'sample',
-    googlePlaceId: place.id,
+    googlePlaceId: place.place_id,
     name: place.name.toLowerCase(),
     displayName: place.name,
     address: place.formatted_address,
-    phone: place.formatted_phone_number || 'none',
+    phone: place.formatted_phone_number || '(123) 456-7890',
     lat: place.geometry.location.lat,
     lng: place.geometry.location.lng,
   }
   return establishment;
 }
 
+const toDynamoDBJson = (obj) => {
+  let output = {}
+  let keys = Object.keys(obj);
+  keys.forEach(k => output[k] = { 'S': obj[k].toString() })
+  return output;
+}
+
+const insertItemToTable = (item, table) => {
+  const params = {
+    TableName: table,
+    Item: item,
+    ReturnConsumedCapacity: 'TOTAL'
+  }
+  return new Promise((resolve, reject) => {
+    ddb.putItem(params, (err, data) => {
+      if (err) reject(err);
+      else resolve(data);
+    })
+  })
+}
+
+const seedEstablishmentsForCity = async (city) => {
+  let nycEst = await fetchEstablishmentsForCity(city);
+  let estTable = awsResourcesCreated.dynamoDBTables[0];
+  let establishments = nycEst.map(e => toDynamoDBJson(createEstablishmentObj(e)));
+  console.log('establishments length:', establishments.length);
+  for (let i = 0; i < establishments.length; i++) {
+    await insertItemToTable(establishments[i], estTable);
+  }
+}
+
 const main = async () => {
-  let nycEst = await fetchEstablishmentsForCity('new york city');
-  let establishments = nycEst.map(e => createEstablishmentObj(e));
-  console.log(establishments);
+  await seedEstablishmentsForCity('new york city');
 };
 
 main();
