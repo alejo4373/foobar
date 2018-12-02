@@ -54,7 +54,6 @@ const mapLeaguesToTeams = async () => {
     try {
       teams = await fetchLeagueTeams(leagueIds[i]);
       map[leagueIds[i].toString()] = teams;
-      console.log('map =>', map[leagueIds[i].toString()][0].strTeam);
     } catch (err) {
       console.log('[Error] => ', err)
     }
@@ -121,23 +120,28 @@ const pickRandomTeams = (teams) => {
   let j = Math.floor(Math.random() * teams.length);
   if (i != j) {
     return {
-      homeTeam: teams[i].strTeam,
-      awayTeam: teams[j].strTeam
+      homeTeam: teams[i],
+      awayTeam: teams[j]
     }
   }
   pickRandomTeams(teams);
 }
 
-const generateRandomEvent = (atEstablishment, leagueId, teams) => {
+const generateRandomEventForEstablishment = async (atEstablishmentId, leaguesAndTeams) => {
+  let leagues = Object.keys(leaguesAndTeams);
+  let leagueId = leagues[Math.floor(Math.random() * leagues.length)];
+  let teams = leaguesAndTeams[leagueId];
   let { homeTeam, awayTeam } = pickRandomTeams(teams);
   let event = {
-    atEstablishment,
+    atEstablishmentId,
     leagueId,
-    homeTeam,
-    awayTeam,
+    homeTeam: homeTeam.strTeam,
+    awayTeam: awayTeam.strTeam,
+    homeTeamBadge: homeTeam.strTeamBadge,
+    awayTeamBadge: awayTeam.strTeamBadge,
     startTime: generateRandomDate().toISOString(),
     coverCharge: false,
-    description: 'Some description of the event/show or additional notes.'
+    description: '[Sample event], description of event/show or additional notes.'
   }
   return event;
 }
@@ -154,9 +158,11 @@ const seedEstablishmentsForCity = async (city) => {
 
 const main = async () => {
   // await seedEstablishmentsForCity('new york city');
-  let leaguesAndTeams = await mapLeaguesToTeams()
-  let event = generateRandomEvent('1234', 4380, leaguesAndTeams['4380'])
+  let leaguesAndTeams = await mapLeaguesToTeams();
+  let event = await generateRandomEventForEstablishment('4a1bc824-3c74-4312-8776-62d4c9024a27', leaguesAndTeams);
+  let res = await insertItemToTable(toDynamoDBJson(event), awsResourcesCreated.dynamoDBTables[1]);
   console.log(event);
+  console.log(res);
 };
 
 main();
