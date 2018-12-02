@@ -66,26 +66,18 @@ const exportCreatedResourcesAsJson = () => {
   fs.writeFileSync('./awsResourcesCreated.json', fileContent, 'utf8')
 }
 
-const networkRequest = (path) => {
-  const URL = url.parse(path);
+const networkRequest = (url) => {
   let buffer = [];
   return new Promise((resolve, reject) => {
-    const req = https.request(URL, (res) => {
+    const req = https.request(url, (res) => {
 
-      res.on('data', (chunk) => {
-        buffer.push(chunk);
-      })
-
-      res.on('error', (err) => {
-        reject(err);
-      })
-      res.on('end', () => {
-        resolve(JSON.parse(buffer.join('')));
-      })
+      res.on('data', (chunk) => buffer.push(chunk))
+      res.on('end', () => resolve(JSON.parse(buffer.join(''))))
     })
+    req.on('error', (err) => reject(err))
     req.end();
   })
-}
+};
 
 module.exports = {
   setGlobalVar,
