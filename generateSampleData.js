@@ -1,5 +1,10 @@
 require('dotenv').config();
+const uuidv1 = require('uuid/v1');
 const { networkRequest } = require('./utils');
+const googleMapsClient = require('@google/maps').createClient({
+  key: process.env.GOOGLE_MAPS_API_KEY,
+  Promise: Promise
+});
 
 const usMajorCities = [
   "seattle",
@@ -49,5 +54,36 @@ const mapLeaguesToTeams = async () => {
   return map;
 }
 
+const fetchEstablishmentsForCity = async (city) => {
+  let establishments = [];
+  try {
+    let { json } = await googleMapsClient.places({ query: `sports bars in ${city}` }).asPromise()
+    establishments = json.results;
+    return (establishments);
+  } catch (err) {
+    throw err
+  }
+}
 
-mapLeaguesToTeams();
+const createEstablishmentObj = (place) => {
+  const establishment = {
+    id: uuidv1(),
+    managerUsername: 'sample',
+    googlePlaceId: place.id,
+    name: place.name.toLowerCase(),
+    displayName: place.name,
+    address: place.formatted_address,
+    phone: place.formatted_phone_number || 'none',
+    lat: place.geometry.location.lat,
+    lng: place.geometry.location.lng,
+  }
+  return establishment;
+}
+
+const main = async () => {
+  let nycEst = await fetchEstablishmentsForCity('new york city');
+  let establishments = nycEst.map(e => createEstablishmentObj(e));
+  console.log(establishments);
+};
+
+main();
