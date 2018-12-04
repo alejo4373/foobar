@@ -12,6 +12,7 @@
     "start": "cd ./react-app && npm start",
     "setup": "node ./aws-setup.js",
     "cleanup": "node ./aws-cleanup.js",
-    "build": "cd ./react-app && npm run build"
+    "build": "cd ./react-app && npm run build",
+    "heroku-postbuild": "cd ./react-app && npm install"
   }
 }
