@@ -46,7 +46,7 @@ export default class LogInForm extends Component {
           </div>
           <div>
             <label> Password: </label>
-            <input className='input-box' type='text' name='password' value={password} onChange={this.handleInput} required />
+            <input className='input-box' type='password' name='password' value={password} onChange={this.handleInput} required />
           </div>
           <button className='btn' type='submit'> Log In </button>
         </form>
