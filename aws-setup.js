@@ -25,7 +25,6 @@ const setupDynamoDB = require('./AWS/setup-scripts/dynamoDB');
 const setupCognito = require('./AWS/setup-scripts/cognito');
 const setupAppSync = require('./AWS/setup-scripts/appSync');
 const setupLambda = require('./AWS/setup-scripts/lambda');
-const generateSampleData = require('./generateSampleData');
 
 const main = async () => {
   try {
@@ -35,7 +34,6 @@ const main = async () => {
     await setupCognito();
     exportEnvVarsFile(); // Will output ./react-app/.env file for use when launching the React App
     exportCreatedResourcesAsJson(); // Will output awsResourcesCreate.json for use when cleaning up (aws-cleanup.js)
-    generateSampleData();
   } catch (err) {
     console.log("[Error]:", err);
   }
