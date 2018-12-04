@@ -147,22 +147,33 @@ const generateRandomEventForEstablishment = async (atEstablishmentId, leaguesAnd
 }
 
 const seedEstablishmentsForCity = async (city) => {
-  let nycEst = await fetchEstablishmentsForCity(city);
+  let cityEst = await fetchEstablishmentsForCity(city);
   let estTable = awsResourcesCreated.dynamoDBTables[0];
-  let establishments = nycEst.map(e => toDynamoDBJson(createEstablishmentObj(e)));
+  let establishments = cityEst.map(e => toDynamoDBJson(createEstablishmentObj(e)));
   console.log('establishments length:', establishments.length);
-  for (let i = 0; i < establishments.length; i++) {
-    await insertItemToTable(establishments[i], estTable);
+  for (let i = 0; i < 1 ; i++) {
+    try {
+      insertItemToTable(establishments[i], estTable);
+      console.log('est', establishments[i]);
+    } catch (err) {
+      throw err;
+    }
   }
 }
 
 const main = async () => {
-  // await seedEstablishmentsForCity('new york city');
   let leaguesAndTeams = await mapLeaguesToTeams();
-  let event = await generateRandomEventForEstablishment('4a1bc824-3c74-4312-8776-62d4c9024a27', leaguesAndTeams);
-  let res = await insertItemToTable(toDynamoDBJson(event), awsResourcesCreated.dynamoDBTables[1]);
-  console.log(event);
-  console.log(res);
+  let city;
+  // for (let i = 0; i < usMajorCities.length; i++) {
+  for (let i = 0; i < 1; i++) {
+    city = usMajorCities[i];
+    await seedEstablishmentsForCity(city);
+  }
+  // let leaguesAndTeams = await mapLeaguesToTeams();
+  // let event = await generateRandomEventForEstablishment('4a1bc824-3c74-4312-8776-62d4c9024a27', leaguesAndTeams);
+  // let res = await insertItemToTable(toDynamoDBJson(event), awsResourcesCreated.dynamoDBTables[1]);
+  // console.log(event);
+  // console.log(res);
 };
 
 main();
