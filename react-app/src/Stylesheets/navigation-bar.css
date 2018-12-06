@@ -73,9 +73,9 @@
 }
 
 .navigation-bar .searchbox .react-autosuggest__input {
-  line-height: 46px;
   width: 100%;
   border: none;
+  height: inherit;
 }
 
 .navigation-bar .searchbox .react-autosuggest__suggestions-container {
