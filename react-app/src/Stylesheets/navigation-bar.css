@@ -80,13 +80,14 @@
 
 .navigation-bar .searchbox .react-autosuggest__suggestions-container {
   background-color: white;
+  margin-top: 10px
 }
 
 .navigation-bar .searchbox .react-autosuggest__suggestions-container--open {
-  width: 392px;
-  left: -51px;
-  top: 36px;
   position: absolute;
+  width: 392px;
+  left: 0px;
+  top: 36px;
   z-index: 4;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px 0px;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
