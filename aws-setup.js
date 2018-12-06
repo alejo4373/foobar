@@ -10,7 +10,7 @@ global.aws_vars = {
 };
 
 const { AWS } = global;
-const { exportEnvVarsFile, exportCreatedResourcesAsJson } = require('./AWS/setup-scripts/utils');
+const { exportEnvVarsFile, exportCreatedResourcesAsJson } = require('./utils');
 
 // Set APIs versions
 AWS.config.apiVersions = {

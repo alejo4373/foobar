@@ -15,8 +15,13 @@ export default class LogInForm extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { username, password } = this.state
     const { logInUser } = this.props
+    let { username, password } = this.state
+    console.log(e.target.name);
+    if (e.target.name === 'demo') {
+      username = 'AEstablishmentManagerUser'
+      password = 'HelloWorld123$'
+    }
     logInUser(username, password)
   }
 
@@ -46,9 +51,12 @@ export default class LogInForm extends Component {
           </div>
           <div>
             <label> Password: </label>
-            <input className='input-box' type='text' name='password' value={password} onChange={this.handleInput} required />
+            <input className='input-box' type='password' name='password' value={password} onChange={this.handleInput} required />
           </div>
-          <button className='btn' type='submit'> Log In </button>
+          <div className='btns-box'>
+            <button className='btn btn--primary' type='submit'> Log In </button>
+            <button className='btn btn--secondary' name='demo' onClick={this.handleSubmit}> Demo Log In </button>
+          </div>
         </form>
         <p>Or <Link to='/signup'>Sign-Up</Link> if you are a business owner/manager</p>
       </Frame>

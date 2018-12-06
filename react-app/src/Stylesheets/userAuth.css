@@ -17,16 +17,24 @@
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
 }
 
+.btn--primary {
+  --btn-color-top: #15FF86;
+  --btn-color-bottom: #68BB42;
+}
+
+.btn--secondary {
+  --btn-color-top: rgb(74, 77, 255); 
+  --btn-color-bottom: rgb(16, 43, 161);
+}
+
 .btn {
-  display: block;
-  width: 100%;
   text-align: center;
   color: white;
   text-shadow: 0 0 4px rgb(96,96,96);
   border: 1px solid #adadad;
   border-radius: 4px;
   padding: 6px 12px;
-  background-image: linear-gradient(to bottom,#15FF86 0,#68BB42 100%);
+  background-image: linear-gradient(to bottom, var(--btn-color-top) 0, var(--btn-color-bottom) 100%);
   background-repeat: repeat-x;
   box-sizing: border-box;
   font-family: inherit;
@@ -36,15 +44,20 @@
 }
 
 .btn:hover {
-  color: white;
-  background-color: #68BB42;
-  border-color: #adadad;
   background-position: 0 -5px;
+  background-color: var(--btn-color-bottom);
+  border-color: #adadad;
 }
 
 .btn:active {
-  background-color: #279f43;
+  background-color: var(--btn-color-bottom);
   background-image: none;
   border-color: rgba(27,31,35,0.5);
   box-shadow: inset 0 0.15em 0.3em rgba(27,31,35,0.15);
+}
+
+.btns-box {
+  display: grid;
+  grid-template-columns: 48% 48%;
+  grid-column-gap: 4%;
 }
