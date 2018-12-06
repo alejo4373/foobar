@@ -54,8 +54,8 @@ export default class LogInForm extends Component {
             <input className='input-box' type='password' name='password' value={password} onChange={this.handleInput} required />
           </div>
           <div className='btns-box'>
-            <button className='btn' type='submit'> Log In </button>
-            <button className='btn' name='demo' onClick={this.handleSubmit}> Demo Log In </button>
+            <button className='btn btn--primary' type='submit'> Log In </button>
+            <button className='btn btn--secondary' name='demo' onClick={this.handleSubmit}> Demo Log In </button>
           </div>
         </form>
         <p>Or <Link to='/signup'>Sign-Up</Link> if you are a business owner/manager</p>
