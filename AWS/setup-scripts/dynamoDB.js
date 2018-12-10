@@ -25,7 +25,7 @@ const awsDescribeTable = (params) => {
 }
 
 let establishmentsTableParams = {
-  TableName: 'foobar_establishments_table',
+  TableName: 'foobar_establishments_table_2',
   AttributeDefinitions: [
     {
       AttributeName: 'id',
@@ -49,11 +49,15 @@ let establishmentsTableParams = {
   ProvisionedThroughput: {
     ReadCapacityUnits: 5,
     WriteCapacityUnits: 5
+  },
+  StreamSpecification: {
+    StreamEnabled: true,
+    StreamViewType: 'NEW_IMAGE'
   }
 }
 
 let eventsTableParams = {
-  TableName: 'foobar_events_table',
+  TableName: 'foobar_events_table_2',
   AttributeDefinitions: [
     {
       AttributeName: 'atEstablishmentId',
@@ -77,6 +81,10 @@ let eventsTableParams = {
   ProvisionedThroughput: {
     ReadCapacityUnits: 5,
     WriteCapacityUnits: 5
+  },
+  StreamSpecification: {
+    StreamEnabled: true,
+    StreamViewType: 'NEW_IMAGE'
   }
 }
 
