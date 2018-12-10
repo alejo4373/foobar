@@ -337,9 +337,67 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
   return createdRoleArn
 }
 
+const createRoleForLambdaToAccessES = async () => {
+  // The trust relationship policy document that grants an entity permission to assume the role. 
+  let assumeRolePolicyDoc = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "lambda.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  }
+
+  let policyDoc = {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "LogsDDBESAccess",
+        "Effect": "Allow",
+        "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:CreateLogGroup",
+          "dynamodb:GetShardIterator",
+          "dynamodb:DescribeStream",
+          "dynamodb:ListStreams",
+          "dynamodb:GetRecords",
+          "es:ESHttpPost",
+          "es:ESHttpDelete",
+          "es:ESHttpPut",
+        ],
+        "Resource": "*"
+      }
+    ]
+  }
+
+  const roleParams = {
+    RoleName: 'foobar_lambda_DDB_ES_execution-role',
+    Description: 'Role that allows function to write logs, read table streams and talk to the elasticsearch service',
+  };
+
+  const policyParams = {
+    PolicyDocument: JSON.stringify(policyDoc),
+    PolicyName: 'foobar_lambda_DDB_ES_execution-policy'
+  }
+
+  let createdRoleArn;
+  try {
+    createdRoleArn = await createRoleFor(assumeRolePolicyDoc, roleParams, policyParams);
+    return createdRoleArn;
+  } catch (err) {
+    console.log('[Error]', err)
+  }
+}
+
 module.exports = {
   createUnauthenticatedRoleForIdentityPoolToAccessAppSync,
   createAuthenticatedRoleForIdentityPoolToAccessAppSync,
   createExecutionRoleForLambdaFunction,
   createRoleForAppSyncToAccessDataSource,
+  createRoleForLambdaToAccessES,
 }
