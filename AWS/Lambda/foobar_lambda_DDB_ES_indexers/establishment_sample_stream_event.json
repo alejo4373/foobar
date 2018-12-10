@@ -1,0 +1,100 @@
+{
+  "Records": [
+    {
+      "eventID": "1",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "Keys": {
+          "id": {
+            "S": "001"
+          },
+          "managerUsername": {
+            "S": "alejo"
+          }
+        },
+        "NewImage": {
+          "id": {
+            "S": "001"
+          },
+          "managerUsername": {
+            "S": "alejo"
+          },
+          "otherProp": {
+            "S": "hello"
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "SequenceNumber": "111",
+        "SizeBytes": 26
+      },
+      "awsRegion": "us-east-2",
+      "eventName": "INSERT",
+      "eventSourceARN": "arn:aws:dynamodb:us-east-2:account-id:table/foobar_establishments_table/stream/2015-06-27T00:48:05.899",
+      "eventSource": "aws:dynamodb"
+    },
+    {
+      "eventID": "2",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "Keys": {
+          "id": {
+            "S": "002"
+          },
+          "managerUsername": {
+            "S": "alejo"
+          }
+        },
+        "NewImage": {
+          "id": {
+            "S": "002"
+          },
+          "managerUsername": {
+            "S": "alejo"
+          },
+          "otherProp": {
+            "S": "hello"
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "SequenceNumber": "111",
+        "SizeBytes": 26
+      },
+      "awsRegion": "us-east-2",
+      "eventName": "INSERT",
+      "eventSourceARN": "arn:aws:dynamodb:us-east-2:account-id:table/foobar_establishments_table/stream/2015-06-27T00:48:05.899",
+      "eventSource": "aws:dynamodb"
+    },
+    {
+      "eventID": "3",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "Keys": {
+          "id": {
+            "S": "003"
+          },
+          "managerUsername": {
+            "S": "alejo"
+          }
+        },
+        "SizeBytes": 38,
+        "SequenceNumber": "333",
+        "OldImage": {
+          "id": {
+            "S": "003"
+          },
+          "managerUsername": {
+            "S": "alejo"
+          },
+          "otherProp": {
+            "S": "hello"
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES"
+      },
+      "awsRegion": "us-east-2",
+      "eventName": "REMOVE",
+      "eventSourceARN": "arn:aws:dynamodb:us-east-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+      "eventSource": "aws:dynamodb"
+    }
+  ]
+}
