@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 const region = AWS.config.region;
 const domain = process.env.ES_DOMAIN_ENDPOINT
 const type = '_doc';
-const index = 'foobar-est-index'
+const index = 'establishments-index'
 
 const manageIndex = (record, eventName) => {
   let endpoint = new AWS.Endpoint(domain);
