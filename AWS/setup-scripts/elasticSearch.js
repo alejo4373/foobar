@@ -1,4 +1,8 @@
-const { createRoleForLambdaToAccessES } = require('../setup-scripts/iam');
+const fs = require('fs');
+const path = require('path');
+const iam = require('../setup-scripts/iam');
+const lambda = require('../setup-scripts/lambda');
+
 // AWS must be in the global scope
 const ES = new AWS.ES({ apiVersion: '2015-01-01' })
 
@@ -82,28 +86,61 @@ const createESDomain = async (domainName, roleArn) => {
   };
   try {
     console.log('Creating ES domain');
-    let res = await ES.createElasticsearchDomain(esDomainParams).promise();
+    let { DomainStatus } = await ES.createElasticsearchDomain(esDomainParams).promise();
 
     // If processing is not true, it means the domain was already created
     // aws doesn't complain if trying to create a domain with the name of
     // an already existing domain
-    if (res.DomainStatus.Processing === true) {
+    if (DomainStatus.Processing === true) {
       console.log('New ES domain created. Success');
       await waitUntilDomainReady(domainName);
     } else {
       console.log(`Domain '${domainName}' already exists. Skipping...`)
     }
+    return DomainStatus;
   } catch (err) {
     throw err;
   }
 }
 
+/**
+ * Creates function that will read items from a DynamoDB table stream
+ * and index them as documents to the Elasticsearch domain
+ */
+const createESIndexerFunction = async (name, zipFilePath, esDomainEndpoint) => {
+  let functionZipFile = fs.readFileSync(path.join(__dirname, zipFilePath))
+  let roleArn = await iam.createRoleForLambdaToAccessES();
+  let funcParams = {
+    FunctionName: name,
+    Runtime: 'nodejs8.10',
+    Role: roleArn,
+    Handler: `${name}.handler`,
+    Description: 'Function to read DynamoDB table stream and index items as documents in ES domain',
+    Environment: {
+      Variables: {
+        "ES_DOMAIN_ENDPOINT": esDomainEndpoint
+      }
+    },
+    Code: {
+      ZipFile: functionZipFile
+    }
+  }
+  return lambda.deployFunction(funcParams);
+}
+
 const main = async () => {
   let domainName = 'foobar-es-domain';
-  let roleArn;
+  let accessRoleArn;
+  let domain;
   try {
-    roleArn = await createRoleForLambdaToAccessES();
-    await createESDomain(domainName, roleArn);
+    accessRoleArn = await iam.createRoleForLambdaToAccessES();
+    domain = await createESDomain(domainName, accessRoleArn);
+    let lam = await createESIndexerFunction(
+      'foobar_establishments_DDB_ES_indexer',
+      '../Lambda/foobar_lambda_DDB_ES_indexers/foobar_establishments_DDB_ES_indexer.zip',
+      domain.Endpoint
+    );
+    console.log('lam res', lam);
   } catch (err) {
     console.log(err);
   }
