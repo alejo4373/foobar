@@ -21,6 +21,12 @@ const addToCreatedInGlobalVar = (name, value) => {
   }
 }
 
+const addFunctionToCreated = (name) => {
+  let functions = aws_vars.created.functions || [];
+  functions.push(name);
+  aws_vars.created.functions = functions;
+}
+
 /**
  * Adds newIAMRoleAndPolicy object to array kept in aws_vars global var
  * @param {object} newIAMRoleAndPolicy 
@@ -84,6 +90,7 @@ module.exports = {
   exportEnvVarsFile,
   addToCreatedInGlobalVar,
   addIAMRoleAndPolicyToCreated,
+  addFunctionToCreated,
   exportCreatedResourcesAsJson,
   networkRequest
 }
