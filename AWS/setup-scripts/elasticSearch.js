@@ -108,22 +108,26 @@ const createESDomain = async (domainName, roleArn) => {
  * Creates function that will read items from a DynamoDB table stream
  * and index them as documents to the Elasticsearch domain
  * @param {string} name Function name
- * @param {string} zipFilePath File system path to function dev package .zip
  * @param {string} tableName Table to read stream from
  * @param {string} esDomainEndpoint Domain to which index documents
- */
-const createAndSetupESIndexerFunction = async (name, zipFilePath, tableName, esDomainEndpoint) => {
+ * @param {string} index index that will be used by the function via ENV var
+ **/
+const createAndSetupESIndexerFunction = async (name, tableName, esDomainEndpoint, index) => {
   try {
-    let functionZipFile = fs.readFileSync(path.join(__dirname, zipFilePath))
+    let functionZipFile = fs.readFileSync(path.join(
+      __dirname,
+      '../Lambda/foobar_DDB_ES_items_indexer.zip',
+    ));
     let roleArn = await iam.createRoleForLambdaToAccessES();
     let funcParams = {
       FunctionName: name, Runtime: 'nodejs8.10',
       Role: roleArn,
-      Handler: `${name}.handler`,
+      Handler: 'foobar_DDB_ES_items_indexer.handler',
       Description: 'Function to read DynamoDB table stream and index items as documents in ES domain',
       Environment: {
         Variables: {
-          "ES_DOMAIN_ENDPOINT": esDomainEndpoint
+          "ES_DOMAIN_ENDPOINT": esDomainEndpoint,
+          "ES_INDEX": index 
         }
       },
       Code: {
@@ -171,11 +175,19 @@ const main = async () => {
   try {
     accessRoleArn = await iam.createRoleForLambdaToAccessES();
     domain = await createESDomain(domainName, accessRoleArn);
-    createAndSetupESIndexerFunction(
+    console.log('==== Creating Establishment indexer function ====');
+    await createAndSetupESIndexerFunction(
       'foobar_establishments_DDB_ES_indexer',
-      '../Lambda/foobar_lambda_DDB_ES_indexers/foobar_establishments_DDB_ES_indexer.zip',
       'foobar_establishments_table',
-      domain.Endpoint
+      domain.Endpoint,
+      'establishments-index'
+    );
+    console.log('==== Creating Events indexer function ====');
+    await createAndSetupESIndexerFunction(
+      'foobar_events_DDB_ES_indexer',
+      'foobar_events_table',
+      domain.Endpoint,
+      'events-index'
     );
   } catch (err) {
     console.log(err);
