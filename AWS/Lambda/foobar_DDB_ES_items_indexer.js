@@ -8,7 +8,16 @@ const manageIndex = (record, eventName) => {
   let endpoint = new AWS.Endpoint(domain);
   let request = new AWS.HttpRequest(endpoint, region);
   let document = AWS.DynamoDB.Converter.unmarshall(record.dynamodb.NewImage);
-  let id = record.dynamodb.Keys.id.S;
+  let keys = record.dynamodb.Keys;
+  let id;
+  // If the item/record coming in is an Establishment it will have an id on its keys,
+  // otherwise (i.e it's an event) combine the composite key with a '#' character 
+  // to create a unique id 
+  if (keys.id) {
+    id = keys.id.S;
+  } else {
+    id = keys.atEstablishmentId.S + '#' + keys.startTime.S;
+  }
   if (eventName == 'REMOVE') {
     request.method = 'DELETE';
   } else {
