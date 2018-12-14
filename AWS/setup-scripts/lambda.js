@@ -28,6 +28,8 @@ const listFunctions = () => {
   })
 }
 
+const createEventSourceMapping = (params) => lambda.createEventSourceMapping(params).promise();
+
 // Due to IAM roles and policies not being replicated immediately 
 // the Lambda function creation might fail because the role is not
 // ready. 
@@ -125,4 +127,6 @@ const deployFunction = async (funcParams) => {
 
 module.exports = {
   createGetGooglePhotoReferenceFunction,
+  createEventSourceMapping,
+  deployFunction
 };
