@@ -22,9 +22,9 @@ const addToCreatedInGlobalVar = (name, value) => {
 }
 
 const addFunctionToCreated = (name) => {
-  let functions = aws_vars.created.functions || [];
-  functions.push(name);
-  aws_vars.created.functions = functions;
+  let lambdaFunctions = aws_vars.created.lambdaFunctions || [];
+  lambdaFunctions.push(name);
+  aws_vars.created.lambdaFunctions = lambdaFunctions;
 }
 
 /**
