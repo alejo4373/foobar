@@ -29,17 +29,21 @@ const addFunctionToCreated = (name) => {
 
 /**
  * Adds newIAMRoleAndPolicy object to array kept in aws_vars global var
+ * if role with same name hasn't been previously added
  * @param {object} newIAMRoleAndPolicy 
  */
 const addIAMRoleAndPolicyToCreated = (newIAMRoleAndPolicy) => {
   let IAMRolesAndPolicies = global.aws_vars.created.IAMRolesAndPolicies || [];
   let prevAws_vars = global.aws_vars;
   let prevCreated = prevAws_vars.created;
-  global.aws_vars = {
-    ...prevAws_vars,
-    created: {
-      ...prevCreated,
-      IAMRolesAndPolicies: [...IAMRolesAndPolicies, newIAMRoleAndPolicy]
+  //If role not already in IAMRolesAndPolicies added it 
+  if (!IAMRolesAndPolicies.some(elem => newIAMRoleAndPolicy.RoleName === elem.RoleName)) {
+    global.aws_vars = {
+      ...prevAws_vars,
+      created: {
+        ...prevCreated,
+        IAMRolesAndPolicies: [...IAMRolesAndPolicies, newIAMRoleAndPolicy]
+      }
     }
   }
 }
