@@ -1,22 +1,29 @@
 const lambda = new AWS.Lambda()
 
-const deleteFunction = (functionName) => {
-  return new Promise((resolve, reject) => {
-    let params = { FunctionName: functionName };
-    lambda.deleteFunction(params, (err, data) => {
-      if (err) { reject(err) }
-      else {
-        resolve(data)
-      }
-    })
-  })
+const deleteFunction = async (functionName) => {
+  try {
+    const params = { FunctionName: functionName };
+    const { EventSourceMappings } = await lambda.listEventSourceMappings(params).promise();
+    // Remove all event source mappings (triggers) for the current function
+    for (let i = 0; i < EventSourceMappings.length; i++) {
+      const { UUID } = EventSourceMappings[i];
+      await lambda.deleteEventSourceMapping({ UUID: UUID }).promise();
+       console.log(`=> Deleted event source mapping (i.e trigger) UUID: '${UUID}' for function`);
+    }
+    return await lambda.deleteFunction(params).promise();
+  } catch (err) {
+    throw err;
+  }
 }
 
-const main = async ({ lambdaFunction }) => {
-  if (lambdaFunction) {
+const main = async ({ lambdaFunctions }) => {
+  if (lambdaFunctions.length) {
     try {
-      await deleteFunction(lambdaFunction);
-      console.log('Removing function:', lambdaFunction);
+      for (let i = 0; i < lambdaFunctions.length; i++) {
+        let f = lambdaFunctions[i];
+        console.log('Deleting function:', f);
+        await deleteFunction(f);
+      }
     } catch (err) {
       console.log('[Error] => Deleting lambda function.');
       if (err.code === 'ResourceNotFoundException') {
