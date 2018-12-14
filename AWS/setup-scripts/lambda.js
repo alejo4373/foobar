@@ -69,7 +69,7 @@ const createGetGooglePhotoReferenceFunction = async () => {
   let functionZipFile = fs.readFileSync(path.join(__dirname, '../Lambda/getGooglePhotoReference.zip'))
   let roleArn = await createExecutionRoleForLambdaFunction();
   let funcParams = {
-    FunctionName: 'getGooglePhotoReference2',
+    FunctionName: 'getGooglePhotoReference',
     Runtime: 'nodejs8.10',
     Role: roleArn,
     Handler: 'getGooglePhotoReference.handler',

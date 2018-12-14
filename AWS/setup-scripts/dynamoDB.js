@@ -25,7 +25,7 @@ const awsDescribeTable = (params) => {
 }
 
 let establishmentsTableParams = {
-  TableName: 'foobar_establishments_table_2',
+  TableName: 'foobar_establishments_table',
   AttributeDefinitions: [
     {
       AttributeName: 'id',
@@ -57,7 +57,7 @@ let establishmentsTableParams = {
 }
 
 let eventsTableParams = {
-  TableName: 'foobar_events_table_2',
+  TableName: 'foobar_events_table',
   AttributeDefinitions: [
     {
       AttributeName: 'atEstablishmentId',
