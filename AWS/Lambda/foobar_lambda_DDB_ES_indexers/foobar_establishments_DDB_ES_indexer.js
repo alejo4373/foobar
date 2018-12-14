@@ -56,6 +56,7 @@ exports.handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify(res),
     };
+    console.log('respose ===>', res);
     return response;
   } catch (err) {
     console.log('Error ===>', res);
