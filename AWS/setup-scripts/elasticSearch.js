@@ -5,6 +5,7 @@ const lambda = require('../setup-scripts/lambda');
 
 // AWS must be in the global scope
 const ES = new AWS.ES({ apiVersion: '2015-01-01' })
+const DDB = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
 
 const isDomainReady = (domainName) => {
   console.log('Checking if ES domain is ready. Please wait.');
@@ -106,26 +107,61 @@ const createESDomain = async (domainName, roleArn) => {
 /**
  * Creates function that will read items from a DynamoDB table stream
  * and index them as documents to the Elasticsearch domain
+ * @param {string} name Function name
+ * @param {string} zipFilePath File system path to function dev package .zip
+ * @param {string} tableName Table to read stream from
+ * @param {string} esDomainEndpoint Domain to which index documents
  */
-const createESIndexerFunction = async (name, zipFilePath, esDomainEndpoint) => {
-  let functionZipFile = fs.readFileSync(path.join(__dirname, zipFilePath))
-  let roleArn = await iam.createRoleForLambdaToAccessES();
-  let funcParams = {
-    FunctionName: name,
-    Runtime: 'nodejs8.10',
-    Role: roleArn,
-    Handler: `${name}.handler`,
-    Description: 'Function to read DynamoDB table stream and index items as documents in ES domain',
-    Environment: {
-      Variables: {
-        "ES_DOMAIN_ENDPOINT": esDomainEndpoint
+const createAndSetupESIndexerFunction = async (name, zipFilePath, tableName, esDomainEndpoint) => {
+  try {
+    let functionZipFile = fs.readFileSync(path.join(__dirname, zipFilePath))
+    let roleArn = await iam.createRoleForLambdaToAccessES();
+    let funcParams = {
+      FunctionName: name, Runtime: 'nodejs8.10',
+      Role: roleArn,
+      Handler: `${name}.handler`,
+      Description: 'Function to read DynamoDB table stream and index items as documents in ES domain',
+      Environment: {
+        Variables: {
+          "ES_DOMAIN_ENDPOINT": esDomainEndpoint
+        }
+      },
+      Code: {
+        ZipFile: functionZipFile
       }
-    },
-    Code: {
-      ZipFile: functionZipFile
+    }
+    let functionArn = await lambda.deployFunction(funcParams);
+    await setupTriggerForFunction(tableName, functionArn);
+  } catch (err) {
+    throw err;
+  }
+
+}
+
+/**
+ * Setup trigger that will fire the function i.e events being written to
+ * the stream of the given table 
+ * @param {string} tableName Table source of the stream 
+ * @param {string} functionArn Function to fire on events in the stream
+ */
+const setupTriggerForFunction = async (tableName, functionArn) => {
+  try {
+    let { Table } = await DDB.describeTable({ TableName: tableName }).promise();
+    let eventSourceArn = Table.LatestStreamArn;
+    await lambda.createEventSourceMapping({
+      EventSourceArn: eventSourceArn,
+      FunctionName: functionArn,
+      StartingPosition: 'LATEST',
+      Enabled: true
+    });
+    console.log(`Trigger for function '${functionArn.split(':')[6]}' reading '${tableName}' table stream created. Success`);
+  } catch (err) {
+    if (err.code === 'ResourceConflictException') {
+      console.log(`[WARNING] Trigger for function '${functionArn.split(':')[6]}' already exists. Skipping...`);
+    } else {
+      console.log('[Error] ==>', err);
     }
   }
-  return lambda.deployFunction(funcParams);
 }
 
 const main = async () => {
@@ -135,12 +171,12 @@ const main = async () => {
   try {
     accessRoleArn = await iam.createRoleForLambdaToAccessES();
     domain = await createESDomain(domainName, accessRoleArn);
-    let lam = await createESIndexerFunction(
+    createAndSetupESIndexerFunction(
       'foobar_establishments_DDB_ES_indexer',
       '../Lambda/foobar_lambda_DDB_ES_indexers/foobar_establishments_DDB_ES_indexer.zip',
+      'foobar_establishments_table',
       domain.Endpoint
     );
-    console.log('lam res', lam);
   } catch (err) {
     console.log(err);
   }
