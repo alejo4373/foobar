@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const iam = require('../setup-scripts/iam');
 const lambda = require('../setup-scripts/lambda');
+const utils = require('../../utils');
 
 // AWS must be in the global scope
 const ES = new AWS.ES({ apiVersion: '2015-01-01' })
@@ -98,6 +99,7 @@ const createESDomain = async (domainName, roleArn) => {
     } else {
       console.log(`Domain '${domainName}' already exists. Skipping...`)
     }
+    utils.addToCreatedInGlobalVar('esDomain', DomainStatus.DomainName);
     return DomainStatus;
   } catch (err) {
     throw err;
