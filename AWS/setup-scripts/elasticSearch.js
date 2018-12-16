@@ -9,7 +9,7 @@ const ES = new AWS.ES({ apiVersion: '2015-01-01' })
 const DDB = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
 
 const isDomainReady = (domainName) => {
-  console.log('Checking if ES domain is ready. Please wait.');
+  console.log('Initializing ES domain. Please wait.');
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       ES.describeElasticsearchDomain({ DomainName: domainName }, (err, data) => {
@@ -28,8 +28,7 @@ const isDomainReady = (domainName) => {
 
 // Ask if domain is ready every 2 minutes
 const waitUntilDomainReady = async (domainName) => {
-  console.log(`Waiting for domain ${domainName} to be ready...`);
-  console.log('[Note] New domains take up to ten minutes to initialize. After your domain is initialized, you can upload data and make changes to the domain.');
+  console.log('[Note] New domains take up to 10 minutes to initialize. An uninitialized domain cannot perform queries or index documents.');
   let domainReady = false;
   while (!domainReady) {
     try {
@@ -38,7 +37,7 @@ const waitUntilDomainReady = async (domainName) => {
       return console.log('[Error]', err);
     }
   }
-  console.log('Domain is ready for use in production');
+  console.log('==== Domain fully initialized. Ready for use. ====');
 }
 
 /**
@@ -87,7 +86,7 @@ const createESDomain = async (domainName, roleArn) => {
     },
   };
   try {
-    console.log('Creating ES domain');
+    console.log('==== Creating ES domain ====');
     let { DomainStatus } = await ES.createElasticsearchDomain(esDomainParams).promise();
 
     // If processing is not true, it means the domain was already created
