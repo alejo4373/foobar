@@ -49,7 +49,7 @@ const isSchemaReady = (apiId) => {
           }
         }
       })
-    }, 1000)
+    }, 3000)
   })
 }
 
