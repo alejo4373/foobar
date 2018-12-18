@@ -6,19 +6,34 @@ Welcome to **FooBar** a Full-Stack Web App that enables sports fanatics to find 
 Built with ReactJS in the front-end and an array of Amazon Web Services including AppSync, Lambda, DynamoDB and Cognito as the back-end.
 
 ## Features
+
+- [Material Design](https://material.io/) principles.
+- Google Maps integration.
+- Business names autocompletion.
+- Team names autocompletion.
+- Sign-up + account confirmation & Log-in.
+
+
 **Foobar** is intended to be used by two different kinds of users, mainly establishments and sports fanatics. Its graphic interface is visually consistent but on the establishment side it exposes a few more controls to allow the establishment's management of sporting events.
 
-### _As an Establishment_
+### _From The Establishment perspective_
+
+- Create and manage sporting events that will be shown in your establishments.
+  
 It is required an establishment be registered by its management onto **Foobar** in order for the establishment to advertise/post sporting events they will be showing at their venue.
 
-Upon registration and login the management of an establishment is welcomed with the landing page shown above where, integrated in the search bar there are two link icons: Profile and Logout.
+Upon registration and login the management of an establishment is welcomed with the landing page shown above, where, integrated in the search bar there are two link icons: Profile and Logout.
 
 Now management can register one or more of their establishments by going to their profile.
 
 ![business-perspective](assets/images/business_perspective.gif) 
 ##### fig 1. Adding a business and an event flow.
 
-### _As an regular User_
+### _From The Fan perspective_
+
+- Search by establishment name or by team/fighter involved in the sporting event. (currently partially working)
+- Map integration to find establishments near me. 
+
 A regular user doesn't need an account. **Foobar** is a public website where a user can find the bar that will be showing the game of their interest. To accomplish this task the user is offered a search bar where they can search for an establishment, as well as the map view where they can see establishments near them or explore new areas of the map and their offers.
 
 ![user-perspective](assets/images/user_perspective.gif) 
@@ -26,7 +41,23 @@ A regular user doesn't need an account. **Foobar** is a public website where a u
 
 ## Setup
 
-### Amazon Web Services (AWS)
+### TL;DR 
+
+Clone this repo:
+
+`git clone git@github.com:alejo4373/foobar.git`
+
+Deploy AWS back-end services:
+
+`npm install && npm run setup`
+
+Check the terminal logs to see that everything went smoothly.
+
+Launch React App (Front-end)
+
+`cd react-app && npm install && npm start`
+
+### Longer, manual setup of Amazon Web Services (AWS)
 **Note**:
 The steps outlined here are to be followed using the [AWS web console](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ConsoleDynamoDB.html). However `awscli` can be used to perform the same steps faster. Regardless you will need to have a basic knowledge of how AWS works as the instructions given here are rather high level. If you have any problems setting up please make sure you read and follow the associated links to the AWS documentation.
 
