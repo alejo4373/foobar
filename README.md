@@ -46,19 +46,26 @@ A regular user doesn't need an account. **Foobar** is a public website where a u
 
 ### TL;DR 
 
-Clone this repo:
+To perform this steps you need to have an [AWS account](https://portal.aws.amazon.com/billing/signup#/start) as well as a [Google Maps API key](https://accounts.google.com/signup/v2/webcreateaccount?service=cloudconsole).
 
-`git clone git@github.com:alejo4373/foobar.git`
+1. Clone this repo: `git clone git@github.com:alejo4373/foobar.git`
 
-Deploy AWS back-end services:
+2. Put you AWS keys and region as well as your Google Maps key into a `.env` file at the root of the repo. Your file should be similar to this.
 
-`npm install && npm run setup`
+```
+  AWS_ACCESS_KEY_ID=A67GHUA3L2GFAFMCTGQ
+  AWS_SECRET_ACCESS_KEY=bZ5FdWwtDiDe+Ty7Xy9uNGrZWT76bVO8bOsCIM0Y
+  AWS_REGION=us-east-2
+  GOOGLE_MAPS_API_KEY=AIzaSyAi84To7Q6VTLLaBMnENrJGrLKhGjKnzhE
+``` 
 
-Check the terminal logs to see that everything went smoothly.
+3. Deploy AWS back-end services: `npm install && npm run setup`
 
-Launch React App (Front-end)
+>Check the terminal logs to see that everything went smoothly.
 
-`cd react-app && npm install && npm start`
+3. Launch React App (Front-end) `cd react-app && npm install && npm start`
+
+4. To undo all the AWS services that were created run `npm run cleanup`. I'm glad you checked out my app.
 
 ### Longer, manual setup of Amazon Web Services (AWS)
 **Note**:
