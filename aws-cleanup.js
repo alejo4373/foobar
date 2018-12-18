@@ -19,6 +19,7 @@ const cleanupLambda = require('./AWS/cleanup-scripts/lambda.js');
 const cleanupAppSync = require('./AWS/cleanup-scripts/appSync.js');
 const cleanupCognito = require('./AWS/cleanup-scripts/cognito.js');
 const cleanupIAMRolesAndPolicies = require('./AWS/cleanup-scripts/iam.js');
+const cleanupESDomain = require('./AWS/cleanup-scripts/elasticSearch.js');
 
 const awsResourcesCreated = JSON.parse(
   fs.readFileSync(
@@ -34,6 +35,7 @@ const main = async () => {
     cleanupAppSync(awsResourcesCreated);
     cleanupCognito(awsResourcesCreated);
     cleanupIAMRolesAndPolicies(awsResourcesCreated);
+    cleanupESDomain(awsResourcesCreated)
   } catch (err) {
     console.log('[Error]:', err);
   }
