@@ -7,6 +7,9 @@ Built with ReactJS in the front-end and an array of Amazon Web Services includin
 
 ## Features
 
+>### Note:
+>This project is actively under development. I use Trello to manage it and you can peek in [here](https://trello.com/b/VcQgZhci/foobar) to se where I am with it. There I keep track of progress, new features, bugs and development related articles I find online.
+
 - [Material Design](https://material.io/) principles.
 - Google Maps integration.
 - Business names autocompletion.
