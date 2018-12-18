@@ -25,13 +25,15 @@ const setupDynamoDB = require('./AWS/setup-scripts/dynamoDB');
 const setupCognito = require('./AWS/setup-scripts/cognito');
 const setupAppSync = require('./AWS/setup-scripts/appSync');
 const setupLambda = require('./AWS/setup-scripts/lambda');
+const elasticSearch = require('./AWS/setup-scripts/elasticSearch');
 
 const main = async () => {
   try {
     await setupDynamoDB();
-    await setupLambda();
+    await setupLambda.createGetGooglePhotoReferenceFunction();
     await setupAppSync();
     await setupCognito();
+    await elasticSearch();
     exportEnvVarsFile(); // Will output ./react-app/.env file for use when launching the React App
     exportCreatedResourcesAsJson(); // Will output awsResourcesCreate.json for use when cleaning up (aws-cleanup.js)
   } catch (err) {
