@@ -19,7 +19,7 @@ export default class LogInForm extends Component {
     let { username, password } = this.state
     console.log(e.target.name);
     if (e.target.name === 'demo') {
-      username = 'AEstablishmentManagerUser'
+      username = 'AnEstablishmentManagerUser'
       password = 'HelloWorld123$'
     }
     logInUser(username, password)
