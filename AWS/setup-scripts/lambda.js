@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { createExecutionRoleForLambdaFunction } = require('./iam');
 const { setGlobalVar, addFunctionToCreated } = require('../../utils');
+const { envPrefix } = global;
 
 const AWS = require('aws-sdk');
 const lambda = new AWS.Lambda();
@@ -69,7 +70,7 @@ const createGetGooglePhotoReferenceFunction = async () => {
   let functionZipFile = fs.readFileSync(path.join(__dirname, '../Lambda/getGooglePhotoReference.zip'))
   let roleArn = await createExecutionRoleForLambdaFunction();
   let funcParams = {
-    FunctionName: 'getGooglePhotoReference',
+    FunctionName: `${envPrefix}getGooglePhotoReference`,
     Runtime: 'nodejs8.10',
     Role: roleArn,
     Handler: 'getGooglePhotoReference.handler',

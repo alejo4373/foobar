@@ -6,6 +6,7 @@ const appSync = new AWS.AppSync();
 const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
 const createDataSource = require('./appSync/createDataSources');
 const createResolvers = require('./appSync/createResolvers');
+const { envPrefix } = global;
 
 const listApis = () => {
   return new Promise((resolve, reject) => {
@@ -71,7 +72,7 @@ const waitUntilSchemaIsReady = async (apiId) => {
 const main = async () => {
   let apiParams = {
     authenticationType: 'AWS_IAM',
-    name: 'Foobar API',
+    name: `${envPrefix}Foobar API`,
   }
 
   let apis;

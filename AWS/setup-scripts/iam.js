@@ -2,6 +2,8 @@ const IAM = require('aws-sdk/clients/iam');
 const { addIAMRoleAndPolicyToCreated } = require('../../utils');
 const iam = new IAM()
 
+const { envPrefix } = global;
+
 const createRole = (params) => {
   return new Promise((resolve, reject) => {
     iam.createRole(params, (err, data) => {
@@ -85,13 +87,13 @@ const createUnauthenticatedRoleForIdentityPoolToAccessAppSync = async (identityP
   }
 
   const roleParams = {
-    RoleName: 'foobar_identity_pool_unauthenticated-role',
+    RoleName: `${envPrefix}foobar_identity_pool_unauthenticated-role`,
     Description: 'Role that grants only access to the query type of a given GraphQL API',
   };
 
   const policyParams = {
     PolicyDocument: JSON.stringify(policyDoc),
-    PolicyName: 'foobar_identity_pool_unauthenticated-policy',
+    PolicyName: `${envPrefix}foobar_identity_pool_unauthenticated-policy`,
   }
 
   let createdRoleArn;
@@ -139,13 +141,13 @@ const createAuthenticatedRoleForIdentityPoolToAccessAppSync = async (identityPoo
   }
 
   const roleParams = {
-    RoleName: 'foobar_identity_pool_authenticated-role',
+    RoleName: `${envPrefix}foobar_identity_pool_authenticated-role`,
     Description: 'Role that grants access to all the types of a given GraphQL API',
   };
 
   const policyParams = {
     PolicyDocument: JSON.stringify(policyDoc),
-    PolicyName: 'foobar_identity_pool_authenticated-policy',
+    PolicyName: `${envPrefix}foobar_identity_pool_authenticated-policy`,
   }
 
   let createdRoleArn;
@@ -189,13 +191,13 @@ const createExecutionRoleForLambdaFunction = async () => {
   }
 
   const roleParams = {
-    RoleName: 'lambda_basic_execution-role',
+    RoleName: `${envPrefix}lambda_basic_execution-role`,
     Description: 'Role that grants access to the logs service to the Lambda function',
   };
 
   const policyParams = {
     PolicyDocument: JSON.stringify(policyDoc),
-    PolicyName: 'lambda_basic_execution-policy'
+    PolicyName: `${envPrefix}lambda_basic_execution-policy`
   }
 
   let createdRoleArn;
@@ -282,7 +284,7 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
   }
 
   const roleParams = {
-    RoleName: `appsync-datasource-${dataSourceName}-role`,
+    RoleName: `${envPrefix}appsync-datasource-${dataSourceName}-role`,
     Description: 'Role that grants access to the AppSync service to the DynamoDB Table',
   };
 
@@ -323,7 +325,7 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
 
   let policyParams = {
     PolicyDocument: JSON.stringify(policyDoc),
-    PolicyName: `appsync-datasource-${dataSourceName}-policy`,
+    PolicyName: `${envPrefix}appsync-datasource-${dataSourceName}-policy`,
   };
 
   let createdRoleArn;
@@ -376,13 +378,13 @@ const createRoleForLambdaToAccessES = async () => {
   }
 
   const roleParams = {
-    RoleName: 'foobar_lambda_DDB_ES_execution-role',
+    RoleName: `${envPrefix}foobar_lambda_DDB_ES_execution-role`,
     Description: 'Role that allows function to write logs, read table streams and talk to the elasticsearch service',
   };
 
   const policyParams = {
     PolicyDocument: JSON.stringify(policyDoc),
-    PolicyName: 'foobar_lambda_DDB_ES_execution-policy'
+    PolicyName: `${envPrefix}foobar_lambda_DDB_ES_execution-policy`
   }
 
   let createdRoleArn;

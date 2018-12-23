@@ -9,6 +9,13 @@ global.aws_vars = {
   created: {} // Will hold AWS resources created to be exported as awsResourcesCreated.json
 };
 
+// Global variable that will prepend the environment
+// an AWS resource was created in, to the resource's name.
+global.envPrefix = '';
+if (process.NODE_ENV === 'development') {
+  envPrefix = 'DEV_';
+}
+
 const { AWS } = global;
 const { exportEnvVarsFile, exportCreatedResourcesAsJson } = require('./utils');
 

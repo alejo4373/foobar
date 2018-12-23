@@ -8,6 +8,8 @@ const utils = require('../../utils');
 const ES = new AWS.ES({ apiVersion: '2015-01-01' })
 const DDB = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
 
+const { envPrefix } = global;
+
 const isDomainReady = (domainName) => {
   console.log('Initializing ES domain. Please wait.');
   return new Promise((resolve, reject) => {
@@ -121,7 +123,8 @@ const createAndSetupESIndexerFunction = async (name, tableName, esDomainEndpoint
     ));
     let roleArn = await iam.createRoleForLambdaToAccessES();
     let funcParams = {
-      FunctionName: name, Runtime: 'nodejs8.10',
+      FunctionName: name,
+      Runtime: 'nodejs8.10',
       Role: roleArn,
       Handler: 'foobar_DDB_ES_items_indexer.handler',
       Description: 'Function to read DynamoDB table stream and index items as documents in ES domain',
@@ -170,7 +173,7 @@ const setupTriggerForFunction = async (tableName, functionArn) => {
 }
 
 const main = async () => {
-  let domainName = 'foobar-es-domain';
+  let domainName = `${envPrefix}foobar-es-domain`;
   let accessRoleArn;
   let domain;
   try {
@@ -178,15 +181,15 @@ const main = async () => {
     domain = await createESDomain(domainName, accessRoleArn);
     console.log('==== Creating Establishment indexer function ====');
     await createAndSetupESIndexerFunction(
-      'foobar_establishments_DDB_ES_indexer',
-      'foobar_establishments_table',
+      `${envPrefix}foobar_establishments_DDB_ES_indexer`,
+      `${envPrefix}foobar_establishments_table`,
       domain.Endpoint,
       'establishments-index'
     );
     console.log('==== Creating Events indexer function ====');
     await createAndSetupESIndexerFunction(
-      'foobar_events_DDB_ES_indexer',
-      'foobar_events_table',
+      `${envPrefix}foobar_events_DDB_ES_indexer`,
+      `${envPrefix}foobar_events_table`,
       domain.Endpoint,
       'events-index'
     );

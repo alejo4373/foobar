@@ -1,5 +1,6 @@
 const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
 const db = new AWS.DynamoDB()
+const { envPrefix } = global
 
 // Just so that we can use await instead of nesting callbacks
 const awsCreateTable = (tableParams) => {
@@ -25,7 +26,7 @@ const awsDescribeTable = (params) => {
 }
 
 let establishmentsTableParams = {
-  TableName: 'foobar_establishments_table',
+  TableName: `${envPrefix}foobar_establishments_table`,
   AttributeDefinitions: [
     {
       AttributeName: 'id',
@@ -57,7 +58,7 @@ let establishmentsTableParams = {
 }
 
 let eventsTableParams = {
-  TableName: 'foobar_events_table',
+  TableName: `${envPrefix}foobar_events_table`,
   AttributeDefinitions: [
     {
       AttributeName: 'atEstablishmentId',
