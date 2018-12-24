@@ -58,7 +58,7 @@ const main = async ({ type, apiId, dataSourceName, dataSourceArn }) => {
         params.dynamodbConfig = {
           awsRegion: AWS.config.region,
           tableName: dataSourceName,
-          useCallerCredentials: true
+          useCallerCredentials: false
         }
         // Create the appropriate role to allow access to data source.
         try {
