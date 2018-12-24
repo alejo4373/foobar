@@ -173,7 +173,12 @@ const setupTriggerForFunction = async (tableName, functionArn) => {
 }
 
 const main = async () => {
-  let domainName = `${envPrefix}foobar-es-domain`;
+  // Domain name has to satisfy regular expression pattern: [a-z][a-z0-9\-]+ as per AWS
+  let domainPrefix = envPrefix;
+  if ( envPrefix === 'DEV_') {
+    domainPrefix = 'dev-';
+  }
+  let domainName = `${domainPrefix}foobar-es-domain`;
   let accessRoleArn;
   let domain;
   try {

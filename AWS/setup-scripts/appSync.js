@@ -128,22 +128,22 @@ const main = async () => {
   let establishmentTableDsParams = {
     type: 'AMAZON_DYNAMODB',
     apiId: api.apiId,
-    dataSourceName: 'foobar_establishments_table',
-    dataSourceArn: global.aws_vars.foobar_establishments_tableArn
+    dataSourceName: `${envPrefix}foobar_establishments_table`,
+    dataSourceArn: global.aws_vars[`${envPrefix}foobar_establishments_tableArn`]
   }
 
   let eventsTableDsParams = {
     type: 'AMAZON_DYNAMODB',
     apiId: api.apiId,
-    dataSourceName: 'foobar_events_table',
-    dataSourceArn: global.aws_vars.foobar_events_tableArn
+    dataSourceName: `${envPrefix}foobar_events_table`,
+    dataSourceArn: global.aws_vars[`${envPrefix}foobar_events_tableArn`]
   }
 
   let lambdaFunctionDsParams = {
     type: 'AWS_LAMBDA',
     apiId: api.apiId,
-    dataSourceName: 'getGooglePhotoReference_function',
-    dataSourceArn: global.aws_vars.getGooglePhotoReference
+    dataSourceName: `${envPrefix}getGooglePhotoReference`,
+    dataSourceArn: global.aws_vars[`${envPrefix}getGooglePhotoReference`]
   }
 
   // The following statements could happen asynchronously but due to confusing log messages I decided against it.

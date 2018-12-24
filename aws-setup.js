@@ -12,7 +12,7 @@ global.aws_vars = {
 // Global variable that will prepend the environment
 // an AWS resource was created in, to the resource's name.
 global.envPrefix = '';
-if (process.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development') {
   envPrefix = 'DEV_';
 }
 
@@ -41,8 +41,13 @@ const main = async () => {
     await setupAppSync();
     await setupCognito();
     await elasticSearch();
-    exportEnvVarsFile(); // Will output ./react-app/.env file for use when launching the React App
-    exportCreatedResourcesAsJson(); // Will output awsResourcesCreate.json for use when cleaning up (aws-cleanup.js)
+
+    // Will output ./.env-react-app file to be moved inside ./react-app, 
+    // renamed to ".env" and be used when launching the React App
+    exportEnvVarsFile(); 
+
+    // Will output awsResourcesCreate.json for use when cleaning up (aws-cleanup.js)
+    exportCreatedResourcesAsJson(); 
   } catch (err) {
     console.log("[Error]:", err);
   }
