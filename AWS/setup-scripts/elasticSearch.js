@@ -88,7 +88,6 @@ const createESDomain = async (domainName, roleArn) => {
     },
   };
   try {
-    console.log('==== Creating ES domain ====');
     let { DomainStatus } = await ES.createElasticsearchDomain(esDomainParams).promise();
 
     // If processing is not true, it means the domain was already created
@@ -105,6 +104,36 @@ const createESDomain = async (domainName, roleArn) => {
   } catch (err) {
     throw err;
   }
+}
+
+/**
+ * Tries to create an ElasticSearch Domain. If failed due to the role
+ * used in the domain access policy not being ready it will retry
+ * every 5 seconds until retries are exhausted
+ * @param {string} domainName Name for the new domain to be created
+ * @param {string} roleArn Role that will have access to the domain
+ * @param {number} retries Number of attempts to create the domain
+ */
+const tryCreateESDomain = (domainName, roleArn, retries) => {
+  return new Promise(async (resolve, reject) => {
+    if (retries > 0) {
+      try {
+        let success = await createESDomain(domainName, roleArn);
+        resolve(success);
+      } catch (err) {
+        if (err.code === 'InvalidTypeException' && err.message.includes('Error setting policy')) {
+          console.log('Role to be used in ES Domain access policy not ready yet. Retrying...');
+          setTimeout(() => {
+            resolve(tryCreateESDomain(domainName, roleArn, retries - 1));
+          }, 5000);
+        } else {
+          reject(err)
+        }
+      }
+    } else {
+      reject(new Error('tryCreateESDomain() retries exhausted'));
+    }
+  })
 }
 
 /**
@@ -131,7 +160,7 @@ const createAndSetupESIndexerFunction = async (name, tableName, esDomainEndpoint
       Environment: {
         Variables: {
           "ES_DOMAIN_ENDPOINT": esDomainEndpoint,
-          "ES_INDEX": index 
+          "ES_INDEX": index
         }
       },
       Code: {
@@ -175,7 +204,7 @@ const setupTriggerForFunction = async (tableName, functionArn) => {
 const main = async () => {
   // Domain name has to satisfy regular expression pattern: [a-z][a-z0-9\-]+ as per AWS
   let domainPrefix = envPrefix;
-  if ( envPrefix === 'DEV_') {
+  if (envPrefix === 'DEV_') {
     domainPrefix = 'dev-';
   }
   let domainName = `${domainPrefix}foobar-es-domain`;
@@ -183,7 +212,8 @@ const main = async () => {
   let domain;
   try {
     accessRoleArn = await iam.createRoleForLambdaToAccessES();
-    domain = await createESDomain(domainName, accessRoleArn);
+    console.log('==== Creating ES domain ====');
+    domain = await tryCreateESDomain(domainName, accessRoleArn, 4);
     console.log('==== Creating Establishment indexer function ====');
     await createAndSetupESIndexerFunction(
       `${envPrefix}foobar_establishments_DDB_ES_indexer`,
