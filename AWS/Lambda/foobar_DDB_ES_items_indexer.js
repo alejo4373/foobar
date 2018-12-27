@@ -11,12 +11,12 @@ const manageIndex = (record, eventName) => {
   let keys = record.dynamodb.Keys;
   let id;
   // If the item/record coming in is an Establishment it will have an id on its keys,
-  // otherwise (i.e it's an event) combine the composite key with a '#' character 
-  // to create a unique id 
+  // otherwise (i.e it's an event) combine its atEstablishmentId with a hex representation
+  // of the startTime, joined by '_' (underscore) to create a unique id 
   if (keys.id) {
     id = keys.id.S;
   } else {
-    id = keys.atEstablishmentId.S + '#' + keys.startTime.S;
+    id = keys.atEstablishmentId.S + '_' + Buffer.from(keys.startTime.S).toString('hex');
   }
   if (eventName == 'REMOVE') {
     request.method = 'DELETE';
@@ -65,10 +65,10 @@ exports.handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify(res),
     };
-    console.log('respose ===>', res);
+    console.log('response ===>', res);
     return response;
   } catch (err) {
-    console.log('Error ===>', res);
+    console.log('Error ===>', err);
     return null;
   }
 };
