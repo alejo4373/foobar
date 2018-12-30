@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './Stylesheets/app.css';
+import AWSESClient from 'aws-elasticsearch-client'
 
 //Child component 
 import Dashboard from './Components/Dashboard';
@@ -34,6 +35,33 @@ class App extends Component {
   componentDidMount() {
     console.log('App DidMount')
     this.fetchCurrentUser()
+    this.setupESClient();
+  }
+
+  // Get current AWS credentials attach as this.esClient 
+  // the created ES domain client with region and ES domain
+  // endpoint specified in the environment 
+  setupESClient = () => {
+    Auth.currentCredentials()
+      .then(credentials => {
+        this.esClient = AWSESClient({
+          host: process.env.REACT_APP_ES_DOMAIN_ENDPOINT,
+          region: process.env.REACT_APP_AWS_REGION,
+          credentials: credentials
+        })
+      })
+      .catch(err => console.log('Error getting current credentials', err))
+  }
+
+  searchIndex = async () => {
+    try {
+      let res = await this.esClient.search({
+        q: 'awayTeam:new york'
+      });
+      console.log('index-query res =>', res)
+    } catch (err) {
+      console.log('index-query err =>', err)
+    }
   }
 
   fetchCurrentUser = () => {
@@ -130,6 +158,7 @@ class App extends Component {
           logInUser={this.logInUser}
           logOutUser={this.logOutUser}
         />
+        <button onClick={this.searchIndex} >click</button>
       </UserContext.Provider>
     )
   }
