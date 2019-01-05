@@ -21,10 +21,6 @@ class MapComponent extends Component {
     this.tryGetClientLocation()
   }
 
-  handleMapReady = (mapProps, map) => {
-    window.googlePlacesService = new this.props.google.maps.places.PlacesService(map);
-  }
-
   tryGetClientLocation = () => {
     const onSuccess = position => {
       this.setState({
@@ -104,7 +100,7 @@ class MapComponent extends Component {
           {
             establishments.map((est, i) => (
               <Marker
-                key={est.googlePlaceId}
+                key={i}
                 establishment={est}
                 position={{ lat: est.lat, lng: est.lng }}
                 onClick={this.onMakerClick}

@@ -1,55 +1,11 @@
 import { API, graphqlOperation } from 'aws-amplify';
 
-class Establishment {
-  constructor({
-    id,
-    managerUsername,
-    googlePlaceId,
-    googlePhotoReference,
-    name,
-    displayName,
-    address,
-    phone,
-    lat,
-    lng,
-  }) {
-    this.id = id;
-    this.managerUsername = managerUsername;
-    this.googlePlaceId = googlePlaceId;
-    this.googlePhotoReference = googlePhotoReference;
-    this.name = name;
-    this.displayName = displayName;
-    this.address = address;
-    this.phone = phone;
-    this.lat = lat;
-    this.lng = lng;
-    this.googlePhotoUrl = undefined;
-  }
-
-  getPhotoUrl(callback) {
-    const { google, googlePlacesService } = window;
-    const request = {
-      placeId: this.googlePlaceId,
-      fields: ['photo']
-    }
-
-    googlePlacesService.getDetails(request, (place, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK) {
-        this.googlePhotoUrl = callback(null, place.photos[0]);
-      } else {
-        const err = new Error('getPhotoUrl failed');
-        callback(err, null)
-      }
-    })
-  }
-
-}
 /**
  * Gets establishments that are with in the bounds provided  
  * @param {object} bounds - An object containing latMin, latMax, lngMin, lngMax boundaries of a map instance
  * @param {Function} callback  - Handles the fetch response 
  */
-export async function getEstablishmentsInBounds(bounds, callback) {
+export async function getEstablishmentsInBounds(bounds, callback){
   try {
     const res = await API.graphql(graphqlOperation(
       `query GetAllEstablishmentsInBounds(
@@ -91,7 +47,7 @@ export async function getEstablishmentsInBounds(bounds, callback) {
  * @param {object} event - An object containing the event to be added
  * @param {Function} callback  - Handles the addEvent response 
  */
-export async function addEvent(newEvent, callback) {
+export async function addEvent(newEvent, callback){
   try {
     const res = await API.graphql(graphqlOperation(
       `mutation AddEvent(
@@ -131,7 +87,7 @@ export async function addEvent(newEvent, callback) {
           description
         }
       }`, newEvent))
-    const event = res.data.putEvent
+    const event  = res.data.putEvent
     callback(null, event)
 
   } catch (err) {
@@ -162,12 +118,9 @@ export async function getEstablishmentsUserManages(limit, callback) {
             lng
           }
         }
-      }`,
-      { limit: limit })
-    )
-    let { establishments } = res.data.getEstablishmentsUserManages;
-    establishments = establishments.map(est => new Establishment(est));
-    callback(null, establishments)
+      }`, {limit: limit}))
+      const { establishments } = res.data.getEstablishmentsUserManages
+      callback(null, establishments)
   } catch (err) {
     callback(err, null)
   }
@@ -211,8 +164,8 @@ export async function addEstablishment(newEstablishment, callback) {
               lng
             }
           }`, newEstablishment)
-    )
-    const establishment = res.data.putEstablishment
+    ) 
+    const establishment  = res.data.putEstablishment
     callback(null, establishment)
 
   } catch (err) {
