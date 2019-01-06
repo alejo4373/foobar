@@ -8,6 +8,14 @@ type PaginatedEstablishments {
   nextToken: String
 }
 
+type EstablishmentSearchResults {
+  hits: [Establishment!]
+}
+
+type EventSearchResults {
+  hits: [Event!]
+}
+
 type Event {
   id: ID
   atEstablishmentId: String!
@@ -69,5 +77,6 @@ type Query {
   getEstablishmentsUserManages(limit: Int, nextToken: String): PaginatedEstablishments!
   getEstablishmentById(id: String!): Establishment!
   getEstablishmentsInBounds(limit: Int, latMin: String!, latMax: String!, lngMin: String!, lngMax: String!): PaginatedEstablishments!
-  getEstablishmentSuggestions(pattern: String!): PaginatedEstablishments!
+  searchEstablishments(name: String!): EstablishmentSearchResults!
+  searchEvents(pattern: String!): EventSearchResults!
 }
