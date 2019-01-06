@@ -267,27 +267,25 @@ export async function getEstablishmentSuggestions(pattern, callback) {
 //Basically the same as above but asking for slightly different attributes 
 /**
  * Gets establishment that match query string 
- * @param {String} pattern - A string pattern to search for in establishments name
- * @param {Function} callback  - Handles response and error
+ * @param {String} name - A Establishment name to search for 
  */
-export async function searchEstablishments(pattern, callback) {
+export async function searchEstablishments(name) {
   try {
     const res = await API.graphql(graphqlOperation(
-      `query GetEstablishmentSuggestions($pattern: String!){
-        getEstablishmentSuggestions(pattern: $pattern){
-          establishments{
+      `query SearchEstablishments($name: String!){
+        searchEstablishments(name: $name){
+          hits {
             id
             displayName
             phone
             googlePhotoReference
           }
         }
-      }`, { pattern: pattern })
+      }`, { name: name })
     )
-    const matches = res.data.getEstablishmentSuggestions.establishments
-    callback(null, matches)
-
+    const { hits } = res.data.searchEstablishments
+    return hits;
   } catch (err) {
-    callback(err, null)
+    throw err
   }
 }
