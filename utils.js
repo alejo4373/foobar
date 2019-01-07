@@ -1,6 +1,39 @@
 const fs = require('fs');
-const url = require('url');
 const https = require('https');
+
+class DataSourceManager {
+  constructor() {
+    // dataSources represent an indexed by type collection of data-sources
+    this.dataSources = {
+      dynamoDBTable: [],
+      ESDomain: [],
+      lambdaFunction: []
+    };
+  }
+
+  /**
+   * Add data-source to the collection of its type
+   * @param {string} type Data-source type  "dynamoDBTable" || "ESDomain" || "lambdaFunction"
+   * @param {object} dataSource Name and ARN of data-source
+   * @param {object} dataSource.name Name of the data-source/resource
+   * @param {object} dataSource.arn ARN of the resource
+   */
+  add(type, dataSource) {
+    this.dataSources[type].push(dataSource)
+  }
+
+  /**
+   * Retrieve data-source of specified type if pattern found on its name 
+   * @param {string} type Data-source type  "dynamoDBTable" || "ESDomain" || "lambdaFunction"
+   * @param {string} namePattern Data-source name patter or substring to find it
+   */
+  get(type, namePattern) {
+    return this.dataSources[type].find(r => {
+      return r.name.includes(namePattern);
+    });
+  }
+}
+
 
 const setGlobalVar = (name, value) => {
   global.aws_vars = {
@@ -90,6 +123,7 @@ const networkRequest = (url) => {
 };
 
 module.exports = {
+  dataSourceManager: new DataSourceManager(),
   setGlobalVar,
   exportEnvVarsFile,
   addToCreatedInGlobalVar,

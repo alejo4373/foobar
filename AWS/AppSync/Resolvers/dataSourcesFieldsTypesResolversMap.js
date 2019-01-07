@@ -19,7 +19,6 @@ module.exports = {
     Mutation: [
       "putEstablishment",
     ],
-
   },
 
   [`${envPrefix}foobar_events_table`]: {
@@ -34,6 +33,12 @@ module.exports = {
   [`${envPrefix}getGooglePhotoReference`]: {
     Establishment: [
       'googlePhotoReference'
+    ]
+  },
+
+  [`${envPrefix}ESDomain`]: {
+    Query: [
+      "searchEstablishments"
     ]
   }
 }
