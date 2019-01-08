@@ -210,6 +210,15 @@ const createExecutionRoleForLambdaFunction = async () => {
   }
 }
 
+/**
+ * Creates a Role and a Policy if none with the same names exists. If either one of the two
+ * or both already exist, it re-does the attachment of the Policy to the Role and returns
+ * the role ARN
+ * @param {object} assumeRolePolicyDoc Also known as Trust Relationship doc (who has can assume the role)
+ * @param {object} roleParams Config to be merged with assumeRolePolicyDoc and create role
+ * @param {object} policyParams Config to create policy that will be attached to role
+ * @returns {Promise} ARN of the role created or false in case of error
+ */
 const createRoleFor = async (assumeRolePolicyDoc, roleParams, policyParams) => {
   roleParams = {
     AssumeRolePolicyDocument: JSON.stringify(assumeRolePolicyDoc),
@@ -249,7 +258,7 @@ const createRoleFor = async (assumeRolePolicyDoc, roleParams, policyParams) => {
     }
 
   } catch (err) {
-    console.log('[Error]', err)
+    throw err;
   }
 
   const attachRolePolicyParams = {
@@ -339,7 +348,10 @@ const createRoleForAppSyncToAccessDataSource = async (type, dataSourceName, data
   return createdRoleArn
 }
 
-const createRoleForLambdaToAccessES = async () => {
+/**
+ * Grants access to Lambda and AppSync to interact with domain
+ */
+const createRoleToAccessES = async () => {
   // The trust relationship policy document that grants an entity permission to assume the role. 
   let assumeRolePolicyDoc = {
     "Version": "2012-10-17",
@@ -347,7 +359,10 @@ const createRoleForLambdaToAccessES = async () => {
       {
         "Effect": "Allow",
         "Principal": {
-          "Service": "lambda.amazonaws.com"
+          "Service": [
+            "lambda.amazonaws.com",
+            "appsync.amazonaws.com"
+          ]
         },
         "Action": "sts:AssumeRole"
       }
@@ -401,5 +416,5 @@ module.exports = {
   createAuthenticatedRoleForIdentityPoolToAccessAppSync,
   createExecutionRoleForLambdaFunction,
   createRoleForAppSyncToAccessDataSource,
-  createRoleForLambdaToAccessES,
+  createRoleToAccessES,
 }
