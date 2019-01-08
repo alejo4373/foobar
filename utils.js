@@ -23,9 +23,11 @@ class DataSourceManager {
   }
 
   /**
-   * Retrieve data-source of specified type if pattern found on its name 
+   * Retrieve runtime saved data-source of specified type if pattern 
+   * found in its name 
    * @param {string} type Data-source type  "dynamoDBTable" || "ESDomain" || "lambdaFunction"
    * @param {string} namePattern Data-source name patter or substring to find it
+   * @returns Data-source information object
    */
   get(type, namePattern) {
     return this.dataSources[type].find(r => {
