@@ -1,4 +1,4 @@
-const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
+const { dataSourceManager, addToCreatedInGlobalVar } = require('../../utils');
 const db = new AWS.DynamoDB()
 const { envPrefix } = global
 
@@ -105,14 +105,12 @@ const createTable = (tableParams) => {
     tableAlreadyExists(tableParams.TableName)
       .then(table => {
         console.log(`Table with name ${table.TableName} already exists. Skipping...`)
-        setGlobalVar([`${table.TableName}Arn`], table.TableArn)
         resolve(table);
       })
       .catch(err => {
         awsCreateTable(tableParams)
           .then(table => {
             console.log('Creating table', table.TableName)
-            setGlobalVar([`${table.TableName}Arn`], table.TableArn)
             resolve(table);
           })
           .catch(err => {
@@ -133,6 +131,9 @@ const main = async () => {
       eventsTable
     ] = await Promise.all([establishmentsTablePromise, eventsTablePromise])
 
+    //Add to data source manager because they will be used by AppSync
+    dataSourceManager.add('AMAZON_DYNAMODB', { name: establishmentsTable.TableName, arn: establishmentsTable.TableArn })
+    dataSourceManager.add('AMAZON_DYNAMODB', { name: eventsTable.TableName, arn: eventsTable.TableArn })
     //Add to aws_vars.created to export as json and delete when cleaning up
     addToCreatedInGlobalVar('dynamoDBTables',
       [establishmentsTable.TableName, eventsTable.TableName]

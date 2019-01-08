@@ -1,5 +1,6 @@
 const appSync = new AWS.AppSync();
 const iam = require('../iam')
+const { dataSourceManager } = require('./../../../utils');
 
 const createDataSource = (params) => {
   return new Promise((resolve, reject) => {
@@ -21,7 +22,7 @@ const getDataSource = (apiId, name) => {
 }
 
 // Creates a data source or retrieves it if already exists and returns it
-const main = async ({ type, apiId, dataSourceName, dataSourceArn }) => {
+const main = async ({ type, apiId, dataSourceName }) => {
   // See if a data source already exists. If not create it, otherwise skip
   let dataSource;
   try {
@@ -44,6 +45,7 @@ const main = async ({ type, apiId, dataSourceName, dataSourceArn }) => {
 
     switch (type) {
       case 'AWS_LAMBDA':
+        let dataSourceArn = dataSourceManager.get(type, dataSourceName).arn
         params.lambdaConfig = {
           lambdaFunctionArn: dataSourceArn
         }
@@ -62,11 +64,19 @@ const main = async ({ type, apiId, dataSourceName, dataSourceArn }) => {
         }
         // Create the appropriate role to allow access to data source.
         try {
+          let dataSourceArn = dataSourceManager.get(type, dataSourceName).arn
           params.serviceRoleArn = await iam.createRoleForAppSyncToAccessDataSource('dynamoDBTable', dataSourceName, dataSourceArn)
         } catch (err) {
           console.log('[Error]', err)
         }
         break;
+
+      case 'AMAZON_ELASTICSEARCH':
+        params.serviceRoleArn = await iam.createRoleToAccessES();
+        params.elasticsearchConfig = {
+          awsRegion: AWS.config.region,
+          endpoint: 'https://' + dataSourceManager.get(type, 'domain').endPoint
+        }
     }
 
     try {

@@ -100,6 +100,11 @@ const createESDomain = async (domainName, roleArn) => {
       console.log(`Domain '${domainName}' already exists. Skipping...`)
     }
     utils.addToCreatedInGlobalVar('esDomain', DomainStatus.DomainName);
+    utils.dataSourceManager.add('AMAZON_ELASTICSEARCH', {
+      name: DomainStatus.DomainName,
+      arn: DomainStatus.ARN,
+      endPoint: DomainStatus.Endpoint
+    });
     return DomainStatus;
   } catch (err) {
     throw err;
@@ -138,19 +143,23 @@ const tryCreateESDomain = (domainName, roleArn, retries) => {
 
 /**
  * Creates function that will read items from a DynamoDB table stream
- * and index them as documents to the Elasticsearch domain
+ * and index them as documents to the Elasticsearch domain.
+ * Since the Role & Policy used for this is bilateral, that is, it sets
+ * the access policy in the domain (who and what can access the domain)
+ * it is the perfect role for the Lambda function and therefore passed
+ * here as roleArn.
  * @param {string} name Function name
  * @param {string} tableName Table to read stream from
  * @param {string} esDomainEndpoint Domain to which index documents
  * @param {string} index index that will be used by the function via ENV var
+ * @param {string} roleArn role that allows access to ES domain
  **/
-const createAndSetupESIndexerFunction = async (name, tableName, esDomainEndpoint, index) => {
+const createAndSetupESIndexerFunction = async (name, tableName, esDomainEndpoint, index, roleArn) => {
   try {
     let functionZipFile = fs.readFileSync(path.join(
       __dirname,
       '../Lambda/foobar_DDB_ES_items_indexer.zip',
     ));
-    let roleArn = await iam.createRoleForLambdaToAccessES();
     let funcParams = {
       FunctionName: name,
       Runtime: 'nodejs8.10',
@@ -202,16 +211,11 @@ const setupTriggerForFunction = async (tableName, functionArn) => {
 }
 
 const main = async () => {
-  // Domain name has to satisfy regular expression pattern: [a-z][a-z0-9\-]+ as per AWS
-  let domainPrefix = envPrefix;
-  if (envPrefix === 'DEV_') {
-    domainPrefix = 'dev-';
-  }
-  let domainName = `${domainPrefix}foobar-es-domain`;
+  let domainName = `${envPrefix}foobar-es-domain`;
   let accessRoleArn;
   let domain;
   try {
-    accessRoleArn = await iam.createRoleForLambdaToAccessES();
+    accessRoleArn = await iam.createRoleToAccessES();
     console.log('==== Creating ES domain ====');
     domain = await tryCreateESDomain(domainName, accessRoleArn, 4);
     console.log('==== Creating Establishment indexer function ====');
@@ -219,14 +223,16 @@ const main = async () => {
       `${envPrefix}foobar_establishments_DDB_ES_indexer`,
       `${envPrefix}foobar_establishments_table`,
       domain.Endpoint,
-      'establishments-index'
+      'establishments-index',
+      accessRoleArn
     );
     console.log('==== Creating Events indexer function ====');
     await createAndSetupESIndexerFunction(
       `${envPrefix}foobar_events_DDB_ES_indexer`,
       `${envPrefix}foobar_events_table`,
       domain.Endpoint,
-      'events-index'
+      'events-index',
+      accessRoleArn
     );
   } catch (err) {
     console.log(err);

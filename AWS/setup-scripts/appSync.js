@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-
 const appSync = new AWS.AppSync();
 
 const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
@@ -128,33 +127,37 @@ const main = async () => {
   let establishmentTableDsParams = {
     type: 'AMAZON_DYNAMODB',
     apiId: api.apiId,
-    dataSourceName: `${envPrefix}foobar_establishments_table`,
-    dataSourceArn: global.aws_vars[`${envPrefix}foobar_establishments_tableArn`]
+    dataSourceName: 'foobar_establishments_table',
   }
 
   let eventsTableDsParams = {
     type: 'AMAZON_DYNAMODB',
     apiId: api.apiId,
-    dataSourceName: `${envPrefix}foobar_events_table`,
-    dataSourceArn: global.aws_vars[`${envPrefix}foobar_events_tableArn`]
+    dataSourceName: 'foobar_events_table',
   }
 
   let lambdaFunctionDsParams = {
     type: 'AWS_LAMBDA',
     apiId: api.apiId,
-    dataSourceName: `${envPrefix}getGooglePhotoReference`,
-    dataSourceArn: global.aws_vars[`${envPrefix}getGooglePhotoReference`]
+    dataSourceName: 'getGooglePhotoReference',
+  }
+
+  let esDomainDSParams = {
+    type: 'AMAZON_ELASTICSEARCH',
+    apiId: api.apiId,
+    dataSourceName: 'ESDomain'
   }
 
   // The following statements could happen asynchronously but due to confusing log messages I decided against it.
   let establishmentTableDs = await createDataSource(establishmentTableDsParams)
   let eventsTableDs = await createDataSource(eventsTableDsParams)
   let lambdaFunctionDs = await createDataSource(lambdaFunctionDsParams)
+  let esDomainDS = await createDataSource(esDomainDSParams)
 
   /*
   * Set up resolvers
   */
-  let dataSources = [establishmentTableDs.name, eventsTableDs.name, lambdaFunctionDs.name];
+  let dataSources = [establishmentTableDs.name, eventsTableDs.name, lambdaFunctionDs.name, esDomainDS.name];
   createResolvers(api.apiId, dataSources);
 }
 
