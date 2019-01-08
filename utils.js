@@ -5,15 +5,15 @@ class DataSourceManager {
   constructor() {
     // dataSources represent an indexed by type collection of data-sources
     this.dataSources = {
-      dynamoDBTable: [],
-      ESDomain: [],
-      lambdaFunction: []
+      'AMAZON_DYNAMODB': [],
+      'AWS_LAMBDA': [],
+      'AMAZON_ELASTICSEARCH': []
     };
   }
 
   /**
    * Add data-source to the collection of its type
-   * @param {string} type Data-source type  "dynamoDBTable" || "ESDomain" || "lambdaFunction"
+   * @param {string} type Data-source type "AMAZON_DYNAMODB" || "AMAZON_ELASTICSEARCH" || "AWS_LAMBDA"
    * @param {object} dataSource Name and ARN of data-source
    * @param {object} dataSource.name Name of the data-source/resource
    * @param {object} dataSource.arn ARN of the resource
@@ -25,7 +25,7 @@ class DataSourceManager {
   /**
    * Retrieve runtime saved data-source of specified type if pattern 
    * found in its name 
-   * @param {string} type Data-source type  "dynamoDBTable" || "ESDomain" || "lambdaFunction"
+   * @param {string} type Data-source type "AMAZON_DYNAMODB" || "AMAZON_ELASTICSEARCH" || "AWS_LAMBDA"
    * @param {string} namePattern Data-source name patter or substring to find it
    * @returns Data-source information object
    */
