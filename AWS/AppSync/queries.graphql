@@ -119,3 +119,17 @@ query searchEstablishments {
     }
   }
 }
+
+query searchEvent {
+  searchEvents(pattern: "chicago cubs") {
+    hits {
+      atEstablishmentId
+      leagueId
+      homeTeam
+      awayTeam
+      startTime
+      coverCharge
+      description
+    }
+  }
+}
