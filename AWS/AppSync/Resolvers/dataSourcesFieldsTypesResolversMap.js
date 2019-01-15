@@ -13,7 +13,6 @@ module.exports = {
     Query: [
       "getEstablishmentById",
       "getEstablishmentsInBounds",
-      "getEstablishmentSuggestions",
       "getEstablishmentsUserManages",
     ],
     Mutation: [
@@ -36,7 +35,7 @@ module.exports = {
     ]
   },
 
-  [`${envPrefix}ESDomain`]: {
+  ESDomain: {
     Query: [
       "searchEstablishments"
     ]
