@@ -393,13 +393,13 @@ const createRoleToAccessES = async () => {
   }
 
   const roleParams = {
-    RoleName: `${envPrefix}foobar_lambda_establishments_DDB_ES_indexer-role`,
+    RoleName: `${envPrefix}foobar_lambda_DDB_ES_indexer-role`,
     Description: 'Role that allows function to write logs, read table streams and talk to the elasticsearch service',
   };
 
   const policyParams = {
     PolicyDocument: JSON.stringify(policyDoc),
-    PolicyName: `${envPrefix}foobar_lambda_establishments_DDB_ES_indexer-policy`
+    PolicyName: `${envPrefix}foobar_lambda_DDB_ES_indexer-policy`
   }
 
   let createdRoleArn;
