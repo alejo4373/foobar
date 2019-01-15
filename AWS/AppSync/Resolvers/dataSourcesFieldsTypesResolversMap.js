@@ -37,7 +37,8 @@ module.exports = {
 
   ESDomain: {
     Query: [
-      "searchEstablishments"
+      "searchEstablishments",
+      "searchEvents"
     ]
   }
 }
