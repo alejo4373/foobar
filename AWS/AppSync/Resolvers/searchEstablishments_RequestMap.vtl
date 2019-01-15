@@ -1,8 +1,21 @@
-{ 
-	"hits": [
-      #foreach($entry in $context.result.hits.hits)
-        #if( $velocityCount > 1 ) , #end
-          $utils.toJson($entry.get("_source"))
-        #end
-	]
+{
+    "version":"2017-02-28",
+    "operation":"GET",
+    "path":"/establishments-index/_search",
+    "params":{
+        "headers":{},
+        "queryString":{},
+        "body":{
+          "from":0,
+          "size":10,
+          "sort": ["_score"],
+          "query": {
+            "multi_match": { 
+              "query": "$ctx.args.name",
+              "type": "best_fields",
+              "fields": ["name", "address"]
+            }
+          }
+        }
+    }
 }
