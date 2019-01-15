@@ -10,10 +10,12 @@ global.aws_vars = {
 };
 
 // Global variable that will prepend the environment
-// an AWS resource was created in, to the resource's name.
+// an AWS resource was created in to the resource's name.
 global.envPrefix = '';
 if (process.env.NODE_ENV === 'development') {
-  envPrefix = 'DEV_';
+  envPrefix = 'dev_';
+} else if (process.env.NODE_ENV === 'test') {
+  envPrefix = 'test_';
 }
 
 const { AWS } = global;
@@ -37,17 +39,17 @@ const elasticSearch = require('./AWS/setup-scripts/elasticSearch');
 const main = async () => {
   try {
     await setupDynamoDB();
+    await elasticSearch();
     await setupLambda.createGetGooglePhotoReferenceFunction();
     await setupAppSync();
     await setupCognito();
-    await elasticSearch();
 
     // Will output ./.env-react-app file to be moved inside ./react-app, 
     // renamed to ".env" and be used when launching the React App
-    exportEnvVarsFile(); 
+    exportEnvVarsFile();
 
     // Will output awsResourcesCreate.json for use when cleaning up (aws-cleanup.js)
-    exportCreatedResourcesAsJson(); 
+    exportCreatedResourcesAsJson();
   } catch (err) {
     console.log("[Error]:", err);
   }
