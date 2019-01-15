@@ -10,6 +10,14 @@ const DDB = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
 
 const { envPrefix } = global;
 
+/**
+ * Delay for 2 minutes and check if domain is ready for use 
+ * i.e. is no longer processing and it has been assigned an
+ * endpoint to interact with it.
+ * @param {string} domainName Domain name to check status for 
+ * @returns {Promise.<(object|boolean)>} Promise that resolves to 
+ * Domain status if domain ready, false otherwise
+ */
 const isDomainReady = (domainName) => {
   console.log('Initializing ES domain. Please wait.');
   return new Promise((resolve, reject) => {
@@ -18,7 +26,7 @@ const isDomainReady = (domainName) => {
         if (err) { reject(err) }
         else {
           if (data.DomainStatus.Processing === false) {
-            resolve(true);
+            resolve(data.DomainStatus);
           } else {
             resolve(false);
           }
@@ -28,18 +36,23 @@ const isDomainReady = (domainName) => {
   });
 }
 
-// Ask if domain is ready every 2 minutes
+/**
+ * Wait until domain is ready
+ * @param {string} domainName Domain to wait for
+ * @returns {Promise.<object>} Promise that resolves to 
+ * Domain status when domain ready. Throw if error
+ */
 const waitUntilDomainReady = async (domainName) => {
   console.log('[Note] New domains take up to 10 minutes to initialize. An uninitialized domain cannot perform queries or index documents.');
-  let domainReady = false;
-  while (!domainReady) {
+  let DomainStatus = false;
+  while (!DomainStatus) {
     try {
-      domainReady = await isDomainReady(domainName);
+      DomainStatus = await isDomainReady(domainName);
     } catch (err) {
-      return console.log('[Error]', err);
+      throw err
     }
   }
-  console.log('==== Domain fully initialized. Ready for use. ====');
+  return DomainStatus;
 }
 
 /**
@@ -87,24 +100,20 @@ const createESDomain = async (domainName, roleArn) => {
       AutomatedSnapshotStartHour: 0
     },
   };
+
   try {
     let { DomainStatus } = await ES.createElasticsearchDomain(esDomainParams).promise();
+    console.log('New ES domain created. Success');
 
     // If processing is not true, it means the domain was already created
     // aws doesn't complain if trying to create a domain with the name of
     // an already existing domain
     if (DomainStatus.Processing === true) {
-      console.log('New ES domain created. Success');
-      await waitUntilDomainReady(domainName);
+      DomainStatus = await waitUntilDomainReady(domainName);
+      console.log('==== Domain fully initialized. Ready for use. ====');
     } else {
       console.log(`Domain '${domainName}' already exists. Skipping...`)
     }
-    utils.addToCreatedInGlobalVar('esDomain', DomainStatus.DomainName);
-    utils.dataSourceManager.add('AMAZON_ELASTICSEARCH', {
-      name: DomainStatus.DomainName,
-      arn: DomainStatus.ARN,
-      endPoint: DomainStatus.Endpoint
-    });
     return DomainStatus;
   } catch (err) {
     throw err;
@@ -114,7 +123,8 @@ const createESDomain = async (domainName, roleArn) => {
 /**
  * Tries to create an ElasticSearch Domain. If failed due to the role
  * used in the domain access policy not being ready it will retry
- * every 5 seconds until retries are exhausted
+ * every 5 seconds until retries are exhausted.
+ * Recursion and promises! 🤯
  * @param {string} domainName Name for the new domain to be created
  * @param {string} roleArn Role that will have access to the domain
  * @param {number} retries Number of attempts to create the domain
@@ -211,13 +221,21 @@ const setupTriggerForFunction = async (tableName, functionArn) => {
 }
 
 const main = async () => {
-  let domainName = `${envPrefix}foobar-es-domain`;
+  // Domain names don't allow underscores in their name
+  let domainEnvPrefix = envPrefix.replace('_', '-');
+  let domainName = `${domainEnvPrefix}foobar-es-domain`;
   let accessRoleArn;
   let domain;
   try {
     accessRoleArn = await iam.createRoleToAccessES();
     console.log('==== Creating ES domain ====');
     domain = await tryCreateESDomain(domainName, accessRoleArn, 4);
+    utils.addToCreatedInGlobalVar('esDomain', domain.DomainName);
+    utils.dataSourceManager.add('AMAZON_ELASTICSEARCH', {
+      name: domain.DomainName,
+      arn: domain.ARN,
+      endPoint: domain.Endpoint
+    });
     console.log('==== Creating Establishment indexer function ====');
     await createAndSetupESIndexerFunction(
       `${envPrefix}foobar_establishments_DDB_ES_indexer`,
