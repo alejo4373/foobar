@@ -25,7 +25,10 @@ const isDomainReady = (domainName) => {
       ES.describeElasticsearchDomain({ DomainName: domainName }, (err, data) => {
         if (err) { reject(err) }
         else {
-          if (data.DomainStatus.Processing === false) {
+          const { Processing, Endpoint } = data.DomainStatus;
+          // Domain is ready when Processing is false and and endpoint has been assigned.
+          // For some weird reason Processing could be false and Endpoint will be null 
+          if (!Processing && Endpoint) {
             resolve(data.DomainStatus);
           } else {
             resolve(false);
@@ -221,8 +224,8 @@ const setupTriggerForFunction = async (tableName, functionArn) => {
 }
 
 const main = async () => {
-  // Domain names don't allow underscores in their name
-  let domainEnvPrefix = envPrefix.replace('_', '-');
+  // Domain names don't allow uppercase characters, nor underscores in their name.
+  let domainEnvPrefix = envPrefix.toLowerCase().replace('_', '-');
   let domainName = `${domainEnvPrefix}foobar-es-domain`;
   let accessRoleArn;
   let domain;
