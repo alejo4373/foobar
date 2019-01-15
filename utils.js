@@ -15,8 +15,9 @@ class DataSourceManager {
    * Add data-source to the collection of its type
    * @param {string} type Data-source type "AMAZON_DYNAMODB" || "AMAZON_ELASTICSEARCH" || "AWS_LAMBDA"
    * @param {object} dataSource Name and ARN of data-source
-   * @param {object} dataSource.name Name of the data-source/resource
-   * @param {object} dataSource.arn ARN of the resource
+   * @param {string} dataSource.name Name of the data-source/resource
+   * @param {string} dataSource.arn ARN of the resource
+   * @param {string} dataSource.endPoint defined if type === 'AMAZON_ELASTICSEARCH' 
    */
   add(type, dataSource) {
     this.dataSources[type].push(dataSource)
