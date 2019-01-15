@@ -21,19 +21,23 @@
 
   mutation PutEstablishment {
     putEstablishment(
-      #id: ID => is being handled in the request mapping template so no need to include it here
-      managerUsername: "alejooooooo"
+      displayName: "a test establishment"
       googlePlaceId: "EisxMyBNYXJrZXQgU3RyZWV0LCBXaWxtaW5ndG9uLCBOQyAyODQwMSwgVVNB"
       name: "Kabu"
-      address: "3140 87th street, east elmhurst"
+      address: "8509 Northern Blvd, Flushing, NY 11370, USA"
       phone: "917-573-6025"
+      lat: "40.7560244" ,
+      lng: "-73.8821983"
     ){
       id
+      displayName
       managerUsername
       googlePlaceId
       name
       address
       phone
+      lat
+      lng
     }
   }
 
@@ -104,6 +108,16 @@ query GetEstablishmentSuggestions{
     establishments{
       id
       name
+    }
+  }
+}
+
+query searchEstablishments {
+  searchEstablishments(name: "kabu") {
+    hits {
+      displayName
+      lat
+      lng
     }
   }
 }
