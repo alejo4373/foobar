@@ -249,13 +249,14 @@ const createIndex = async (client, indexParams) => {
  * Creates 2 indices, one for establishments documents and one 
  * for events documents. Sets up client to make the create
  * index requests with
- * @returns  {Promise.<Array>} Array of responses from the index creation
+ * @param {string} domainEndPoint Domain endpoint for which to instantiate the client
+ * @returns {Promise.<Array>} Array of responses from the index creation
  */
-const createIndices = async () => {
-  const client = ESClient({ host: domain.Endpoint })
+const createIndices = async (domainEndPoint) => {
+  const client = ESClient({ host: domainEndPoint })
 
   const establishmentsIndexParams = {
-    index: 'establishment-index',
+    index: 'establishments-index',
     body: {
       mappings: {
         'establishment': {
@@ -298,6 +299,7 @@ const createIndices = async () => {
   try {
     const estsIndex = await createIndex(client, establishmentsIndexParams);
     const eventsIndex = await createIndex(client, eventsIndexParams);
+    console.log('==== Indices created ====');
     return [estsIndex, eventsIndex];
   } catch (err) {
     return console.log('error ==>', err);
@@ -321,9 +323,8 @@ const main = async () => {
       endPoint: domain.Endpoint
     });
 
-    const indices = await createIndices();
-    console.log('Indices created', indices);
-
+    await createIndices(domain.Endpoint);
+    
     console.log('==== Creating Establishment indexer function ====');
     await createAndSetupESIndexerFunction(
       `${envPrefix}foobar_establishments_DDB_ES_indexer`,
