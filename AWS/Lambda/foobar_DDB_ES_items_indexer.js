@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 const region = AWS.config.region;
 const domain = process.env.ES_DOMAIN_ENDPOINT
-const type = '_doc';
+const mapType = process.env.ES_MAP_TYPE
 const index = process.env.ES_INDEX
 
 const manageIndex = (record, eventName) => {
@@ -23,7 +23,7 @@ const manageIndex = (record, eventName) => {
   } else {
     request.method = 'PUT';
   }
-  request.path += index + '/' + type + '/' + id;
+  request.path += index + '/' + mapType + '/' + id;
   request.body = JSON.stringify(document);
   request.headers['host'] = domain;
   request.headers['Content-Type'] = 'application/json';

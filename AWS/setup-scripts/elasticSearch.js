@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const ESClient = require('aws-elasticsearch-client');
 const iam = require('../setup-scripts/iam');
 const lambda = require('../setup-scripts/lambda');
 const utils = require('../../utils');
@@ -164,10 +165,11 @@ const tryCreateESDomain = (domainName, roleArn, retries) => {
  * @param {string} name Function name
  * @param {string} tableName Table to read stream from
  * @param {string} esDomainEndpoint Domain to which index documents
- * @param {string} index index that will be used by the function via ENV var
- * @param {string} roleArn role that allows access to ES domain
+ * @param {string} mapType Type of mapping that was set in the index.
+ * It will be used to construct the index name and be used by the function via ENV var
+ * @param {string} roleArn Role that allows access to ES domain
  **/
-const createAndSetupESIndexerFunction = async (name, tableName, esDomainEndpoint, index, roleArn) => {
+const createAndSetupESIndexerFunction = async (name, tableName, esDomainEndpoint, mapType, roleArn) => {
   try {
     let functionZipFile = fs.readFileSync(path.join(
       __dirname,
@@ -182,7 +184,8 @@ const createAndSetupESIndexerFunction = async (name, tableName, esDomainEndpoint
       Environment: {
         Variables: {
           "ES_DOMAIN_ENDPOINT": esDomainEndpoint,
-          "ES_INDEX": index
+          "ES_MAP_TYPE": mapType,
+          "ES_INDEX": mapType + 's-index' // So that index name will be 'establishments-index' or 'events-index'
         }
       },
       Code: {
@@ -223,6 +226,84 @@ const setupTriggerForFunction = async (tableName, functionArn) => {
   }
 }
 
+/**
+ * Creates index with the specified params with the configured client
+ * @param {object} client Instance of aws-elasticsearch-client 
+ * to make the request with
+ * @param {object} indexParams Parameters for index to be created
+  */
+const createIndex = async (client, indexParams) => {
+  try {
+    let indexResponse = await client.indices.create(indexParams);
+    return indexResponse;
+  } catch (err) {
+    if (err.message.includes('resource_already_exists_exception')) {
+      console.log(`[Warning] => index ${indexParams.index} already exists. Skipping...`);
+    } else {
+      return console.log('error ==>', err);
+    }
+  }
+}
+
+/**
+ * Creates 2 indices, one for establishments documents and one 
+ * for events documents. Sets up client to make the create
+ * index requests with
+ * @returns  {Promise.<Array>} Array of responses from the index creation
+ */
+const createIndices = async () => {
+  const client = ESClient({ host: domain.Endpoint })
+
+  const establishmentsIndexParams = {
+    index: 'establishment-index',
+    body: {
+      mappings: {
+        'establishment': {
+          properties: {
+            address: { type: 'text' },
+            displayName: { type: 'text' },
+            googlePlaceId: { type: 'text' },
+            id: { type: 'text' },
+            location: { type: 'geo_point' },
+            managerUsername: { type: 'keyword' },
+            name: { type: 'text' },
+            phone: { type: 'text' }
+          }
+        }
+      }
+    }
+  };
+
+  const eventsIndexParams = {
+    index: 'events-index',
+    body: {
+      mappings: {
+        'event': {
+          properties: {
+            atEstablishmentId: { type: 'text' },
+            awayTeam: { type: 'text' },
+            homeTeam: { type: 'text' },
+            homeTeamBadge: { type: 'text' },
+            awayTeamBadge: { type: 'text' },
+            coverCharge: { type: 'boolean' },
+            description: { type: 'text' },
+            startTime: { type: 'date' },
+            leagueId: { type: 'text' },
+          }
+        }
+      }
+    }
+  };
+
+  try {
+    const estsIndex = await createIndex(client, establishmentsIndexParams);
+    const eventsIndex = await createIndex(client, eventsIndexParams);
+    return [estsIndex, eventsIndex];
+  } catch (err) {
+    return console.log('error ==>', err);
+  }
+}
+
 const main = async () => {
   // Domain names don't allow uppercase characters, nor underscores in their name.
   let domainEnvPrefix = envPrefix.toLowerCase().replace('_', '-');
@@ -239,12 +320,16 @@ const main = async () => {
       arn: domain.ARN,
       endPoint: domain.Endpoint
     });
+
+    const indices = await createIndices();
+    console.log('Indices created', indices);
+
     console.log('==== Creating Establishment indexer function ====');
     await createAndSetupESIndexerFunction(
       `${envPrefix}foobar_establishments_DDB_ES_indexer`,
       `${envPrefix}foobar_establishments_table`,
       domain.Endpoint,
-      'establishments-index',
+      'establishment',
       accessRoleArn
     );
     console.log('==== Creating Events indexer function ====');
@@ -252,7 +337,7 @@ const main = async () => {
       `${envPrefix}foobar_events_DDB_ES_indexer`,
       `${envPrefix}foobar_events_table`,
       domain.Endpoint,
-      'events-index',
+      'event',
       accessRoleArn
     );
   } catch (err) {
