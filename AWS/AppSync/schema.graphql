@@ -16,6 +16,16 @@ type EventSearchResults {
   hits: [Event!]
 }
 
+type Location {
+	lat: String!
+	lon: String!
+}
+
+input LocationInput {
+	lat: String!
+	lon: String!
+}
+
 type Event {
   id: ID
   atEstablishmentId: String!
@@ -24,7 +34,7 @@ type Event {
   homeTeam: String!
   homeTeamBadge: String
   leagueId: String!
-  sportsDbId: String #Not required because we might not find the event in sportsDbId
+  sportsDbId: String
   startTime: String!
   coverCharge: Boolean!
   description: String
@@ -36,15 +46,13 @@ type Establishment {
   googlePlaceId: String!
   googlePhotoReference: String
   name: String!
-  displayName: String #removed (!) required because some of the establishments I have registered so far do not have this attribute yet, put back later on
+  displayName: String
   address: String!
-  phone: String #removed (!) required because some establishments do not have a phone
-  lat: String!
-  lng: String!
+  phone: String
+  location: Location!
 }
 
 type Mutation {
-  #  If an item exists it's updated. If it does not it's created.
   putEvent(
     id: ID,
     atEstablishmentId: String!
@@ -53,22 +61,19 @@ type Mutation {
     homeTeam: String!,
     homeTeamBadge: String
     leagueId: String!,
-    sportsDbId: String, #not required (!) because we might not get an eventId from thesportsdb.com
+    sportsDbId: String, 
     startTime: String!,
     coverCharge: Boolean!
     description: String
   ): Event
 
   putEstablishment(
-    #id: ID # Handled in request mapping template, not requiered here
-    #managerUsername: String!, # Handled in request mapping template, not requiered here
     googlePlaceId: String!
     name: String!
     displayName: String!
     address: String!
     phone: String,
-    lat: String!,
-    lng: String!
+    location: LocationInput!
    ): Establishment
 }
 
