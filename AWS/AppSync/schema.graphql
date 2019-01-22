@@ -81,7 +81,7 @@ type Query {
   getEvents(limit: Int, nextToken: String, atEstablishmentId: String!): PaginatedEvents!
   getEstablishmentsUserManages(limit: Int, nextToken: String): PaginatedEstablishments!
   getEstablishmentById(id: String!): Establishment!
-  getEstablishmentsInBounds(limit: Int, latMin: String!, latMax: String!, lngMin: String!, lngMax: String!): PaginatedEstablishments!
+  getEstablishmentsInBounds(limit: Int, topLeft: LocationInput!, bottomRight: LocationInput!): EstablishmentSearchResults!
   searchEstablishments(name: String!): EstablishmentSearchResults!
   searchEvents(pattern: String!): EventSearchResults!
 }

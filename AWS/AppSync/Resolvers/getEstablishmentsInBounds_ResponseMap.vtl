@@ -1,5 +1,8 @@
-## Response mapping template
-{
-    "establishments": $util.toJson(${context.result.items}),
-    "nextToken": $util.toJson(${context.result.nextToken})
+{ 
+	"hits": [
+      #foreach($entry in $context.result.hits.hits)
+        #if( $velocityCount > 1 ) , #end
+          $utils.toJson($entry.get("_source"))
+        #end
+	]
 }

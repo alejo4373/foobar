@@ -12,7 +12,6 @@ module.exports = {
   [`${envPrefix}foobar_establishments_table`]: {
     Query: [
       "getEstablishmentById",
-      "getEstablishmentsInBounds",
       "getEstablishmentsUserManages",
     ],
     Mutation: [
@@ -38,7 +37,8 @@ module.exports = {
   ESDomain: {
     Query: [
       "searchEstablishments",
-      "searchEvents"
+      "searchEvents",
+      "getEstablishmentsInBounds"
     ]
   }
 }
