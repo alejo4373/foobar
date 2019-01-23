@@ -9,34 +9,32 @@ export async function getEstablishmentsInBounds(bounds, callback){
   try {
     const res = await API.graphql(graphqlOperation(
       `query GetAllEstablishmentsInBounds(
-        $latMin: String!,
-        $latMax: String!,
-        $lngMin: String!,
-        $lngMax: String!
-        ){
-        getEstablishmentsInBounds(
-          latMin: $latMin,
-          latMax: $latMax,
-          lngMin: $lngMin, 
-          lngMax: $lngMax,
-        ){
-          establishments{
-            id
-            googlePlaceId
-            googlePhotoReference
-            managerUsername
-            name
-            displayName
-            address
-            phone
-            lat
-            lng
+        $topLeft: LocationInput!,
+        $bottomRight: LocationInput!,
+        ) {
+          getEstablishmentsInBounds(
+            topLeft: $topLeft
+            bottomRight: $bottomRight
+          ) {
+            hits {
+              id
+              managerUsername
+              googlePlaceId
+              googlePhotoReference
+              name
+              displayName
+              address
+              phone
+              location {
+                lat
+                lon
+              }
+            }
           }
-        }
-      }`, bounds)
+        }`, bounds)
     )
-    const { establishments } = res.data.getEstablishmentsInBounds
-    callback(null, establishments)
+    const { hits } = res.data.getEstablishmentsInBounds
+    callback(null, hits)
   } catch (err) {
     callback(err, null)
   }
