@@ -138,8 +138,7 @@ export async function addEstablishment(newEstablishment, callback) {
           $displayName: String!,
           $address: String!,
           $phone: String,
-          $lat: String!,
-          $lng: String!,
+          $location: LocationInput!
         ){
             putEstablishment(
               googlePlaceId: $googlePlaceId,
@@ -147,8 +146,7 @@ export async function addEstablishment(newEstablishment, callback) {
               displayName: $displayName,
               address: $address,
               phone: $phone,
-              lat: $lat,
-              lng: $lng,
+              location: $location
             ){
               id
               managerUsername
@@ -158,8 +156,10 @@ export async function addEstablishment(newEstablishment, callback) {
               displayName
               address
               phone
-              lat
-              lng
+              location {
+                lat
+                lon
+              }
             }
           }`, newEstablishment)
     ) 
