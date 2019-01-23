@@ -222,8 +222,10 @@ export async function getEstablishmentById(establishmentId, callback) {
           displayName
           address
           phone
-          lat
-          lng
+          location {
+            lat
+            lon
+          }
         }
       }`, { id: establishmentId })
     )
