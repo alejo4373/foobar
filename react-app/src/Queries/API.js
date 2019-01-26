@@ -108,12 +108,8 @@ export async function getEstablishmentsUserManages(limit, callback) {
             managerUsername
             googlePlaceId
             googlePhotoReference
-            name
             displayName
             address
-            phone
-            lat
-            lng
           }
         }
       }`, {limit: limit}))
