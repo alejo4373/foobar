@@ -47,6 +47,28 @@ let establishmentsTableParams = {
       KeyType: 'RANGE'
     }
   ],
+  GlobalSecondaryIndexes: [
+    { 
+      IndexName: 'managerUsername-index',
+      KeySchema: [
+        {
+          AttributeName: 'managerUsername',
+          KeyType: 'HASH'
+        }
+      ],
+      Projection: {
+        NonKeyAttributes: [
+          'address',
+          'googlePlaceId'
+        ],
+        ProjectionType: "INCLUDE"
+      },
+      ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5
+      }
+    }
+  ],
   ProvisionedThroughput: {
     ReadCapacityUnits: 5,
     WriteCapacityUnits: 5
