@@ -61,14 +61,16 @@ const mapLeaguesToTeams = async () => {
 const createEstablishmentObj = (place) => {
   const establishment = {
     id: uuidv1(),
-    managerUsername: 'sample',
+    managerUsername: Math.floor(Math.random() * 6) === 3 ? 'AnEstablishmentManagerUser' : 'SampleManager' ,
     googlePlaceId: place.place_id,
     name: place.name.toLowerCase(),
     displayName: place.name,
     address: place.formatted_address,
     phone: place.formatted_phone_number || '(123) 456-7890',
-    lat: place.geometry.location.lat.toString(),
-    lng: place.geometry.location.lng.toString(),
+    location: {
+      lat: place.geometry.location.lat.toString(),
+      lon: place.geometry.location.lng.toString(),
+    }
   }
   return establishment;
 }
