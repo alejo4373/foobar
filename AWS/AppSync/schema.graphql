@@ -41,15 +41,15 @@ type Event {
 }
 
 type Establishment {
-  id: ID
-  managerUsername: String 
+  id: ID!
+  managerUsername: String! 
   googlePlaceId: String!
   googlePhotoReference: String
-  name: String!
+  name: String
   displayName: String
-  address: String!
+  address: String
   phone: String
-  location: Location!
+  location: Location
 }
 
 type Mutation {
