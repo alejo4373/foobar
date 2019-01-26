@@ -9,34 +9,32 @@ export async function getEstablishmentsInBounds(bounds, callback){
   try {
     const res = await API.graphql(graphqlOperation(
       `query GetAllEstablishmentsInBounds(
-        $latMin: String!,
-        $latMax: String!,
-        $lngMin: String!,
-        $lngMax: String!
-        ){
-        getEstablishmentsInBounds(
-          latMin: $latMin,
-          latMax: $latMax,
-          lngMin: $lngMin, 
-          lngMax: $lngMax,
-        ){
-          establishments{
-            id
-            googlePlaceId
-            googlePhotoReference
-            managerUsername
-            name
-            displayName
-            address
-            phone
-            lat
-            lng
+        $topLeft: LocationInput!,
+        $bottomRight: LocationInput!,
+        ) {
+          getEstablishmentsInBounds(
+            topLeft: $topLeft
+            bottomRight: $bottomRight
+          ) {
+            hits {
+              id
+              managerUsername
+              googlePlaceId
+              googlePhotoReference
+              name
+              displayName
+              address
+              phone
+              location {
+                lat
+                lon
+              }
+            }
           }
-        }
-      }`, bounds)
+        }`, bounds)
     )
-    const { establishments } = res.data.getEstablishmentsInBounds
-    callback(null, establishments)
+    const { hits } = res.data.getEstablishmentsInBounds
+    callback(null, hits)
   } catch (err) {
     callback(err, null)
   }
@@ -110,12 +108,8 @@ export async function getEstablishmentsUserManages(limit, callback) {
             managerUsername
             googlePlaceId
             googlePhotoReference
-            name
             displayName
             address
-            phone
-            lat
-            lng
           }
         }
       }`, {limit: limit}))
@@ -140,8 +134,7 @@ export async function addEstablishment(newEstablishment, callback) {
           $displayName: String!,
           $address: String!,
           $phone: String,
-          $lat: String!,
-          $lng: String!,
+          $location: LocationInput!
         ){
             putEstablishment(
               googlePlaceId: $googlePlaceId,
@@ -149,8 +142,7 @@ export async function addEstablishment(newEstablishment, callback) {
               displayName: $displayName,
               address: $address,
               phone: $phone,
-              lat: $lat,
-              lng: $lng,
+              location: $location
             ){
               id
               managerUsername
@@ -160,8 +152,10 @@ export async function addEstablishment(newEstablishment, callback) {
               displayName
               address
               phone
-              lat
-              lng
+              location {
+                lat
+                lon
+              }
             }
           }`, newEstablishment)
     ) 
@@ -224,8 +218,10 @@ export async function getEstablishmentById(establishmentId, callback) {
           displayName
           address
           phone
-          lat
-          lng
+          location {
+            lat
+            lon
+          }
         }
       }`, { id: establishmentId })
     )
@@ -267,27 +263,25 @@ export async function getEstablishmentSuggestions(pattern, callback) {
 //Basically the same as above but asking for slightly different attributes 
 /**
  * Gets establishment that match query string 
- * @param {String} pattern - A string pattern to search for in establishments name
- * @param {Function} callback  - Handles response and error
+ * @param {String} name - A Establishment name to search for 
  */
-export async function searchEstablishments(pattern, callback) {
+export async function searchEstablishments(name) {
   try {
     const res = await API.graphql(graphqlOperation(
-      `query GetEstablishmentSuggestions($pattern: String!){
-        getEstablishmentSuggestions(pattern: $pattern){
-          establishments{
+      `query SearchEstablishments($name: String!){
+        searchEstablishments(name: $name){
+          hits {
             id
             displayName
             phone
             googlePhotoReference
           }
         }
-      }`, { pattern: pattern })
+      }`, { name: name })
     )
-    const matches = res.data.getEstablishmentSuggestions.establishments
-    callback(null, matches)
-
+    const { hits } = res.data.searchEstablishments
+    return hits;
   } catch (err) {
-    callback(err, null)
+    throw err
   }
 }

@@ -1,5 +1,6 @@
-const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
+const { dataSourceManager, addToCreatedInGlobalVar } = require('../../utils');
 const db = new AWS.DynamoDB()
+const { envPrefix } = global
 
 // Just so that we can use await instead of nesting callbacks
 const awsCreateTable = (tableParams) => {
@@ -25,7 +26,7 @@ const awsDescribeTable = (params) => {
 }
 
 let establishmentsTableParams = {
-  TableName: 'foobar_establishments_table',
+  TableName: `${envPrefix}foobar_establishments_table`,
   AttributeDefinitions: [
     {
       AttributeName: 'id',
@@ -46,14 +47,41 @@ let establishmentsTableParams = {
       KeyType: 'RANGE'
     }
   ],
+  GlobalSecondaryIndexes: [
+    { 
+      IndexName: 'managerUsername-index',
+      KeySchema: [
+        {
+          AttributeName: 'managerUsername',
+          KeyType: 'HASH'
+        }
+      ],
+      Projection: {
+        NonKeyAttributes: [
+          'address',
+          'googlePlaceId',
+          'displayName'
+        ],
+        ProjectionType: "INCLUDE"
+      },
+      ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5
+      }
+    }
+  ],
   ProvisionedThroughput: {
     ReadCapacityUnits: 5,
     WriteCapacityUnits: 5
+  },
+  StreamSpecification: {
+    StreamEnabled: true,
+    StreamViewType: 'NEW_IMAGE'
   }
 }
 
 let eventsTableParams = {
-  TableName: 'foobar_events_table',
+  TableName: `${envPrefix}foobar_events_table`,
   AttributeDefinitions: [
     {
       AttributeName: 'atEstablishmentId',
@@ -77,6 +105,10 @@ let eventsTableParams = {
   ProvisionedThroughput: {
     ReadCapacityUnits: 5,
     WriteCapacityUnits: 5
+  },
+  StreamSpecification: {
+    StreamEnabled: true,
+    StreamViewType: 'NEW_IMAGE'
   }
 }
 
@@ -96,14 +128,12 @@ const createTable = (tableParams) => {
     tableAlreadyExists(tableParams.TableName)
       .then(table => {
         console.log(`Table with name ${table.TableName} already exists. Skipping...`)
-        setGlobalVar([`${table.TableName}Arn`], table.TableArn)
         resolve(table);
       })
       .catch(err => {
         awsCreateTable(tableParams)
           .then(table => {
             console.log('Creating table', table.TableName)
-            setGlobalVar([`${table.TableName}Arn`], table.TableArn)
             resolve(table);
           })
           .catch(err => {
@@ -124,6 +154,9 @@ const main = async () => {
       eventsTable
     ] = await Promise.all([establishmentsTablePromise, eventsTablePromise])
 
+    //Add to data source manager because they will be used by AppSync
+    dataSourceManager.add('AMAZON_DYNAMODB', { name: establishmentsTable.TableName, arn: establishmentsTable.TableArn })
+    dataSourceManager.add('AMAZON_DYNAMODB', { name: eventsTable.TableName, arn: eventsTable.TableArn })
     //Add to aws_vars.created to export as json and delete when cleaning up
     addToCreatedInGlobalVar('dynamoDBTables',
       [establishmentsTable.TableName, eventsTable.TableName]

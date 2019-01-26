@@ -4,11 +4,10 @@
     "operation" : "PutItem",
     "key" : {
         "atEstablishmentId": $util.dynamodb.toDynamoDBJson($ctx.args.atEstablishmentId),
-        "timeStart": $util.dynamodb.toDynamoDBJson($ctx.args.timeStart)
+        "startTime": $util.dynamodb.toDynamoDBJson($ctx.args.startTime)
     },
 
     #set ( $eventObj = $util.dynamodb.toMapValues($ctx.args) )
-    #set ( $eventObj.id = $util.dynamodb.toString($util.autoId()) )
 
     "attributeValues" : $util.toJson($eventObj)
 }

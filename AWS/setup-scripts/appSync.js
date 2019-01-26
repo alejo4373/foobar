@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-
 const appSync = new AWS.AppSync();
 
 const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
-const createDataSource = require('./appSync/createDataSources');
+const createDataSources = require('./appSync/createDataSources');
 const createResolvers = require('./appSync/createResolvers');
+const { envPrefix } = global;
 
 const listApis = () => {
   return new Promise((resolve, reject) => {
@@ -49,7 +49,7 @@ const isSchemaReady = (apiId) => {
           }
         }
       })
-    }, 1000)
+    }, 3000)
   })
 }
 
@@ -71,7 +71,7 @@ const waitUntilSchemaIsReady = async (apiId) => {
 const main = async () => {
   let apiParams = {
     authenticationType: 'AWS_IAM',
-    name: 'Foobar API',
+    name: `${envPrefix}Foobar API`,
   }
 
   let apis;
@@ -123,37 +123,9 @@ const main = async () => {
   }
   console.log('Schema is ready?:', schemaReady);
 
-  // Set up data sources
-  let establishmentTableDsParams = {
-    type: 'AMAZON_DYNAMODB',
-    apiId: api.apiId,
-    dataSourceName: 'foobar_establishments_table',
-    dataSourceArn: global.aws_vars.foobar_establishments_tableArn
-  }
-
-  let eventsTableDsParams = {
-    type: 'AMAZON_DYNAMODB',
-    apiId: api.apiId,
-    dataSourceName: 'foobar_events_table',
-    dataSourceArn: global.aws_vars.foobar_events_tableArn
-  }
-
-  let lambdaFunctionDsParams = {
-    type: 'AWS_LAMBDA',
-    apiId: api.apiId,
-    dataSourceName: 'getGooglePhotoReference_function',
-    dataSourceArn: global.aws_vars.getGooglePhotoReference
-  }
-
-  // The following statements could happen asynchronously but due to confusing log messages I decided against it.
-  let establishmentTableDs = await createDataSource(establishmentTableDsParams)
-  let eventsTableDs = await createDataSource(eventsTableDsParams)
-  let lambdaFunctionDs = await createDataSource(lambdaFunctionDsParams)
-
-  /*
-  * Set up resolvers
-  */
-  let dataSources = [establishmentTableDs.name, eventsTableDs.name, lambdaFunctionDs.name];
+  // Set up data-sources
+  let dataSources = await createDataSources(api.apiId)
+  // Set up resolvers
   createResolvers(api.apiId, dataSources);
 }
 

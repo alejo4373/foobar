@@ -1,20 +1,19 @@
 require('dotenv').config();
-const fs = require('fs');
 const uuidv1 = require('uuid/v1');
 const AWS = require('aws-sdk');
 const { networkRequest } = require('./utils');
+const awsResourcesCreated = require('./awsResourcesCreated.json');
 const googleMapsClient = require('@google/maps').createClient({
   key: process.env.GOOGLE_MAPS_API_KEY,
   Promise: Promise
 });
-const ddb = new AWS.DynamoDB();
-const awsResourcesCreated = JSON.parse(
-  fs.readFileSync(
-    './awsResourcesCreated.json',
-    'utf8'
-  )
-)
+
+const DDB = new AWS.DynamoDB();
+const { marshall } = AWS.DynamoDB.Converter; // To Convert a JavaScript object into a DynamoDB record
+
 const usMajorCities = [
+  "new york city",
+  "miami",
   "seattle",
   "portland",
   "san francisco",
@@ -29,10 +28,8 @@ const usMajorCities = [
   "minneapolis",
   "chicago",
   "detroit",
-  "new york city",
   "baltimore",
   "washington dc",
-  "miami"
 ]
 
 //                 NHL,  NFL,  NBA,  MLS,  MLB
@@ -61,47 +58,42 @@ const mapLeaguesToTeams = async () => {
   return map;
 }
 
+const createEstablishmentObj = (place) => {
+  const establishment = {
+    id: uuidv1(),
+    managerUsername: Math.floor(Math.random() * 6) === 3 ? 'AnEstablishmentManagerUser' : 'SampleManager' ,
+    googlePlaceId: place.place_id,
+    name: place.name.toLowerCase(),
+    displayName: place.name,
+    address: place.formatted_address,
+    phone: place.formatted_phone_number || '(123) 456-7890',
+    location: {
+      lat: place.geometry.location.lat.toString(),
+      lon: place.geometry.location.lng.toString(),
+    }
+  }
+  return establishment;
+}
+
 const fetchEstablishmentsForCity = async (city) => {
   let establishments = [];
   try {
     let { json } = await googleMapsClient.places({ query: `sports bars in ${city}` }).asPromise()
-    establishments = json.results;
+    establishments = json.results.map(place => createEstablishmentObj(place))
     return (establishments);
   } catch (err) {
     throw err
   }
 }
 
-const createEstablishmentObj = (place) => {
-  const establishment = {
-    id: uuidv1(),
-    managerUsername: 'sample',
-    googlePlaceId: place.place_id,
-    name: place.name.toLowerCase(),
-    displayName: place.name,
-    address: place.formatted_address,
-    phone: place.formatted_phone_number || '(123) 456-7890',
-    lat: place.geometry.location.lat,
-    lng: place.geometry.location.lng,
-  }
-  return establishment;
-}
-
-const toDynamoDBJson = (obj) => {
-  let output = {}
-  let keys = Object.keys(obj);
-  keys.forEach(k => output[k] = { 'S': obj[k].toString() })
-  return output;
-}
-
 const insertItemToTable = (item, table) => {
   const params = {
     TableName: table,
-    Item: item,
+    Item: marshall(item),
     ReturnConsumedCapacity: 'TOTAL'
   }
   return new Promise((resolve, reject) => {
-    ddb.putItem(params, (err, data) => {
+    DDB.putItem(params, (err, data) => {
       if (err) reject(err);
       else resolve(data);
     })
@@ -124,13 +116,10 @@ const pickRandomTeams = (teams) => {
       awayTeam: teams[j]
     }
   }
-  pickRandomTeams(teams);
+  return pickRandomTeams(teams);
 }
 
-const generateRandomEventForEstablishment = async (atEstablishmentId, leaguesAndTeams) => {
-  let leagues = Object.keys(leaguesAndTeams);
-  let leagueId = leagues[Math.floor(Math.random() * leagues.length)];
-  let teams = leaguesAndTeams[leagueId];
+const generateRandomEvent = (atEstablishmentId, leagueId, teams) => {
   let { homeTeam, awayTeam } = pickRandomTeams(teams);
   let event = {
     atEstablishmentId,
@@ -146,15 +135,35 @@ const generateRandomEventForEstablishment = async (atEstablishmentId, leaguesAnd
   return event;
 }
 
-const seedEstablishmentsForCity = async (city) => {
-  let cityEst = await fetchEstablishmentsForCity(city);
+const seedEventsForEstablishments = async (allEstablishments) => {
+  try {
+    const leaguesAndTeams = await mapLeaguesToTeams();
+    const leagues = Object.keys(leaguesAndTeams);
+    const eventsTable = awsResourcesCreated.dynamoDBTables[1];
+    for (let i = 0; i < allEstablishments.length; i++) {
+      const est = allEstablishments[i];
+      console.log('=> ', est.displayName);
+      // Generate 3 random events per establishment
+      for (let i = 0; i < 3; i++) {
+        const leagueId = leagues[Math.floor(Math.random() * leagues.length)];
+        const teams = leaguesAndTeams[leagueId];
+        const event = generateRandomEvent(est.id, leagueId, teams);
+        console.log(event.awayTeam, 'vs', event.homeTeam);
+        await insertItemToTable(event, eventsTable);
+      }
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
+const seedEstablishments = async (establishments) => {
   let estTable = awsResourcesCreated.dynamoDBTables[0];
-  let establishments = cityEst.map(e => toDynamoDBJson(createEstablishmentObj(e)));
-  console.log('establishments length:', establishments.length);
-  for (let i = 0; i < 1 ; i++) {
+  for (let i = 0; i < establishments.length; i++) {
     try {
-      insertItemToTable(establishments[i], estTable);
-      console.log('est', establishments[i]);
+      // Inserting items could happen concurrently, but I'm afraid that could 
+      // throttle the database and exceed my 5 WCU provisioned on the table
+      await insertItemToTable(establishments[i], estTable);
     } catch (err) {
       throw err;
     }
@@ -162,18 +171,20 @@ const seedEstablishmentsForCity = async (city) => {
 }
 
 const main = async () => {
-  let leaguesAndTeams = await mapLeaguesToTeams();
-  let city;
-  // for (let i = 0; i < usMajorCities.length; i++) {
-  for (let i = 0; i < 1; i++) {
-    city = usMajorCities[i];
-    await seedEstablishmentsForCity(city);
+  try {
+    let allEstablishments = [];
+    for (let i = 0; i < usMajorCities.length; i++) {
+      const city = usMajorCities[i];
+      let establishments = await fetchEstablishmentsForCity(city);
+      await seedEstablishments(establishments);
+      allEstablishments = allEstablishments.concat(establishments);
+      console.log(`Generated ${establishments.length} establishments for ${city}.`);
+    }
+    await seedEventsForEstablishments(allEstablishments);
+    console.log('=== Generated sample data. Success... ===');
+  } catch (err) {
+    console.log('error =>', err);
   }
-  // let leaguesAndTeams = await mapLeaguesToTeams();
-  // let event = await generateRandomEventForEstablishment('4a1bc824-3c74-4312-8776-62d4c9024a27', leaguesAndTeams);
-  // let res = await insertItemToTable(toDynamoDBJson(event), awsResourcesCreated.dynamoDBTables[1]);
-  // console.log(event);
-  // console.log(res);
 };
 
 main();
