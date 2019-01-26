@@ -59,7 +59,8 @@ let establishmentsTableParams = {
       Projection: {
         NonKeyAttributes: [
           'address',
-          'googlePlaceId'
+          'googlePlaceId',
+          'displayName'
         ],
         ProjectionType: "INCLUDE"
       },
