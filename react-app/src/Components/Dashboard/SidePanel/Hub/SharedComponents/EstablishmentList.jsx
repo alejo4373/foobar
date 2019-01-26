@@ -27,7 +27,7 @@ class EstablishmentList extends Component {
                       </div>
                       <div className='right'>
                         <p className='name'>{est.displayName}</p>
-                        <p>{est.phone}</p>
+                        <p>{est.address}</p>
                       </div>
                     </div>
                   </Link>
