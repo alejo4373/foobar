@@ -9,6 +9,15 @@ global.aws_vars = {
   created: {} // Will hold AWS resources created to be exported as awsResourcesCreated.json
 };
 
+// Global variable that will prepend the name of an AWS resource 
+// with the environment said resource was created in. 
+global.envPrefix = '';
+if (process.env.NODE_ENV === 'development') {
+  envPrefix = 'DEV_';
+} else if (process.env.NODE_ENV === 'test') {
+  envPrefix = 'TEST_';
+}
+
 const { AWS } = global;
 const { exportEnvVarsFile, exportCreatedResourcesAsJson } = require('./utils');
 
@@ -25,15 +34,22 @@ const setupDynamoDB = require('./AWS/setup-scripts/dynamoDB');
 const setupCognito = require('./AWS/setup-scripts/cognito');
 const setupAppSync = require('./AWS/setup-scripts/appSync');
 const setupLambda = require('./AWS/setup-scripts/lambda');
+const elasticSearch = require('./AWS/setup-scripts/elasticSearch');
 
 const main = async () => {
   try {
     await setupDynamoDB();
-    await setupLambda();
+    await elasticSearch();
+    await setupLambda.createGetGooglePhotoReferenceFunction();
     await setupAppSync();
     await setupCognito();
-    exportEnvVarsFile(); // Will output ./react-app/.env file for use when launching the React App
-    exportCreatedResourcesAsJson(); // Will output awsResourcesCreate.json for use when cleaning up (aws-cleanup.js)
+
+    // Will output ./.env-react-app file to be moved inside ./react-app, 
+    // renamed to ".env" and be used when launching the React App
+    exportEnvVarsFile();
+
+    // Will output awsResourcesCreate.json for use when cleaning up (aws-cleanup.js)
+    exportCreatedResourcesAsJson();
   } catch (err) {
     console.log("[Error]:", err);
   }

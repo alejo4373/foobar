@@ -1,16 +1,26 @@
-## Request mapping template
 {
-    "version" : "2017-02-28",
-    "operation" : "Scan",
-    "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
-    "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null)),
-    "filter" : {
-      "expression": "(lat BETWEEN :latMin and :latMax) and (lng BETWEEN :lngMin and :lngMax)",
-      "expressionValues": {
-        ":latMax": { "S": "${ctx.args.latMax}" },
-        ":latMin": { "S": "${ctx.args.latMin}" },
-        ":lngMax": { "S": "${ctx.args.lngMax}" },
-        ":lngMin": { "S": "${ctx.args.lngMin}" }
-      } 
+  "version": "2017-02-28",
+  "operation": "GET",
+  "path": "/establishments-index/_search",
+  "params": {
+    "body": {
+      "from": 0,
+      "size": 20,
+      "query": {
+        "bool": {
+          "must": {
+            "match_all": {}
+          },
+          "filter": {
+            "geo_bounding_box": {
+              "location": {
+                "top_left": $util.toJson(${context.arguments.topLeft}),
+                "bottom_right": $util.toJson(${context.arguments.bottomRight})
+              }
+            }
+          }
+        }
+      }
     }
+  }
 }

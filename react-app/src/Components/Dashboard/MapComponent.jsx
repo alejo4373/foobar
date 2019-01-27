@@ -48,10 +48,14 @@ class MapComponent extends Component {
     const sw = bounds.getSouthWest();
     const ne = bounds.getNorthEast();
     const areaBounds = {
-      latMax: ne.lat(),
-      latMin: sw.lat(),
-      lngMax: sw.lng(),
-      lngMin: ne.lng()
+      topLeft: {
+        lat: ne.lat(),
+        lon: sw.lng()
+      },
+      bottomRight: {
+        lat: sw.lat(),
+        lon: ne.lng(),
+      }
     }
     if (zoom >= 14) {
       getEstablishmentsInBounds(areaBounds, (err, establishments) => {
@@ -102,7 +106,7 @@ class MapComponent extends Component {
               <Marker
                 key={i}
                 establishment={est}
-                position={{ lat: est.lat, lng: est.lng }}
+                position={{ lat: est.location.lat, lng: est.location.lon }}
                 onClick={this.onMakerClick}
               />
             ))

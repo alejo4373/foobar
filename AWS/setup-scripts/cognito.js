@@ -7,9 +7,10 @@ const cognitoIdentity = new cognito_identity();
 const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
 const iam = require('./iam');
 const createDemoUser = require('./cognito/createDemoUser');
+const { envPrefix } = global;
 
 const newUserPoolParams = {
-  PoolName: 'foobar_user_pool',
+  PoolName: `${envPrefix}foobar_user_pool`,
   Policies: {
     PasswordPolicy: {
       MinimumLength: 8,
@@ -204,7 +205,7 @@ const main = async () => {
 
   // Identity Pool setup
   newIdentityPoolParams = {
-    IdentityPoolName: 'foobar_identity_pool',
+    IdentityPoolName: `${envPrefix}foobar_identity_pool`,
     AllowUnauthenticatedIdentities: true,
     CognitoIdentityProviders: [{
       ClientId: client.ClientId,

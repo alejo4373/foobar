@@ -13,10 +13,10 @@ class EstablishmentList extends Component {
         <h4>Establishments</h4>
         <ul>
           {
-            establishments.map((est, i) => {
+            establishments.map(est => {
               return (
-                <li>
-                  <Link to={`/establishments/${est.id}`} key={i}>
+                <li key={est.id}>
+                  <Link to={`/establishments/${est.id}`} >
                     <div
                       className='establishment-card'
                       to={`/establishments/${est.id}`}
@@ -27,7 +27,7 @@ class EstablishmentList extends Component {
                       </div>
                       <div className='right'>
                         <p className='name'>{est.displayName}</p>
-                        <p>{est.phone}</p>
+                        <p>{est.address}</p>
                       </div>
                     </div>
                   </Link>

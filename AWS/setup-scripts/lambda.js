@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { createExecutionRoleForLambdaFunction } = require('./iam');
-const { setGlobalVar, addToCreatedInGlobalVar } = require('../../utils');
+const { dataSourceManager, addFunctionToCreated } = require('../../utils');
+const { envPrefix } = global;
 
 const AWS = require('aws-sdk');
 const lambda = new AWS.Lambda();
@@ -27,6 +28,8 @@ const listFunctions = () => {
     })
   })
 }
+
+const createEventSourceMapping = (params) => lambda.createEventSourceMapping(params).promise();
 
 // Due to IAM roles and policies not being replicated immediately 
 // the Lambda function creation might fail because the role is not
@@ -58,11 +61,16 @@ const tryCreateFunction = (operation, retries) => {
   })
 }
 
-const main = async () => {
+/**
+ * Creates function that will be used as GraphQL resolver to retrieve 
+ * a google photo reference that will serve to retrieve an actual 
+ * photo for the establishment.
+ */
+const createGetGooglePhotoReferenceFunction = async () => {
   let functionZipFile = fs.readFileSync(path.join(__dirname, '../Lambda/getGooglePhotoReference.zip'))
   let roleArn = await createExecutionRoleForLambdaFunction();
   let funcParams = {
-    FunctionName: 'getGooglePhotoReference',
+    FunctionName: `${envPrefix}getGooglePhotoReference`,
     Runtime: 'nodejs8.10',
     Role: roleArn,
     Handler: 'getGooglePhotoReference.handler',
@@ -76,7 +84,17 @@ const main = async () => {
       ZipFile: functionZipFile
     }
   }
+  return deployFunction(funcParams);
+}
 
+/**
+ * Attempts to create a function and reties 4 times in case of failure,
+ * with the received params if another function with the same name
+ * doesn't already exists. It also exports the name of the function to 
+ * global.aws_vars.created, as well as to global.aws_vars
+ * @param {Object} funcParams 
+ */
+const deployFunction = async (funcParams) => {
   let func;
   let functions;
 
@@ -99,13 +117,16 @@ const main = async () => {
   }
 
   if (func) {
-    //Make available the function arn as a global variable with the function name
-    setGlobalVar(func.FunctionName, func.FunctionArn);
-    addToCreatedInGlobalVar('lambdaFunction', func.FunctionName);
+    dataSourceManager.add('AWS_LAMBDA', { name: func.FunctionName, arn: func.FunctionArn });
+    addFunctionToCreated(func.FunctionName);
     return func.FunctionArn;
   } else {
     return false
   }
 }
 
-module.exports = main;
+module.exports = {
+  createGetGooglePhotoReferenceFunction,
+  createEventSourceMapping,
+  deployFunction
+};

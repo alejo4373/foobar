@@ -23,8 +23,10 @@ class AddEstablishmentForm extends Component {
       displayName: place.name, 
       address: place.formatted_address,
       phone: place.formatted_phone_number || 'none',
-      lat: place.geometry.location.lat(),
-      lng: place.geometry.location.lng(),
+      location: {
+        lat: place.geometry.location.lat(),
+        lon: place.geometry.location.lng(),
+      }
     }
     this.setState(placeInfo)
   }

@@ -1,39 +1,41 @@
-  	mutation PutEvent {
+  mutation PutEvent {
     putEvent(
-      #id: ID => is being handled in the request mapping template so no need to include it here
-      sportsDbId: "sports-db-id"
+      atEstablishmentId: "da4652d3-18e5-11e9-9629-b5829e980b2f"
       leagueId: "alejoLeague",
       homeTeam: "teamA",
       awayTeam: "teamB",
-      startTime: "09:pm"
+      startTime: "2019-02-05T22:35:03.648Z"
       coverCharge: true,
     	description: "margaritas 5$"){
-      id
-      sportsDbId
-      leagueId
-      homeTeam
-      awayTeam
-      startTime
-      coverCharge
-      description
+        atEstablishmentId
+      	leagueId
+      	homeTeam
+      	awayTeam
+      	startTime
+      	coverCharge
+        description
     }
   }
 
   mutation PutEstablishment {
     putEstablishment(
-      #id: ID => is being handled in the request mapping template so no need to include it here
-      managerUsername: "alejooooooo"
+      displayName: "a test establishment"
       googlePlaceId: "EisxMyBNYXJrZXQgU3RyZWV0LCBXaWxtaW5ndG9uLCBOQyAyODQwMSwgVVNB"
       name: "Kabu"
-      address: "3140 87th street, east elmhurst"
+      address: "8509 Northern Blvd, Flushing, NY 11370, USA"
       phone: "917-573-6025"
+      lat: "40.7560244" ,
+      lng: "-73.8821983"
     ){
       id
+      displayName
       managerUsername
       googlePlaceId
       name
       address
       phone
+      lat
+      lng
     }
   }
 
@@ -104,6 +106,30 @@ query GetEstablishmentSuggestions{
     establishments{
       id
       name
+    }
+  }
+}
+
+query searchEstablishments {
+  searchEstablishments(name: "kabu") {
+    hits {
+      displayName
+      lat
+      lng
+    }
+  }
+}
+
+query searchEvent {
+  searchEvents(pattern: "chicago cubs") {
+    hits {
+      atEstablishmentId
+      leagueId
+      homeTeam
+      awayTeam
+      startTime
+      coverCharge
+      description
     }
   }
 }

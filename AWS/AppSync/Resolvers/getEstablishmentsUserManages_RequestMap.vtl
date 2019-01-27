@@ -1,10 +1,10 @@
-## Request mapping template
 {
     "version" : "2017-02-28",
-    "operation" : "Scan",
+    "operation" : "Query",
+    "index" : "managerUsername-index",
     "limit": $util.defaultIfNull(${ctx.args.limit}, 10),
     "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null)),
-    "filter" : {
+    "query" : {
       "expression": "(managerUsername = :managerUsername)",
       "expressionValues": {
         ":managerUsername": $util.dynamodb.toDynamoDBJson($ctx.request.headers.username)

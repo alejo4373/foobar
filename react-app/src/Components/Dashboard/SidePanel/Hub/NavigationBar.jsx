@@ -38,17 +38,18 @@ class NavigationBar extends Component {
     })
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     const { searchStr } = this.state;
     e.preventDefault()
     console.log(e)
     console.log('searching for event or establishemt')
-    searchEstablishments(searchStr, (err, results) => {
-      if (err) {
-        return console.log('err in searchEstablishments', err)
-      }
+    try {
+      let results = await searchEstablishments(searchStr);
       this.props.setSearchResults(results)
-    })
+    }
+    catch (err) {
+      return console.log('err in searchEstablishments', err)
+    }
   }
 
   renderButtonIcon = () => {

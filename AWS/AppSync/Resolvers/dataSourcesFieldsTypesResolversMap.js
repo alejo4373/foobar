@@ -6,21 +6,20 @@
 // in this directory. If the names don't match the appSync.js script will fail
 // to attach the resolver.
 
+const { envPrefix } = global;
+
 module.exports = {
-  foobar_establishments_table: {
+  [`${envPrefix}foobar_establishments_table`]: {
     Query: [
       "getEstablishmentById",
-      "getEstablishmentsInBounds",
-      "getEstablishmentSuggestions",
       "getEstablishmentsUserManages",
     ],
     Mutation: [
       "putEstablishment",
     ],
-
   },
 
-  foobar_events_table: {
+  [`${envPrefix}foobar_events_table`]: {
     Query: [
       "getEvents",
     ],
@@ -29,9 +28,17 @@ module.exports = {
     ],
   },
 
-  getGooglePhotoReference_function: {
+  [`${envPrefix}getGooglePhotoReference`]: {
     Establishment: [
       'googlePhotoReference'
+    ]
+  },
+
+  ESDomain: {
+    Query: [
+      "searchEstablishments",
+      "searchEvents",
+      "getEstablishmentsInBounds"
     ]
   }
 }
