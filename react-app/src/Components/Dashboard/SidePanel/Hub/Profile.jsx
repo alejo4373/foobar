@@ -53,14 +53,14 @@ class Profile extends Component {
           <ProfileIcon />
         </div>
         <div className='middle'>
-          <Link to='/profile/addestablishment'>
-            <div className='button'>
+          <div className='button'>
+            <Link to='/profile/addestablishment'>
               <div className='add-establishment'>
                 <PlusIcon />
               </div>
               <p>Add Establishment</p>
-            </div>
-          </Link>
+            </Link>
+          </div>
           <h3>{user.username}</h3>
           <p>{user.email}</p>
         </div>
