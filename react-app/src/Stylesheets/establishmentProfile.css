@@ -1,6 +1,4 @@
 .establishment-profile {
-  display: grid;
-  grid-template-rows: 60% 10% 30%;
   font-family: 'Raleway', sans-serif;
 }
 
@@ -16,25 +14,31 @@
 
 .establishment-profile .middle {
   color: whitesmoke;
+  min-height: 170px;
   background-color: rgb(74, 35, 40);
   padding: 4%
 }
 
-.establishment-profile .middle .button {
+.establishment-profile .button {
+  position: relative;
   float: right;
-  margin-top: -44px;
+  margin-top: -48px;
   width: 86px;
   text-align: center;
 }
 
-.establishment-profile .middle .button p {
+.establishment-profile .button p {
   padding-top: 8px;
   font-size: 0.8em;
   font-weight: bold;
   color: white;
 }
 
-.establishment-profile .middle .add-event {
+.establishment-profile .button a {
+  text-decoration: none;
+}
+
+.establishment-profile .button .add-event {
   margin: 0 auto;
   background: radial-gradient(circle, white, white);
   width: 60px;
@@ -43,16 +47,16 @@
   text-align: center;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 4px 0px;
 }
-.establishment-profile .middle .add-establishment:hover {
-  box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 4px 0px;
+.establishment-profile .button .add-event:hover {
+  box-shadow: rgba(0, 0, 0, 0.52) 0px 0px 14px 4px
 }
 
-.establishment-profile .middle .plus-icon {
+.establishment-profile .button .plus-icon {
   width: 28px;
   margin: 17px 0;
 }
 
-.establishment-profile .middle .plus-icon path {
+.establishment-profile .button .plus-icon path {
   fill: rgb(74, 35, 40);
 }
 

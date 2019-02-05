@@ -77,19 +77,21 @@ class EstablishmentProfile extends Component {
             alt='bar or restaurant'
           />
         </div>
+
         <div className='middle'>
+        <div className='button'>
           <Link to={`${this.props.match.url}/addEvent`}>
-            <div className='button'>
               <div className='add-event'>
                 <PlusIcon/>
               </div>
               <p>Add Event</p>
-            </div>
           </Link>
-          <h3>{establishment.displayName}</h3>
+        </div>
+         <h3>{establishment.displayName}</h3>
           <p>{establishment.address}</p>
           <p>{establishment.phone}</p>
         </div>
+
         <div className='bottom'>
           <Route path={`${this.props.match.url}/addevent`} render={this.renderAddEventForm} />
           <EventList events={events}/>
