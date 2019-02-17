@@ -1,3 +1,6 @@
 {
-  "root": "react-app/build/"
+  "root": "react-app/build/",
+  "routes": {
+    "/**": "index.html"
+  }
 }
